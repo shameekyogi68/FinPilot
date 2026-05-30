@@ -1,0 +1,101 @@
+"use client"
+
+import { useEffect, useState } from 'react'
+import { Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase/client'
+
+export default function DeleteData() {
+  const router = useRouter()
+  const [open, setOpen] = useState(false)
+  const [confirmText, setConfirmText] = useState('')
+  const [counts, setCounts] = useState<{ transactions: number; budgets: number; goals: number }>({ transactions: 0, budgets: 0, goals: 0 })
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (open) fetchCounts()
+  }, [open])
+
+  async function fetchCounts() {
+    const [{ count: tCount }, { count: bCount }, { count: gCount }] = await Promise.all([
+      supabase.from('transactions').select('id', { count: 'exact', head: true }),
+      supabase.from('budgets').select('id', { count: 'exact', head: true }),
+      supabase.from('goals').select('id', { count: 'exact', head: true }),
+    ])
+    setCounts({ transactions: tCount ?? 0, budgets: bCount ?? 0, goals: gCount ?? 0 })
+  }
+
+  async function handleDeleteAll() {
+    if (confirmText !== 'DELETE') return
+    setLoading(true)
+    try {
+      // call server-side delete route for safety
+      const res = await fetch('/api/settings/delete', { method: 'POST' })
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}))
+        toast.error(payload?.error || 'Failed to delete data')
+        return
+      }
+      toast.success('All data deleted')
+      setOpen(false)
+      router.push('/')
+      router.refresh()
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to delete data')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="destructive" className="gap-2">
+          <Trash2 className="h-4 w-4" /> Delete All Data
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action is irreversible. It will permanently delete all data from your account.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <div className="p-4">
+          <div className="text-sm">Transactions: {counts.transactions}</div>
+          <div className="text-sm">Budgets: {counts.budgets}</div>
+          <div className="text-sm">Goals: {counts.goals}</div>
+        </div>
+
+        <div className="px-4">
+          <input
+            type="text"
+            placeholder="Type DELETE to confirm"
+            className="w-full p-2 border rounded-md"
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+          />
+        </div>
+
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDeleteAll} disabled={confirmText !== 'DELETE' || loading} className="bg-red-600 hover:bg-red-700">Delete Everything</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}

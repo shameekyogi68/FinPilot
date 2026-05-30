@@ -20,6 +20,50 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## AI Insights Troubleshooting
+
+### Common Issues & Fixes
+
+- **API key invalid**: Double-check `.env.local` and restart the dev server.
+- **CORS error**: OpenRouter does not require CORS setup for server-side calls.
+- **Rate limited**: Wait 60 seconds, or rely on fallback insights.
+- **AI response too slow**: The service already uses a timeout; show a loading skeleton while waiting.
+- **Cache not working**: Check the `ai_cache` table in Supabase.
+- **No transactions**: Add test data first.
+
+### Enhancement Ideas
+
+Once basic insights work, consider adding:
+
+1. **Subscription Detection**
+
+```ts
+const subscriptions = transactions.filter((t) =>
+  t.type === "expense" &&
+  t.amount === lastMonthAmount &&
+  t.note?.toLowerCase().includes("netflix") ||
+  t.note?.toLowerCase().includes("spotify") ||
+  t.note?.toLowerCase().includes("subscription")
+)
+```
+
+2. **Unusual Spending Alerts**
+
+```ts
+const unusual = categories.filter((c) =>
+  c.amount > previousMonthAvg * 1.5
+)
+```
+
+3. **Savings Tips**
+
+```ts
+const tips = [
+  `You spent $${coffeeTotal} on coffee. Making at home saves $${coffeeTotal * 0.7}`,
+  `Your subscriptions total $${subscriptionsTotal}. Cancel unused ones.`,
+]
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

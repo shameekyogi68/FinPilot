@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+# Personal finance app - no indexing needed
