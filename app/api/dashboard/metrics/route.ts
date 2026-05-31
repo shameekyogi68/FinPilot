@@ -1,18 +1,24 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
-export async function GET() {
+export async function GET(request: Request) {
+  const authError = authenticateRequest(request)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(request, 100, 60_000)
+  if (rateLimitError) return rateLimitError
+
   let transactions
   try {
     transactions = await prisma.transaction.findMany({
       select: { amount: true, type: true, date: true }
     })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return safeErrorResponse(error, "Failed to load metrics")
   }
   const now = new Date()
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
-  const monthStartIso = monthStart.toISOString()
 
   const currentBalance = transactions.reduce((total, transaction) => {
     if (transaction.type === "income") {

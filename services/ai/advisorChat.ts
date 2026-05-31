@@ -270,12 +270,6 @@ export async function advisorChat(
   const budgetSummary = summarizeBudgets(budgetData, categories)
   const goalsSummary = goalsData.length ? summarizeGoals(goalsData) : "No active savings goals."
   const budgetDetails = formatBudgetDetails(budgetData, categories)
-  const categoryDetails = topCategories.length
-    ? topCategories
-        .slice(0, 5)
-        .map(([category, amount]) => `${category}: ₹${formatCurrency(amount)}`)
-        .join("; ")
-    : "No expenses recorded."
 
   const systemPrompt = `You are FinPilot, an elite personal finance assistant and wealth advisor operating in India, catering to Indian users. You strictly use the Indian Wealth System (INR, lakhs, crores) and Indian financial context (tax-saving instruments, SIPs, FDs).
 

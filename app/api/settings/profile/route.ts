@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { prisma } from "@/lib/prisma"
+import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
 const currencyValues = ["USD", "EUR", "GBP", "INR", "CAD", "AUD", "JPY"] as const
 const profileSchema = z.object({
@@ -14,7 +15,13 @@ const profileSchema = z.object({
   ai_enabled: z.boolean(),
 })
 
-export async function GET() {
+export async function GET(request: Request) {
+  const authError = authenticateRequest(request)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(request, 100, 60_000)
+  if (rateLimitError) return rateLimitError
+
   try {
     const profile = await prisma.profile.upsert({
       where: { id: 1 },
@@ -31,12 +38,18 @@ export async function GET() {
       },
     })
     return NextResponse.json(profile)
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return safeErrorResponse(error, "Failed to load profile")
   }
 }
 
 export async function PATCH(request: Request) {
+  const authError = authenticateRequest(request)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(request, 30, 60_000)
+  if (rateLimitError) return rateLimitError
+
   const body = await request.json().catch(() => null)
   const parseResult = profileSchema.safeParse(body)
 
@@ -77,7 +90,7 @@ export async function PATCH(request: Request) {
       }
     })
     return NextResponse.json({ status: "ok", profile })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return safeErrorResponse(error, "Failed to update profile")
   }
 }

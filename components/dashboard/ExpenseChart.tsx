@@ -28,35 +28,6 @@ const CHART_COLORS = [
   "#6366F1", // indigo
 ]
 
-const categoryIcons: Record<string, string> = {
-  food: "utensils",
-  transport: "car",
-  shopping: "shopping-bag",
-  bills: "file-text",
-  subscriptions: "smartphone",
-  entertainment: "film",
-  healthcare: "heart-pulse",
-  education: "book",
-  travel: "plane",
-  miscellaneous: "package",
-  groceries: "shopping-cart",
-  rent: "home",
-  utilities: "zap",
-  insurance: "shield",
-  investments: "trending-up",
-  dining: "pizza",
-  gym: "dumbbell",
-  default: "credit-card",
-}
-
-function getCategoryIcon(category: string): string {
-  const key = category.toLowerCase()
-  for (const [k, v] of Object.entries(categoryIcons)) {
-    if (key.includes(k)) return v
-  }
-  return categoryIcons.default
-}
-
 interface CustomTooltipProps {
   active?: boolean
   payload?: Array<{ name: string; value: number; payload: ExpenseCategorySlice }>

@@ -20,7 +20,6 @@ export const currencyLocales: Record<string, string> = {
 
 export function formatCurrency(amount: number, currency: string = 'INR'): string {
   const locale = currencyLocales[currency] || 'en-IN';
-  const symbol = currencySymbols[currency] || '₹';
   
   return new Intl.NumberFormat(locale, {
     style: 'currency',

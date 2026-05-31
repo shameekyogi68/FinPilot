@@ -49,16 +49,10 @@ export function getCategoryIcon(cat: string) {
 }
 
 export const transactionFormSchema = z.object({
-  amount: z
-    .preprocess((v) => (typeof v === "string" ? (v.trim() === "" ? NaN : Number(v)) : v), z.number())
-    .refine((v) => !Number.isNaN(v), { message: "Amount is required" })
-    .refine((v) => v > 0, { message: "Amount must be positive" }),
+  amount: z.number().positive({ message: "Amount must be positive" }),
   type: z.enum(["income", "expense"]),
   category: z.string().min(1, "Category is required"),
-  date: z.preprocess(
-    (v) => (v instanceof Date ? v : v ? new Date(String(v)) : v),
-    z.date()
-  ).refine((d) => !Number.isNaN(d.getTime()), { message: "Date is required" }),
+  date: z.date(),
   note: z.string().optional(),
 })
 
@@ -71,7 +65,7 @@ type TransactionFormProps = {
 export function TransactionForm({ onSuccess }: TransactionFormProps) {
   const { register, handleSubmit, control, setValue, reset, formState: { errors, isSubmitting } } = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
-    defaultValues: { amount: undefined, type: "expense", category: expenseCategories[0], date: new Date(), note: "" },
+    defaultValues: { amount: 0, type: "expense", category: expenseCategories[0], date: new Date(), note: "" },
   })
 
   const transactionType = useWatch({ control, name: "type" })

@@ -6,8 +6,17 @@ import {
   getMonthlySummary,
   getYearlyTrend,
 } from "@/lib/queries/analyticsQueries"
+import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
+  const authError = authenticateRequest(request)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(request, 50, 60_000)
+  if (rateLimitError) return rateLimitError
+
   const url = new URL(request.url)
   const month = Number(url.searchParams.get("month")) || new Date().getMonth() + 1
   const year = Number(url.searchParams.get("year")) || new Date().getFullYear()
@@ -36,9 +45,6 @@ export async function GET(request: Request) {
       dailySpending,
     })
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unable to load analytics data" },
-      { status: 500 }
-    )
+    return safeErrorResponse(error, "Failed to load analytics")
   }
 }

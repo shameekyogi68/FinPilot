@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
-export async function GET() {
+export async function GET(request: Request) {
+  const authError = authenticateRequest(request)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(request, 100, 60_000)
+  if (rateLimitError) return rateLimitError
+
   const now = new Date()
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
   const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
@@ -18,8 +25,8 @@ export async function GET() {
       },
       select: { category: true, amount: true },
     })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return safeErrorResponse(error, "Failed to load expenses")
   }
 
   const categories = (data ?? []).reduce<Record<string, number>>((acc, transaction) => {

@@ -17,7 +17,7 @@ type ChatMessageProps = {
   isLatest?: boolean
 }
 
-export function ChatMessage({ message, isUser, isLatest }: ChatMessageProps) {
+export function ChatMessage({ message, isUser }: ChatMessageProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {

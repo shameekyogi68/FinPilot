@@ -51,10 +51,7 @@ export function getCategoryIcon(cat: string) {
 
 const budgetFormSchema = z.object({
   category: z.string().min(1, "Category is required"),
-  monthly_limit: z
-    .preprocess((v) => (typeof v === "string" ? Number(v) : v), z.number())
-    .refine((v) => !Number.isNaN(v), { message: "Monthly limit is required" })
-    .refine((v) => v >= 0, { message: "Must be a positive number" }),
+  monthly_limit: z.number().min(0, { message: "Must be a positive number" }),
 })
 
 type BudgetFormValues = z.infer<typeof budgetFormSchema>

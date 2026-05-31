@@ -34,6 +34,41 @@ A modern, industry-standard personal finance dashboard built with Next.js 16, Ty
 - **Shadows**: Subtle layered shadows
 - **No Dark Mode**: Light-only design for consistency
 
+## Environment Variables
+
+### Local Development
+
+Create a `.env.local` file in the project root:
+
+```env
+DATABASE_URL="file:./dev.db"
+NODE_ENV="development"
+```
+
+### Vercel Deployment
+
+The following environment variables are configured in `vercel.json`:
+
+- `DATABASE_URL`: Database connection URL (use Vercel Postgres or external database)
+- `NODE_ENV`: Set to `production` automatically
+
+**For Vercel Postgres:**
+1. Add a Vercel Postgres database to your project
+2. The `DATABASE_URL` will be automatically provided
+3. Run migrations on deployment using the build script
+
+**For External Database:**
+1. Set `DATABASE_URL` in Vercel project settings
+2. Ensure your database is accessible from Vercel's network
+3. Run migrations manually or through build script
+
+### Backup & Restore
+
+The app includes automatic backup functionality:
+- **Manual Backup**: Use Settings → Backup & Restore to export all data as JSON
+- **Automatic Backup**: Vercel cron job runs daily at 2 AM UTC (`/api/cron/backup`)
+- **Restore**: Import previously exported JSON backup file
+
 ## Getting Started
 
 ### Prerequisites

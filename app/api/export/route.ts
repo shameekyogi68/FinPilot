@@ -1,13 +1,20 @@
 import { NextRequest } from 'next/server'
 import { formatDateForExport, convertToCSV, convertToJSON, generatePDF } from '@/lib/utils/exportUtils'
 import { prisma } from '@/lib/prisma'
+import { authenticateRequest, checkRateLimit, safeErrorResponse } from '@/lib/middleware'
 
 export async function POST(req: NextRequest) {
+  const authError = authenticateRequest(req)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(req, 10, 60_000)
+  if (rateLimitError) return rateLimitError
+
   try {
     const body = await req.json()
     const { format = 'csv', startDate, endDate } = body
 
-    let where: any = {}
+    const where: { date?: { gte?: Date; lte?: Date } } = {}
     if (startDate) {
       where.date = { ...where.date, gte: new Date(startDate) }
     }
@@ -26,8 +33,8 @@ export async function POST(req: NextRequest) {
         date: t.date.toISOString(),
         type: t.type as "income" | "expense",
       }))
-    } catch (error: any) {
-      return new Response(JSON.stringify({ error: error.message }), { status: 500 })
+    } catch {
+      return new Response(JSON.stringify({ error: "Failed to fetch transactions" }), { status: 500 })
     }
 
     if (!transactions || transactions.length === 0) {
@@ -37,12 +44,11 @@ export async function POST(req: NextRequest) {
     const filenameBase = `finpilot-export-${formatDateForExport(new Date())}`
 
     if (format === 'json') {
-      const content = convertToJSON(transactions)
       const headers = new Headers({
         'Content-Type': 'application/json',
         'Content-Disposition': `attachment; filename="${filenameBase}.json"`,
       })
-      return new Response(JSON.stringify(transactions, null, 2), { headers })
+      return new Response(convertToJSON(transactions), { headers })
     }
 
     if (format === 'csv') {
@@ -65,6 +71,7 @@ export async function POST(req: NextRequest) {
 
     return new Response(JSON.stringify({ error: 'Unsupported format' }), { status: 400 })
   } catch (err) {
-    return new Response(JSON.stringify({ error: err instanceof Error ? err.message : 'Unknown error' }), { status: 500 })
+    safeErrorResponse(err, "Export failed")
+    return new Response(JSON.stringify({ error: "Export failed" }), { status: 500 })
   }
 }

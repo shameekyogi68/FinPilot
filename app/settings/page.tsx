@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch"
 import { formatCurrency, updateCurrencyInAllAmounts } from "@/lib/utils/settings"
 import ExportData from "@/components/settings/ExportData"
 import DeleteData from "@/components/settings/DeleteData"
+import BackupRestore from "@/components/settings/BackupRestore"
 import { motion } from "framer-motion"
 import {
   User, IndianRupee, SlidersHorizontal, AlertOctagon,
@@ -43,7 +44,7 @@ type SettingsState = {
 }
 
 const initialState: SettingsState = {
-  name: "You",
+  name: "Shameek Yogi",
   email: "",
   currency: "INR",
   monthlyIncome: "0",
@@ -123,33 +124,6 @@ export default function SettingsPage() {
 
   const monthlyIncomePreview = Number(state.monthlyIncome || 0)
   const savingsTargetPreview = Number(state.savingsTarget || 0)
-
-  const sections = [
-    {
-      id: "profile",
-      title: "Profile",
-      desc: "Your name and account details",
-      icon: User,
-      iconColor: "text-[#8B5CF6]",
-      iconBg: "bg-[#8B5CF6]/15",
-    },
-    {
-      id: "financial",
-      title: "Financial Settings",
-      desc: "Currency, income & savings targets",
-      icon: IndianRupee,
-      iconColor: "text-[#D4AF37]",
-      iconBg: "bg-[#D4AF37]/15",
-    },
-    {
-      id: "preferences",
-      title: "Preferences",
-      desc: "Theme, month view & AI features",
-      icon: SlidersHorizontal,
-      iconColor: "text-[#8B5CF6]",
-      iconBg: "bg-[#8B5CF6]/15",
-    },
-  ]
 
   return (
     <ErrorBoundary>
@@ -328,6 +302,9 @@ export default function SettingsPage() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <ExportData />
+              <BackupRestore />
+            </div>
+            <div className="mt-3">
               <DeleteData />
             </div>
           </motion.div>

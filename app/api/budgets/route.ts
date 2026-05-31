@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { prisma } from "@/lib/prisma"
 import { getCurrentMonthExpenses } from "@/lib/queries/queries"
+import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
 const budgetSchema = z.object({
   category: z.string().min(1),
@@ -11,7 +12,13 @@ const budgetSchema = z.object({
     .refine((value) => value >= 0, { message: "Monthly limit must be a positive number" }),
 })
 
-export async function GET() {
+export async function GET(request: Request) {
+  const authError = authenticateRequest(request)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(request, 100, 60_000)
+  if (rateLimitError) return rateLimitError
+
   try {
     const budgets = await prisma.budget.findMany({
       select: { id: true, category: true, monthly_limit: true },
@@ -26,14 +33,17 @@ export async function GET() {
 
     return NextResponse.json({ budgets: budgetsWithSpend, currentMonthExpenses: rawExpenses, currentMonthIncome })
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unable to load expenses" },
-      { status: 500 }
-    )
+    return safeErrorResponse(error, "Failed to load budgets")
   }
 }
 
 export async function POST(request: Request) {
+  const authError = authenticateRequest(request)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(request, 30, 60_000)
+  if (rateLimitError) return rateLimitError
+
   const body = await request.json().catch(() => null)
   const parseResult = budgetSchema.safeParse(body)
 
@@ -51,12 +61,18 @@ export async function POST(request: Request) {
       data: { category, monthly_limit },
     })
     return NextResponse.json({ status: "ok" })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return safeErrorResponse(error, "Failed to create budget")
   }
 }
 
 export async function PATCH(request: Request) {
+  const authError = authenticateRequest(request)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(request, 30, 60_000)
+  if (rateLimitError) return rateLimitError
+
   const url = new URL(request.url)
   const id = url.searchParams.get("id")
 
@@ -82,7 +98,7 @@ export async function PATCH(request: Request) {
       data: { category, monthly_limit },
     })
     return NextResponse.json({ status: "ok" })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error) {
+    return safeErrorResponse(error, "Failed to update budget")
   }
 }

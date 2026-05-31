@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server"
 import { generateMonthlyInsights } from "@/services/ai/monthlyInsights"
+import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
 export async function GET(request: Request) {
+  const authError = authenticateRequest(request)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(request, 20, 60_000)
+  if (rateLimitError) return rateLimitError
+
   const url = new URL(request.url)
   const month = url.searchParams.get("month")
   const refresh = url.searchParams.get("refresh") === "true"
@@ -22,9 +29,6 @@ export async function GET(request: Request) {
       { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } }
     )
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unable to load insights" },
-      { status: 500 }
-    )
+    return safeErrorResponse(error, "Failed to load insights")
   }
 }

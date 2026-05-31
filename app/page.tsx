@@ -63,7 +63,7 @@ export default function Home() {
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Dashboard</p>
-              <h1 className="mt-3 text-3xl font-semibold text-slate-950 dark:text-white">Your financial overview</h1>
+              <h1 className="mt-3 text-3xl font-semibold text-slate-950 dark:text-white">Shameek Yogi's Financial Overview</h1>
               <p className="mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
                 Monitor your balance, income, expenses, and recent activity in one place.
               </p>

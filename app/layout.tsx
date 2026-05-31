@@ -30,17 +30,17 @@ const sora = Sora({
 
 export const metadata: Metadata = {
   title: {
-    default: "FinPilot — Premium Personal Wealth Manager",
+    default: "FinPilot — Shameek Yogi's Personal Wealth Manager",
     template: "%s | FinPilot",
   },
   description:
-    "Your AI-powered personal finance advisor. Track spending, manage budgets, set goals and receive elite wealth management insights — tailored to the Indian financial ecosystem.",
+    "Shameek Yogi's AI-powered personal finance advisor. Track spending, manage budgets, set goals and receive elite wealth management insights — tailored to the Indian financial ecosystem.",
   keywords: ["personal finance", "wealth management", "budgeting", "INR", "India", "financial advisor", "SIP", "investments", "AI finance"],
-  authors: [{ name: "FinPilot" }],
+  authors: [{ name: "Shameek Yogi" }],
   robots: { index: false, follow: false },
   openGraph: {
-    title: "FinPilot — Premium Personal Wealth Manager",
-    description: "Your AI-powered personal finance advisor tailored to the Indian financial ecosystem.",
+    title: "FinPilot — Shameek Yogi's Personal Wealth Manager",
+    description: "Shameek Yogi's AI-powered personal finance advisor tailored to the Indian financial ecosystem.",
     type: "website",
     locale: "en_IN",
     siteName: "FinPilot",
@@ -49,14 +49,14 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "FinPilot - Premium Personal Wealth Manager",
+        alt: "FinPilot - Shameek Yogi's Personal Wealth Manager",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FinPilot — Premium Personal Wealth Manager",
-    description: "Your AI-powered personal finance advisor tailored to the Indian financial ecosystem.",
+    title: "FinPilot — Shameek Yogi's Personal Wealth Manager",
+    description: "Shameek Yogi's AI-powered personal finance advisor tailored to the Indian financial ecosystem.",
   },
 };
 

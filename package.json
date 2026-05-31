@@ -9,7 +9,9 @@
     "lint": "eslint",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:reset": "prisma migrate reset --force && npm run db:seed"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -42,6 +44,7 @@
     "eslint-config-next": "16.2.6",
     "prisma": "^5.20.0",
     "tailwindcss": "^4",
+    "tsx": "^4.22.4",
     "typescript": "^5"
   }
 }

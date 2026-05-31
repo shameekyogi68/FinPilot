@@ -51,7 +51,7 @@ function TypingText({ text, active }: { text: string; active: boolean }) {
     if (!text) return
     let i = 0
     const interval = setInterval(() => {
-      setDisplayed((prev) => text.slice(0, i + 1))
+      setDisplayed(text.slice(0, i + 1))
       i++
       if (i >= text.length) clearInterval(interval)
     }, 18)

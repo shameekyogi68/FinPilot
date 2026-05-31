@@ -1,0 +1,26 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["hkg1"],
+  "env": {
+    "DATABASE_URL": {
+      "description": "Database connection URL (use Vercel Postgres or external database)"
+    },
+    "NODE_ENV": {
+      "value": "production"
+    }
+  },
+  "build": {
+    "env": {
+      "DATABASE_URL": "@database-url"
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/backup",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}

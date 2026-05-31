@@ -39,7 +39,6 @@ export default function ExportData() {
 
   async function fetchCount() {
     setCount(null)
-    const { start, end } = computeRange()
     
     // Using our new counts API for all time, or just showing "Unknown" for filtered ranges
     if (range === 'all') {

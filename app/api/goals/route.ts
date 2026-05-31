@@ -1,19 +1,31 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
-export async function GET() {
+export async function GET(request: Request) {
+  const authError = authenticateRequest(request)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(request, 100, 60_000)
+  if (rateLimitError) return rateLimitError
+
   try {
     const goals = await prisma.goal.findMany({
       orderBy: { createdAt: 'desc' }
     })
     return NextResponse.json(goals)
   } catch (error) {
-    console.error("GET /api/goals error:", error)
-    return NextResponse.json({ error: "Failed to fetch goals" }, { status: 500 })
+    return safeErrorResponse(error, "Failed to fetch goals")
   }
 }
 
 export async function POST(request: Request) {
+  const authError = authenticateRequest(request)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(request, 30, 60_000)
+  if (rateLimitError) return rateLimitError
+
   try {
     const body = await request.json()
     const { name, targetAmount, currentAmount, deadline } = body
@@ -33,7 +45,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(newGoal, { status: 201 })
   } catch (error) {
-    console.error("POST /api/goals error:", error)
-    return NextResponse.json({ error: "Failed to create goal" }, { status: 500 })
+    return safeErrorResponse(error, "Failed to create goal")
   }
 }

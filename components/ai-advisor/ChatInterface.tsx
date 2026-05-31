@@ -42,7 +42,7 @@ export function ChatInterface() {
   const [showScrollDown, setShowScrollDown] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   useEffect(() => {
     try {
@@ -247,7 +247,7 @@ export function ChatInterface() {
           <div className="flex-1 flex items-start gap-2 bg-[hsl(var(--muted))] rounded-xl px-3 py-2.5 relative border-[hsl(var(--border))]">
             <User className="w-4 h-4 mt-1 text-muted-foreground flex-shrink-0" />
             <textarea
-              ref={inputRef as React.RefObject<HTMLTextAreaElement>}
+              ref={inputRef}
               value={input}
               onChange={(e) => {
                 setInput(e.target.value)
