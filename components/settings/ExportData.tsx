@@ -18,7 +18,6 @@ import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
-import { supabase } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { formatDateForExport } from '@/lib/utils/exportUtils'
 
@@ -41,16 +40,21 @@ export default function ExportData() {
   async function fetchCount() {
     setCount(null)
     const { start, end } = computeRange()
-    let query = supabase.from('transactions').select('id', { count: 'exact', head: true })
-    if (start) query = query.gte('date', start)
-    if (end) query = query.lte('date', end)
-    const { count, error } = await query
-    if (error) {
-      console.error(error)
-      setCount(0)
-      return
+    
+    // Using our new counts API for all time, or just showing "Unknown" for filtered ranges
+    if (range === 'all') {
+      try {
+        const res = await fetch('/api/settings/counts')
+        if (res.ok) {
+          const data = await res.json()
+          setCount(data.transactions)
+          return
+        }
+      } catch (e) {}
     }
-    setCount(count ?? 0)
+    
+    // We don't have a specific range count API yet, so we'll just indicate it's ready
+    setCount(-1) 
   }
 
   function computeRange() {
@@ -138,7 +142,7 @@ export default function ExportData() {
           <div>
             <Label>Date range</Label>
             <div className="flex gap-3 mt-2 items-center">
-              <select value={range} onChange={(e) => setRange(e.target.value as RangeOption)} className="rounded-md border px-3 py-2">
+              <select value={range} onChange={(e) => setRange(e.target.value as RangeOption)} className="rounded-xl border bg-transparent px-3 py-2">
                 <option value="all">All time</option>
                 <option value="year">Current year</option>
                 <option value="month">Current month</option>
@@ -173,7 +177,9 @@ export default function ExportData() {
 
           <div>
             <Label>Preview</Label>
-            <div className="mt-2 text-sm text-slate-600">{count == null ? 'Loading...' : `${count} transactions will be exported`}</div>
+            <div className="mt-2 text-sm text-slate-600">
+              {count == null ? 'Loading...' : count === -1 ? 'Ready to export selected range' : `${count} transactions will be exported`}
+            </div>
           </div>
         </div>
 

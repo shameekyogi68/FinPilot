@@ -1,4 +1,4 @@
-import { createSupabaseAdmin } from "@/lib/supabaseAdmin"
+import { prisma } from "@/lib/prisma"
 import { callOpenRouterChat, type OpenRouterMessage } from "@/services/ai/client"
 
 type ChatHistoryItem = {
@@ -12,14 +12,17 @@ type Budget = {
 }
 
 type Goal = {
-  name?: string
-  title?: string
-  target_amount?: number
-  current_amount?: number
-  status?: string
+  name: string
+  targetAmount: number
+  currentAmount: number
 }
 
-const formatCurrency = (value: number) => value.toFixed(2)
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
+}
 
 const trimToWords = (text: string, maxWords: number) => {
   const words = text.trim().split(/\s+/)
@@ -101,8 +104,7 @@ const summarizeGoals = (goals: Goal[]) => {
   }
 
   const activeGoals = goals.filter((goal) => {
-    const status = normalize(goal.status ?? "")
-    return status === "active" || status === "in progress" || Number(goal.current_amount ?? 0) < Number(goal.target_amount ?? 0)
+    return goal.currentAmount < goal.targetAmount
   })
 
   if (!activeGoals.length) {
@@ -112,9 +114,9 @@ const summarizeGoals = (goals: Goal[]) => {
   return activeGoals
     .slice(0, 3)
     .map((goal) => {
-      const name = goal.name ?? goal.title ?? "Goal"
-      const current = Number(goal.current_amount ?? 0)
-      const target = Number(goal.target_amount ?? 0)
+      const name = goal.name || "Goal"
+      const current = goal.currentAmount
+      const target = goal.targetAmount
       if (target > 0) {
         const percent = Math.min(100, Math.round((current / target) * 100))
         return `${name} is ${percent}% funded.`
@@ -131,7 +133,7 @@ const summarizeTopCategories = (categories: Array<[string, number]>) => {
 
   return categories
     .slice(0, 3)
-    .map(([category, amount]) => `${category} ($${formatCurrency(amount)})`)
+    .map(([category, amount]) => `${category} (₹${formatCurrency(amount)})`)
     .join(", ")
 }
 
@@ -145,7 +147,7 @@ const formatBudgetDetails = (budgets: Budget[], expenses: Record<string, number>
       const spent = expenses[budget.category] ?? 0
       const remaining = budget.monthly_limit - spent
       const percent = budget.monthly_limit > 0 ? Math.round((spent / budget.monthly_limit) * 100) : 0
-      return `${budget.category}: $${formatCurrency(spent)} of $${formatCurrency(budget.monthly_limit)} (${percent}%)${remaining < 0 ? ", over by $" + formatCurrency(Math.abs(remaining)) : ", $" + formatCurrency(remaining) + " remaining"}`
+      return `${budget.category}: ₹${formatCurrency(spent)} of ₹${formatCurrency(budget.monthly_limit)} (${percent}%)${remaining < 0 ? ", over by ₹" + formatCurrency(Math.abs(remaining)) : ", ₹" + formatCurrency(remaining) + " remaining"}`
     })
     .join("; ")
 }
@@ -172,9 +174,9 @@ const buildFallbackAdvice = (
     const budget = budgetMap[categoryKey]
     if (budget) {
       const remaining = budget.monthly_limit - amount
-      return `You spent $${formatCurrency(amount)} on ${categoryKey} this month. Your ${categoryKey} budget is $${formatCurrency(budget.monthly_limit)}, leaving $${formatCurrency(Math.max(0, remaining))} remaining${remaining < 0 ? ", so you're over by $" + formatCurrency(Math.abs(remaining)) : ""}.`
+      return `You spent ₹${formatCurrency(amount)} on ${categoryKey} this month. Your ${categoryKey} budget is ₹${formatCurrency(budget.monthly_limit)}, leaving ₹${formatCurrency(Math.max(0, remaining))} remaining${remaining < 0 ? ", so you're over by $" + formatCurrency(Math.abs(remaining)) : ""}.`
     }
-    return `You spent $${formatCurrency(amount)} on ${categoryKey} this month.`
+    return `You spent ₹${formatCurrency(amount)} on ${categoryKey} this month.`
   }
 
   if (/over.*budget|overspending|over budget|on track/.test(normalizedMessage)) {
@@ -193,7 +195,7 @@ const buildFallbackAdvice = (
       .slice(0, 2)
       .map((item) => {
         if (item.spent > item.budget.monthly_limit) {
-          return `${item.budget.category} is over budget by $${formatCurrency(item.spent - item.budget.monthly_limit)}`
+          return `${item.budget.category} is over budget by ₹${formatCurrency(item.spent - item.budget.monthly_limit)}`
         }
         return `${item.budget.category} is near its limit at ${Math.round(item.percent)}%`
       })
@@ -209,16 +211,16 @@ const buildFallbackAdvice = (
 
     const secondCategory = topCategories[1]
     const suggestions = [`Try reducing ${topCategory[0]} by 10-15%`, secondCategory ? `and ${secondCategory[0]} by a similar amount` : ""].filter(Boolean).join(" and ")
-    return `Your biggest expense is ${topCategory[0]} at $${formatCurrency(topCategory[1])}. ${suggestions}. Small changes there can usually save $${formatCurrency(Math.round(topCategory[1] * 0.12))} or more each month.`
+    return `Your biggest expense is ${topCategory[0]} at ₹${formatCurrency(topCategory[1])}. ${suggestions}. Small changes there can usually save ₹${formatCurrency(Math.round(topCategory[1] * 0.12))} or more each month.`
   }
 
   if (/biggest expense|largest expense|top spending category/.test(normalizedMessage) && topCategory) {
-    return `Your biggest expense category is ${topCategory[0]} at $${formatCurrency(topCategory[1])} this month.`
+    return `Your biggest expense category is ${topCategory[0]} at ₹${formatCurrency(topCategory[1])} this month.`
   }
 
   if (/summary|overview|quick summary|this month/.test(normalizedMessage)) {
-    const topList = topCategories.slice(0, 2).map(([category, amount]) => `${category} ($${formatCurrency(amount)})`).join(" and ")
-    return `This month you spent $${formatCurrency(totalExpenses)} with $${formatCurrency(monthlyIncome)} in income. Your top categories are ${topList || "none"}. ${budgets.length ? "Check budget categories for specific limits and remaining amounts." : "No budgets are configured yet."}`
+    const topList = topCategories.slice(0, 2).map(([category, amount]) => `${category} (₹${formatCurrency(amount)})`).join(" and ")
+    return `This month you spent ₹${formatCurrency(totalExpenses)} with ₹${formatCurrency(monthlyIncome)} in income. Your top categories are ${topList || "none"}. ${budgets.length ? "Check budget categories for specific limits and remaining amounts." : "No budgets are configured yet."}`
   }
 
   return ""
@@ -228,44 +230,36 @@ export async function advisorChat(
   message: string,
   history: ChatHistoryItem[]
 ): Promise<string> {
-  const supabase = createSupabaseAdmin()
-  if (!supabase) {
-    throw new Error("Missing Supabase service configuration")
-  }
-
   const now = new Date()
   const thirtyDaysAgo = new Date(now)
   thirtyDaysAgo.setDate(now.getDate() - 30)
 
-  const [transactionResult, budgetResult, goalsResult] = await Promise.all([
-    supabase
-      .from("transactions")
-      .select("amount, type, category, note, date"),
-    supabase.from("budgets").select("category, monthly_limit"),
-    supabase.from("goals").select("name, title, target_amount, current_amount, status"),
+  const [transactionData, budgetData, goalsData] = await Promise.all([
+    prisma.transaction.findMany({
+      where: {
+        date: {
+          gte: thirtyDaysAgo,
+          lte: now,
+        },
+      },
+      select: { amount: true, type: true, category: true, note: true, date: true },
+    }).catch(() => []),
+    prisma.budget.findMany({
+      select: { category: true, monthly_limit: true },
+    }).catch(() => []),
+    prisma.goal.findMany({
+      select: { name: true, targetAmount: true, currentAmount: true },
+    }).catch(() => []),
   ])
 
-  if (transactionResult.error) {
-    throw new Error(transactionResult.error.message)
-  }
+  const monthlyIncome = transactionData
+    .filter((transaction) => transaction.type === "income")
+    .reduce((sum, transaction) => sum + transaction.amount, 0)
 
-  const transactionData = transactionResult.data ?? []
-  const budgetData = Array.isArray(budgetResult.data) ? budgetResult.data : []
-  const goalsData = Array.isArray(goalsResult.data) ? goalsResult.data : []
+  const expenseTransactions = transactionData.filter((transaction) => transaction.type === "expense")
+  const totalExpenses = expenseTransactions.reduce((sum, transaction) => sum + transaction.amount, 0)
 
-  const filteredTransactions = transactionData.filter((transaction: any) => {
-    const date = new Date(transaction.date)
-    return date >= thirtyDaysAgo && date <= now
-  })
-
-  const monthlyIncome = filteredTransactions
-    .filter((transaction: any) => transaction.type === "income")
-    .reduce((sum: number, transaction: any) => sum + transaction.amount, 0)
-
-  const expenseTransactions = filteredTransactions.filter((transaction: any) => transaction.type === "expense")
-  const totalExpenses = expenseTransactions.reduce((sum: number, transaction: any) => sum + transaction.amount, 0)
-
-  const categories = expenseTransactions.reduce<Record<string, number>>((summary, transaction: any) => {
+  const categories = expenseTransactions.reduce<Record<string, number>>((summary, transaction) => {
     const category = transaction.category ?? "Other"
     summary[category] = (summary[category] ?? 0) + transaction.amount
     return summary
@@ -279,15 +273,15 @@ export async function advisorChat(
   const categoryDetails = topCategories.length
     ? topCategories
         .slice(0, 5)
-        .map(([category, amount]) => `${category}: $${formatCurrency(amount)}`)
+        .map(([category, amount]) => `${category}: ₹${formatCurrency(amount)}`)
         .join("; ")
     : "No expenses recorded."
 
-  const systemPrompt = `You are FinPilot, a personal finance assistant.
+  const systemPrompt = `You are FinPilot, an elite personal finance assistant and wealth advisor operating in India, catering to Indian users. You strictly use the Indian Wealth System (INR, lakhs, crores) and Indian financial context (tax-saving instruments, SIPs, FDs).
 
 My current financial context:
-- Monthly income: $${formatCurrency(monthlyIncome)}
-- Total expenses (last 30 days): $${formatCurrency(totalExpenses)}
+- Monthly income: ₹${formatCurrency(monthlyIncome)}
+- Total expenses (last 30 days): ₹${formatCurrency(totalExpenses)}
 - Top spending categories: ${topCategoriesSummary}
 - Budget status: ${budgetSummary}
 - Budget details: ${budgetDetails}
@@ -295,12 +289,12 @@ My current financial context:
 
 Rules:
 - Use exact amounts from the data above.
-- If a user asks about a category, give the specific category name and amount.
-- If a user asks about overspending, compare actual spend against budgets.
+- If I ask about a category, give the specific category name and amount.
+- If I ask about overspending, compare actual spend against budgets.
 - If a category has no budget, state that clearly.
 - Do not invent numbers.
-- Be concise and friendly.
-- Never give investment or legal advice.
+- Be concise, friendly, but professional.
+- Give personalized insights to optimize my wealth.
 `
 
   const messages: OpenRouterMessage[] = [

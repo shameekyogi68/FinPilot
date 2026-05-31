@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { supabase } from '@/lib/supabase/client'
 
 export default function DeleteData() {
   const router = useRouter()
@@ -30,12 +29,15 @@ export default function DeleteData() {
   }, [open])
 
   async function fetchCounts() {
-    const [{ count: tCount }, { count: bCount }, { count: gCount }] = await Promise.all([
-      supabase.from('transactions').select('id', { count: 'exact', head: true }),
-      supabase.from('budgets').select('id', { count: 'exact', head: true }),
-      supabase.from('goals').select('id', { count: 'exact', head: true }),
-    ])
-    setCounts({ transactions: tCount ?? 0, budgets: bCount ?? 0, goals: gCount ?? 0 })
+    try {
+      const res = await fetch('/api/settings/counts')
+      if (res.ok) {
+        const data = await res.json()
+        setCounts(data)
+      }
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   async function handleDeleteAll() {
@@ -85,7 +87,7 @@ export default function DeleteData() {
           <input
             type="text"
             placeholder="Type DELETE to confirm"
-            className="w-full p-2 border rounded-md"
+            className="w-full p-2 border rounded-xl bg-transparent"
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
           />
@@ -93,7 +95,7 @@ export default function DeleteData() {
 
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDeleteAll} disabled={confirmText !== 'DELETE' || loading} className="bg-red-600 hover:bg-red-700">Delete Everything</AlertDialogAction>
+          <AlertDialogAction onClick={handleDeleteAll} disabled={confirmText !== 'DELETE' || loading} className="bg-[hsl(var(--destructive))]-600 hover:bg-[hsl(var(--destructive))]-700">Delete Everything</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

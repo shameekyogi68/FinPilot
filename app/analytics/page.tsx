@@ -2,93 +2,56 @@
 
 import { useEffect, useMemo, useState } from "react"
 import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
+  Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer,
+  Tooltip, XAxis, YAxis,
 } from "recharts"
-import { ExpenseChart } from "@/components/dashboard/ExpenseChart"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
-import { Toaster } from "@/components/ui/sonner"
 import { useProfile } from "@/hooks/useProfile"
 import { formatCurrency } from "@/lib/utils/currency"
-import { ThemeToggle } from "@/components/ThemeToggle"
-import { AnalyticsSkeleton } from "@/components/skeletons/AnalyticsSkeleton"
+import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion"
+import { TrendingUp, BarChart2, Sparkles, Calendar, PieChart } from "lucide-react"
 
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-]
+const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 
+type MonthlySummary = { month: number; year: number; monthLabel: string; income: number; expense: number; net: number; savingsRate: number }
+type TrendEntry = { month: string; year: number; income: number; expense: number; net: number; savingsRate: number }
+type YearlyTrendEntry = { month: string; year: number; expense: number }
+type CategoryBreakdown = { category: string; amount: number }[]
+type DailySpendingEntry = { day: number; amount: number }[]
+type AnalyticsResponse = { month: number; year: number; monthlySummary: MonthlySummary; last6MonthsTrend: TrendEntry[]; yearlyTrend: YearlyTrendEntry[]; categoryBreakdown: CategoryBreakdown; dailySpending: DailySpendingEntry }
 
-const percentFormatter = new Intl.NumberFormat("en-US", {
-  style: "percent",
-  maximumFractionDigits: 1,
-})
-
-type MonthlySummary = {
-  month: number
-  year: number
-  monthLabel: string
-  income: number
-  expense: number
-  net: number
-  savingsRate: number
+// Custom Tooltip
+interface ChartTooltipProps {
+  active?: boolean
+  payload?: Array<{ dataKey: string; color: string; value: number; name: string }>
+  label?: string
+  currency: string
 }
 
-type TrendEntry = {
-  month: string
-  year: number
-  income: number
-  expense: number
-  net: number
-  savingsRate: number
+function ChartTooltip({ active, payload, label, currency }: ChartTooltipProps) {
+  if (!active || !payload?.length) return null
+  return (
+    <div className="bg-card rounded-2xl px-4 py-3 shadow-lg border border-[hsl(var(--border))]">
+      <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2">{label}</p>
+      {payload.map((p) => (
+        <div key={p.dataKey} className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.1em]">
+          <span className="w-2 h-2 rounded-full" style={{ background: p.color }} />
+          <span className="capitalize text-muted-foreground">{p.dataKey}:</span>
+          <span className="font-medium font-sora text-foreground">{formatCurrency(Number(p.value), currency)}</span>
+        </div>
+      ))}
+    </div>
+  )
 }
 
-type YearlyTrendEntry = {
-  month: string
-  year: number
-  expense: number
-}
-
-type CategoryBreakdown = {
-  category: string
-  amount: number
-}[]
-
-type DailySpendingEntry = {
-  day: number
-  amount: number
-}[]
-
-type AnalyticsResponse = {
-  month: number
-  year: number
-  monthlySummary: MonthlySummary
-  last6MonthsTrend: TrendEntry[]
-  yearlyTrend: YearlyTrendEntry[]
-  categoryBreakdown: CategoryBreakdown
-  dailySpending: DailySpendingEntry
+// Heatmap heat color
+function heatColor(intensity: number): string {
+  if (intensity === 0) return "rgba(212, 175, 55, 0.04)"
+  const r = Math.round(212 - intensity * 100)
+  const g = Math.round(175 - intensity * 80)
+  const b = Math.round(55 - intensity * 30)
+  return `rgba(${r},${g},${b},${0.15 + intensity * 0.7})`
 }
 
 export default function AnalyticsPage() {
@@ -99,287 +62,307 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { profile } = useProfile()
-  const currency = profile?.currency ?? "USD"
+  const currency = profile?.currency ?? "INR"
 
   const yearOptions = useMemo(() => {
-    const current = new Date().getFullYear()
-    return Array.from({ length: 5 }, (_, index) => current - index)
+    const cur = new Date().getFullYear()
+    return Array.from({ length: 5 }, (_, i) => cur - i)
   }, [])
 
-  const fetchAnalytics = async (selectedMonth: number, selectedYear: number) => {
-    setLoading(true)
-    setError(null)
-
+  const fetchAnalytics = async (m: number, y: number) => {
+    setLoading(true); setError(null)
     try {
-      const response = await fetch(`/api/analytics?month=${selectedMonth}&year=${selectedYear}`)
-      const payload = await response.json()
-
-      if (!response.ok) {
-        throw new Error(payload.error || "Unable to load analytics data")
-      }
-
-      setData(payload as AnalyticsResponse)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to load analytics data")
-      setData(null)
-    } finally {
-      setLoading(false)
-    }
+      const res = await fetch(`/api/analytics?month=${m}&year=${y}`)
+      const payload = await res.json()
+      if (!res.ok) throw new Error(payload.error || "Unable to load analytics")
+      setData(payload)
+    } catch (err) { setError(err instanceof Error ? err.message : "Unable to load analytics"); setData(null) }
+    finally { setLoading(false) }
   }
 
-  useEffect(() => {
-    fetchAnalytics(month, year)
-  }, [month, year])
+  useEffect(() => { fetchAnalytics(month, year) }, [month, year])
 
-  const heatmapMax = useMemo(() => {
-    return data?.dailySpending.reduce((max, day) => Math.max(max, day.amount), 0) ?? 1
-  }, [data])
+  const heatmapMax = useMemo(() => data?.dailySpending.reduce((max, d) => Math.max(max, d.amount), 0) ?? 1, [data])
+
+  const summaryMetrics = [
+    { label: "Income", value: data ? formatCurrency(data.monthlySummary.income, currency) : "—", color: "text-[hsl(var(--income))]" },
+    { label: "Expenses", value: data ? formatCurrency(data.monthlySummary.expense, currency) : "—", color: "text-[hsl(var(--destructive))]" },
+    { label: "Net", value: data ? formatCurrency(data.monthlySummary.net, currency) : "—", color: "text-[hsl(var(--primary))]" },
+    { label: "Savings Rate", value: data ? `${data.monthlySummary.savingsRate.toFixed(1)}%` : "—", color: "text-[hsl(var(--warning))]" },
+  ]
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-slate-50 py-10 px-4 dark:bg-slate-950 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl space-y-8">
-          <header className="rounded-3xl border border-border bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Analytics</p>
-                <h1 className="mt-3 text-3xl font-semibold text-slate-950 dark:text-white">Spending trends and insights</h1>
-                <p className="mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
-                  Explore your income, expenses, category breakdowns, and spending trends by month and year.
-                </p>
+      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl space-y-6">
+
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+          >
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
+                <span className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">Analytics</span>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Month
-                  <select
-                    className="rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/50"
-                    value={month}
-                    onChange={(event) => setMonth(Number(event.target.value))}
-                  >
-                    {monthNames.map((name, index) => (
-                      <option key={name} value={index + 1}>
-                        {name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Year
-                  <select
-                    className="rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/50"
-                    value={year}
-                    onChange={(event) => setYear(Number(event.target.value))}
-                  >
-                    {yearOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <Button onClick={() => fetchAnalytics(month, year)} disabled={loading}>
-                  Refresh
-                </Button>
-                <ThemeToggle />
-              </div>
+              <h1 className="font-display text-2xl font-semibold text-foreground">
+                Spending <span className="text-[hsl(var(--primary))]">trends & insights</span>
+              </h1>
             </div>
-          </header>
 
-        {loading ? (
-          <AnalyticsSkeleton />
-        ) : error ? (
-          <div className="rounded-3xl border border-destructive/30 bg-destructive/10 p-8 text-destructive">
-            <p className="font-semibold">Unable to load analytics</p>
-            <p>{error}</p>
-          </div>
-        ) : null}
+            <div className="flex flex-wrap items-center gap-2">
+              <select
+                value={month}
+                onChange={(e) => setMonth(Number(e.target.value))}
+                className="bg-[hsl(var(--muted))] border-[hsl(var(--border))] rounded-xl px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.1em] outline-none text-foreground"
+              >
+                {monthNames.map((n, i) => <option key={n} value={i + 1}>{n}</option>)}
+              </select>
+              <select
+                value={year}
+                onChange={(e) => setYear(Number(e.target.value))}
+                className="bg-[hsl(var(--muted))] border-[hsl(var(--border))] rounded-xl px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.1em] outline-none text-foreground"
+              >
+                {yearOptions.map((y) => <option key={y} value={y}>{y}</option>)}
+              </select>
+              <Button
+                onClick={() => fetchAnalytics(month, year)}
+                disabled={loading}
+                size="sm"
+                className="rounded-xl"
+              >
+                {loading ? "Loading…" : "Refresh"}
+              </Button>
+            </div>
+          </motion.div>
 
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Monthly summary</CardTitle>
-              <CardDescription>{data?.monthlySummary.monthLabel ?? "Loading month data..."}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {[
-                  {
-                    title: "Income",
-                    value: data ? formatCurrency(data.monthlySummary.income, currency) : "-",
-                    description: "Total incoming funds this month",
-                  },
-                  {
-                    title: "Expenses",
-                    value: data ? formatCurrency(data.monthlySummary.expense, currency) : "-",
-                    description: "Total spending this month",
-                  },
-                  {
-                    title: "Net",
-                    value: data ? formatCurrency(data.monthlySummary.net, currency) : "-",
-                    description: "Income minus expenses",
-                  },
-                  {
-                    title: "Savings rate",
-                    value: data ? `${data.monthlySummary.savingsRate.toFixed(1)}%` : "-",
-                    description: "Portion of income saved this month",
-                  },
-                ].map((metric) => (
-                  <div key={metric.title} className="rounded-3xl border border-border bg-muted p-5">
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-300">{metric.title}</p>
-                    <p className="mt-3 text-3xl font-semibold text-slate-950 dark:text-white">{metric.value}</p>
-                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{metric.description}</p>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-card border border-[hsl(var(--destructive-border))] rounded-2xl p-5 text-[hsl(var(--destructive))] text-sm shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)]"
+            >
+              <p className="font-jakarta font-semibold">Unable to load analytics</p>
+              <p>{error}</p>
+            </motion.div>
+          )}
+
+          {/* Monthly Summary + Category Breakdown */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Summary metrics */}
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <TrendingUp className="w-5 h-5 text-[hsl(var(--primary))]" />
+                <h2 className="font-jakarta font-semibold text-base text-foreground">Monthly Summary</h2>
+                {data && <span className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground ml-auto">{data.monthlySummary.monthLabel}</span>}
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {summaryMetrics.map((m) => (
+                  <div key={m.label} className="bg-[hsl(var(--muted))] rounded-xl p-4">
+                    <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-1">{m.label}</p>
+                    <p className={`font-sora text-lg font-semibold ${m.color}`}>
+                      {loading ? <span className="inline-block w-20 h-5 rounded bg-[hsl(var(--border))] animate-pulse" /> : m.value}
+                    </p>
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </motion.div>
 
-          <ErrorBoundary fallback={<div className="rounded-3xl border border-destructive/20 bg-destructive/10 p-8 text-destructive">Unable to render category chart.</div>}>
-            <ExpenseChart
-              data={data?.categoryBreakdown ?? null}
-              loading={loading}
-              error={error}
-            />
-          </ErrorBoundary>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-1 xl:grid-cols-[58%_42%]">
-          <Card className="min-h-[28rem]">
-            <CardHeader>
-              <CardTitle>6 month spending trend</CardTitle>
-              <CardDescription>
-                Compare income and expenses across the last six months.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="h-[28rem]">
-              {loading || !data ? (
-                <div className="h-full animate-pulse rounded-3xl bg-muted" />
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data.last6MonthsTrend} margin={{ top: 20, right: 20, left: -10, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.3)" />
-                    <XAxis dataKey="month" />
-                    <YAxis tickFormatter={(value) => formatCurrency(Number(value), currency)} />
-                    <Tooltip formatter={(value) => formatCurrency(Number(value), currency)} />
-                    <Legend verticalAlign="top" height={36} />
-                    <Line type="monotone" dataKey="income" stroke="#22c55e" strokeWidth={3} dot={{ r: 3 }} />
-                    <Line type="monotone" dataKey="expense" stroke="#ef4444" strokeWidth={3} dot={{ r: 3 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="min-h-[28rem]">
-            <CardHeader>
-              <CardTitle>Yearly expense trend</CardTitle>
-              <CardDescription>Monthly expenses for {year}.</CardDescription>
-            </CardHeader>
-            <CardContent className="h-[28rem]">
-              {loading || !data ? (
-                <div className="h-full animate-pulse rounded-3xl bg-muted" />
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={data.yearlyTrend} margin={{ top: 20, right: 10, left: -10, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.3)" />
-                    <XAxis dataKey="month" />
-                    <YAxis tickFormatter={(value) => formatCurrency(Number(value), currency)} />
-                    <Tooltip formatter={(value) => formatCurrency(Number(value), currency)} />
-                    <Bar dataKey="expense" fill="#f97316" radius={[8, 8, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-1 xl:grid-cols-[45%_55%]">
-          <Card>
-            <CardHeader>
-              <CardTitle>Top spending categories</CardTitle>
-              <CardDescription>Where your money is going this month.</CardDescription>
-            </CardHeader>
-            <CardContent>
+            {/* Category breakdown with horizontal bars */}
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <PieChart className="w-5 h-5 text-[hsl(var(--primary))]" />
+                <h2 className="font-jakarta font-semibold text-base text-foreground">Category Breakdown</h2>
+              </div>
               {loading || !data ? (
                 <div className="space-y-3">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <div key={index} className="h-16 animate-pulse rounded-3xl bg-muted" />
+                  {[80, 60, 70, 50, 40].map((w, i) => (
+                    <div key={i} className="h-12 rounded-xl bg-[hsl(var(--border))] animate-pulse" style={{ width: `${w}%` }} />
                   ))}
                 </div>
               ) : data.categoryBreakdown.length === 0 ? (
-                <div className="rounded-3xl border border-dashed border-border bg-muted p-8 text-center text-sm text-muted-foreground">
-                  No category spending this month.
-                </div>
+                <p className="text-sm text-muted-foreground">No spending data this month.</p>
               ) : (
-                <div className="space-y-4">
-                  {data.categoryBreakdown.slice(0, 6).map((category) => (
-                    <div key={category.category} className="flex items-center justify-between rounded-3xl border border-border bg-card p-4">
-                      <div>
-                        <p className="font-semibold text-slate-950 dark:text-white">{category.category}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                          {((category.amount / (data?.categoryBreakdown.reduce((sum, item) => sum + item.amount, 0) || 1)) * 100).toFixed(0)}%
-                        </p>
-                      </div>
-                      <p className="font-semibold text-slate-900 dark:text-white">{formatCurrency(category.amount, currency)}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Daily spending heatmap</CardTitle>
-              <CardDescription>Track day-by-day expense intensity.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {loading || !data ? (
-                <div className="h-80 animate-pulse rounded-3xl bg-muted" />
-              ) : data.dailySpending.length === 0 ? (
-                <div className="rounded-3xl border border-dashed border-border bg-muted p-8 text-center text-sm text-muted-foreground">
-                  No daily spending data for this month.
-                </div>
-              ) : (
-                <div className="grid gap-2">
-                  <div className="grid grid-cols-7 gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">
-                    {Array.from({ length: 7 }).map((_, index) => (
-                      <div key={index} className="text-center">
-                        {"SMTWTFS"[index]}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-7 gap-2">
-                    {Array.from({ length: new Date(year, month, 0).getDate() }).map((_, index) => {
-                      const day = index + 1
-                      const dayEntry = data.dailySpending.find((entry) => entry.day === day)
-                      const intensity = dayEntry ? Math.max(0.1, Math.min(0.95, dayEntry.amount / heatmapMax)) : 0.05
-                      const backgroundColor = dayEntry
-                        ? `rgba(59, 130, 246, ${intensity})`
-                        : "rgba(148, 163, 184, 0.08)"
-
-                      return (
-                        <div
-                          key={day}
-                          className="rounded-2xl border border-border px-2 py-2 text-center text-xs text-slate-800 dark:text-slate-100"
-                          style={{ backgroundColor }}
-                          title={`${dayEntry ? formatCurrency(dayEntry.amount, currency) : "No spending"}`}
-                        >
-                          <span className="block text-[0.72rem] font-medium">{day}</span>
-                          <span className="block text-[0.65rem] text-slate-600 dark:text-slate-300">
-                            {dayEntry ? formatCurrency(dayEntry.amount, currency) : "-"}
-                          </span>
+                <div className="space-y-3">
+                  {data.categoryBreakdown.slice(0, 5).map((cat, i) => {
+                    const total = data.categoryBreakdown.reduce((s, c) => s + c.amount, 0)
+                    const pct = total > 0 ? ((cat.amount / total) * 100).toFixed(0) : "0"
+                    const COLORS = ["#c26b48", "#4caf82", "#f59e0b", "#e06b6b", "#6b7280"]
+                    const color = COLORS[i % COLORS.length]
+                    return (
+                      <div key={cat.category} className="space-y-1.5">
+                        <div className="flex items-center justify-between text-[10px] font-semibold tracking-[0.1em] uppercase">
+                          <div className="flex items-center gap-2">
+                            <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color }} />
+                            <span className="capitalize font-medium text-foreground">{cat.category}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">{pct}%</span>
+                            <span className="font-medium font-sora text-foreground">{formatCurrency(cat.amount, currency)}</span>
+                          </div>
                         </div>
-                      )
-                    })}
-                  </div>
+                        <div className="h-2 rounded-full bg-[hsl(var(--border))] overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${pct}%` }}
+                            transition={{ duration: 0.8, delay: i * 0.1 }}
+                            className="h-full rounded-full"
+                            style={{ background: color }}
+                          />
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </motion.div>
+          </div>
+
+          {/* 6-month area chart */}
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <TrendingUp className="w-5 h-5 text-[hsl(var(--income))]" />
+              <h2 className="font-display font-medium text-base text-foreground">6-Month Income vs Expenses</h2>
+            </div>
+            <div className="h-72">
+              {loading || !data ? (
+                <div className="h-full w-full rounded-2xl bg-bg-[hsl(var(--muted))] animate-pulse" />
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={data.last6MonthsTrend} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#4caf82" stopOpacity={0.4} />
+                        <stop offset="95%" stopColor="#4caf82" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="expenseGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#e06b6b" stopOpacity={0.4} />
+                        <stop offset="95%" stopColor="#e06b6b" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis dataKey="month" tick={{ fill: "currentColor", opacity: 0.5, fontSize: 11 }} axisLine={false} tickLine={false} className="text-muted-foreground-foreground" />
+                    <YAxis 
+                      tickFormatter={(v) => {
+                        const num = Number(v)
+                        if (num >= 10000000) return `₹${(num / 10000000).toFixed(1)}Cr`
+                        if (num >= 100000) return `₹${(num / 100000).toFixed(1)}L`
+                        if (num >= 1000) return `₹${(num / 1000).toFixed(0)}k`
+                        return `₹${num}`
+                      }} 
+                      tick={{ fill: "currentColor", opacity: 0.5, fontSize: 10 }} 
+                      axisLine={false} 
+                      tickLine={false} 
+                      width={50}
+                      className="text-muted-foreground-foreground"
+                    />
+                    <Tooltip content={<ChartTooltip currency={currency} />} />
+                    <Area type="monotone" dataKey="income" stroke="#4caf82" strokeWidth={3} fill="url(#incomeGrad)" dot={false} />
+                    <Area type="monotone" dataKey="expense" stroke="#e06b6b" strokeWidth={3} fill="url(#expenseGrad)" dot={false} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Yearly bar chart */}
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <BarChart2 className="w-5 h-5 text-[hsl(var(--primary))]" />
+              <h2 className="font-jakarta font-semibold text-base text-foreground">Yearly Expense Trend ({year})</h2>
+            </div>
+            <div className="h-64">
+              {loading || !data ? (
+                <div className="h-full w-full rounded-2xl bg-[hsl(var(--border))] animate-pulse" />
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={data.yearlyTrend} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#c26b48" stopOpacity={0.9} />
+                        <stop offset="100%" stopColor="#a8553e" stopOpacity={0.6} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
+                    <XAxis dataKey="month" tick={{ fill: "currentColor", opacity: 0.5, fontSize: 11 }} axisLine={false} tickLine={false} className="text-muted-foreground" />
+                    <YAxis 
+                      tickFormatter={(v) => {
+                        const num = Number(v)
+                        if (num >= 10000000) return `₹${(num / 10000000).toFixed(1)}Cr`
+                        if (num >= 100000) return `₹${(num / 100000).toFixed(1)}L`
+                        if (num >= 1000) return `₹${(num / 1000).toFixed(0)}k`
+                        return `₹${num}`
+                      }} 
+                      tick={{ fill: "currentColor", opacity: 0.5, fontSize: 10 }} 
+                      axisLine={false} 
+                      tickLine={false}
+                      width={50}
+                      className="text-muted-foreground"
+                    />
+                    <Tooltip content={<ChartTooltip currency={currency} />} />
+                    <Bar dataKey="expense" fill="url(#barGrad)" radius={[8, 8, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Daily spending heatmap */}
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Calendar className="w-5 h-5 text-[hsl(var(--primary))]" />
+              <h2 className="font-jakarta font-semibold text-base text-foreground">Daily Spending Heatmap</h2>
+            </div>
+            {loading || !data ? (
+              <div className="h-40 w-full rounded-2xl bg-[hsl(var(--muted))] animate-pulse" />
+            ) : data.dailySpending.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No daily data for this month.</p>
+            ) : (
+              <div>
+                <div className="grid grid-cols-7 gap-1.5 text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2 text-center">
+                  {["S","M","T","W","T","F","S"].map((d, i) => <div key={i}>{d}</div>)}
+                </div>
+                <div className="grid grid-cols-7 gap-1.5">
+                  {Array.from({ length: new Date(year, month - 1, 1).getDay() }).map((_, i) => (
+                    <div key={`empty-${i}`} />
+                  ))}
+                  {Array.from({ length: new Date(year, month, 0).getDate() }).map((_, idx) => {
+                    const day = idx + 1
+                    const entry = data.dailySpending.find((e) => e.day === day)
+                    const intensity = entry ? Math.max(0.1, Math.min(1, entry.amount / heatmapMax)) : 0
+                    return (
+                      <motion.div
+                        key={day}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: idx * 0.01 }}
+                        title={entry ? `${day}: ${formatCurrency(entry.amount, currency)}` : `${day}: No spending`}
+                        className="rounded-2xl text-center py-2 text-[10px] font-semibold tracking-[0.1em] uppercase cursor-default transition-transform hover:scale-110"
+                        style={{ background: heatColor(intensity) }}
+                      >
+                        <span className="block opacity-70 text-foreground">{day}</span>
+                        {entry && (
+                          <span className="block text-[8px] opacity-60 font-medium text-foreground">
+                            {(entry.amount / 1000).toFixed(0)}k
+                          </span>
+                        )}
+                      </motion.div>
+                    )
+                  })}
+                </div>
+                <div className="flex items-center gap-2 mt-4 text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">
+                  <span>Less</span>
+                  {[0.1, 0.3, 0.5, 0.7, 0.9].map((v) => (
+                    <div key={v} className="w-5 h-5 rounded-2xl" style={{ background: heatColor(v) }} />
+                  ))}
+                  <span>More</span>
+                </div>
+              </div>
+            )}
+          </motion.div>
         </div>
-        </div>
-        <Toaster />
       </div>
     </ErrorBoundary>
   )

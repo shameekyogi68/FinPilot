@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 
 const routeBodySchema = z.object({
@@ -12,56 +12,23 @@ const routeBodySchema = z.object({
   note: z.string().optional().nullable(),
 })
 
-const createSupabaseAdmin = () => {
-  const url = process.env.SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-  if (!url || !key) {
-    return null
-  }
-
-  return createClient(url, key)
-}
-
 export async function GET(request: Request) {
-  const supabase = createSupabaseAdmin()
-
-  if (!supabase) {
-    return NextResponse.json(
-      { error: "Missing Supabase service configuration" },
-      { status: 500 }
-    )
-  }
-
   const url = new URL(request.url)
   const limitParam = url.searchParams.get("limit")
   const limit = limitParam ? Number(limitParam) : undefined
 
-  let query = supabase.from("transactions").select("*").order("date", { ascending: false })
-
-  if (limit && !Number.isNaN(limit) && limit > 0) {
-    query = query.limit(limit)
-  }
-
-  const { data, error } = await query
-
-  if (error) {
+  try {
+    const data = await prisma.transaction.findMany({
+      orderBy: { date: "desc" },
+      ...(limit && !Number.isNaN(limit) && limit > 0 ? { take: limit } : {}),
+    })
+    return NextResponse.json(data ?? [])
+  } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
-  return NextResponse.json(data ?? [])
 }
 
 export async function PATCH(request: Request) {
-  const supabase = createSupabaseAdmin()
-
-  if (!supabase) {
-    return NextResponse.json(
-      { error: "Missing Supabase service configuration" },
-      { status: 500 }
-    )
-  }
-
   const url = new URL(request.url)
   const id = url.searchParams.get("id")
 
@@ -85,30 +52,24 @@ export async function PATCH(request: Request) {
 
   const { amount, type, category, date, note } = parseResult.data
 
-  const parsedId = Number(id)
-  const updateQuery = Number.isNaN(parsedId)
-    ? supabase.from("transactions").update({ amount, type, category, date, note }).eq("id", id)
-    : supabase.from("transactions").update({ amount, type, category, date, note }).eq("id", parsedId)
-
-  const { error } = await updateQuery
-
-  if (error) {
+  try {
+    await prisma.transaction.update({
+      where: { id },
+      data: {
+        amount,
+        type,
+        category,
+        date: new Date(date),
+        note,
+      },
+    })
+    return NextResponse.json({ status: "ok" })
+  } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
-  return NextResponse.json({ status: "ok" })
 }
 
 export async function DELETE(request: Request) {
-  const supabase = createSupabaseAdmin()
-
-  if (!supabase) {
-    return NextResponse.json(
-      { error: "Missing Supabase service configuration" },
-      { status: 500 }
-    )
-  }
-
   const url = new URL(request.url)
   const id = url.searchParams.get("id")
 
@@ -116,30 +77,17 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Missing transaction id" }, { status: 400 })
   }
 
-  const parsedId = Number(id)
-  const deleteQuery = Number.isNaN(parsedId)
-    ? supabase.from("transactions").delete().eq("id", id)
-    : supabase.from("transactions").delete().eq("id", parsedId)
-
-  const { error } = await deleteQuery
-
-  if (error) {
+  try {
+    await prisma.transaction.delete({
+      where: { id },
+    })
+    return NextResponse.json({ status: "ok" })
+  } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
-  return NextResponse.json({ status: "ok" })
 }
 
 export async function POST(request: Request) {
-  const supabase = createSupabaseAdmin()
-
-  if (!supabase) {
-    return NextResponse.json(
-      { error: "Missing Supabase service configuration" },
-      { status: 500 }
-    )
-  }
-
   const body = await request.json().catch(() => null)
 
   const parseResult = routeBodySchema.safeParse(body)
@@ -156,17 +104,18 @@ export async function POST(request: Request) {
 
   const { amount, type, category, date, note } = parseResult.data
 
-  const { error } = await supabase.from("transactions").insert({
-    amount,
-    type,
-    category,
-    date,
-    note,
-  })
-
-  if (error) {
+  try {
+    await prisma.transaction.create({
+      data: {
+        amount,
+        type,
+        category,
+        date: new Date(date),
+        note,
+      },
+    })
+    return NextResponse.json({ status: "ok" })
+  } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
-  return NextResponse.json({ status: "ok" })
 }

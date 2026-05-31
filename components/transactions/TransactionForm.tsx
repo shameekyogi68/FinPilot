@@ -1,60 +1,64 @@
 "use client"
 
-import { useEffect } from "react"
-import { Controller, useForm } from "react-hook-form"
+import { Controller, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { CreatableSelect } from "@/components/ui/creatable-select"
 import { toast } from "sonner"
+import { TrendingUp, TrendingDown, Utensils, Car, ShoppingBag, Receipt, Smartphone, Film, Heart, Book, Plane, Package, Home, Lightbulb, ShoppingCart, Shield, Pizza, Dumbbell, Briefcase, Laptop, Building2, Gift, RotateCcw, TrendingUp as TrendUpIcon, Wallet } from "lucide-react"
 
-const expenseCategories: string[] = [
-  "food",
-  "transport",
-  "shopping",
-  "bills",
-  "subscriptions",
-  "entertainment",
-  "healthcare",
-  "education",
-  "travel",
-  "miscellaneous",
+const expenseCategories = [
+  "food", "transport", "shopping", "bills", "subscriptions",
+  "entertainment", "healthcare", "education", "travel", "miscellaneous",
+  "rent", "utilities", "groceries", "insurance", "dining", "gym",
 ]
 
-const incomeCategories: string[] = ["salary", "freelance", "gift", "refund", "other"]
+const incomeCategories = ["salary", "freelance", "business", "gift", "refund", "investment", "other"]
+
+const categoryEmojis: Record<string, string> = {
+  food: "🍽️", transport: "🚗", shopping: "🛍️", bills: "🧾", subscriptions: "📱",
+  entertainment: "🎬", healthcare: "🏥", education: "📚", travel: "✈️", miscellaneous: "📦",
+  rent: "🏠", utilities: "💡", groceries: "🛒", insurance: "🛡️", dining: "🍕", gym: "💪",
+  salary: "💼", freelance: "💻", business: "🏢", gift: "🎁", refund: "↩️", investment: "📈", other: "💰",
+}
+
+const categoryIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  food: Utensils, transport: Car, shopping: ShoppingBag, bills: Receipt, subscriptions: Smartphone,
+  entertainment: Film, healthcare: Heart, education: Book, travel: Plane, miscellaneous: Package,
+  rent: Home, utilities: Lightbulb, groceries: ShoppingCart, insurance: Shield, dining: Pizza, gym: Dumbbell,
+  salary: Briefcase, freelance: Laptop, business: Building2, gift: Gift, refund: RotateCcw, investment: TrendUpIcon, other: Wallet,
+}
+
+export function getCategoryEmoji(cat: string) {
+  const key = cat.toLowerCase()
+  for (const [k, v] of Object.entries(categoryEmojis)) {
+    if (key.includes(k)) return v
+  }
+  return "💳"
+}
+
+export function getCategoryIcon(cat: string) {
+  const key = cat.toLowerCase()
+  for (const [k, v] of Object.entries(categoryIcons)) {
+    if (key.includes(k)) return v
+  }
+  return Wallet
+}
 
 export const transactionFormSchema = z.object({
   amount: z
-    .preprocess((value) => {
-      if (typeof value === "string") {
-        return value.trim() === "" ? NaN : Number(value)
-      }
-      return value
-    }, z.number())
-    .refine((value) => !Number.isNaN(value), {
-      message: "Amount is required",
-    })
-    .refine((value) => value > 0, {
-      message: "Amount must be positive",
-    }),
+    .preprocess((v) => (typeof v === "string" ? (v.trim() === "" ? NaN : Number(v)) : v), z.number())
+    .refine((v) => !Number.isNaN(v), { message: "Amount is required" })
+    .refine((v) => v > 0, { message: "Amount must be positive" }),
   type: z.enum(["income", "expense"]),
   category: z.string().min(1, "Category is required"),
-  date: z
-    .preprocess(
-      (value) => (value instanceof Date ? value : value ? new Date(String(value)) : value),
-      z.date()
-    )
-    .refine((date) => !Number.isNaN(date.getTime()), {
-      message: "Date is required",
-    }),
+  date: z.preprocess(
+    (v) => (v instanceof Date ? v : v ? new Date(String(v)) : v),
+    z.date()
+  ).refine((d) => !Number.isNaN(d.getTime()), { message: "Date is required" }),
   note: z.string().optional(),
 })
 
@@ -65,152 +69,109 @@ type TransactionFormProps = {
 }
 
 export function TransactionForm({ onSuccess }: TransactionFormProps) {
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    getValues,
-    setValue,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<TransactionFormValues>({
-    resolver: zodResolver(transactionFormSchema) as any,
-    defaultValues: {
-      amount: undefined,
-      type: "expense",
-      category: expenseCategories[0],
-      date: new Date(),
-      note: "",
-    },
+  const { register, handleSubmit, control, setValue, reset, formState: { errors, isSubmitting } } = useForm<TransactionFormValues>({
+    resolver: zodResolver(transactionFormSchema),
+    defaultValues: { amount: undefined, type: "expense", category: expenseCategories[0], date: new Date(), note: "" },
   })
 
-  const transactionType = watch("type")
+  const transactionType = useWatch({ control, name: "type" })
   const categoryOptions = transactionType === "expense" ? expenseCategories : incomeCategories
 
-  useEffect(() => {
-    const currentCategory = getValues("category") as string
-    if (!categoryOptions.includes(currentCategory as typeof categoryOptions[number])) {
-      setValue("category", categoryOptions[0], { shouldValidate: true })
-    }
-  }, [transactionType, categoryOptions, getValues, setValue])
-
   const onSubmit = async (values: TransactionFormValues) => {
-    const payload = {
-      amount: values.amount,
-      type: values.type,
-      category: values.category,
-      date: values.date.toISOString(),
-      note: values.note?.trim() || null,
-    }
-
-    const response = await fetch("/api/transactions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-
-    const json = await response.json().catch(() => ({}))
-
-    if (!response.ok) {
-      toast.error(json.error || "Unable to add transaction")
-      return
-    }
-
-    toast.success("Transaction added")
-    reset({
-      amount: undefined,
-      type: values.type,
-      category: categoryOptions[0],
-      date: new Date(),
-      note: "",
-    })
-
+    // Sanitize category to lowercase for consistency
+    const cat = values.category.toLowerCase().trim()
+    const payload = { amount: values.amount, type: values.type, category: cat, date: values.date.toISOString(), note: values.note?.trim() || null }
+    const res = await fetch("/api/transactions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+    const json = await res.json().catch(() => ({}))
+    if (!res.ok) { toast.error(json.error || "Unable to add transaction"); return }
+    toast.success(`${transactionType === "income" ? "Income" : "Expense"} recorded!`)
+    reset({ amount: undefined, type: values.type, category: categoryOptions[0], date: new Date(), note: "" })
     onSuccess?.()
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-3xl border border-border bg-background p-6 shadow-sm"
-    >
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="amount">Amount</Label>
-          <Input
-            id="amount"
-            type="number"
-            step="0.01"
-            placeholder="0.00"
-            {...register("amount", { valueAsNumber: true })}
-          />
-          {errors.amount?.message ? (
-            <p className="text-sm text-destructive">{errors.amount.message}</p>
-          ) : null}
+    <div className="bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] p-5">
+      {/* Type toggle */}
+      <div className="flex gap-1 mb-5 p-1 rounded-xl bg-[hsl(var(--muted))]">
+        <button
+          type="button"
+          onClick={() => setValue("type", "expense")}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+            transactionType === "expense"
+              ? "bg-[var(--expense-bg)] text-[hsl(var(--expense))] border border-[var(--expense-border)]"
+              : "text-muted-foreground"
+          }`}
+        >
+          <TrendingDown className="w-4 h-4" /> Expense
+        </button>
+        <button
+          type="button"
+          onClick={() => setValue("type", "income")}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+            transactionType === "income"
+              ? "bg-[var(--income-bg)] text-[hsl(var(--income))] border border-[var(--income-border)]"
+              : "text-muted-foreground"
+          }`}
+        >
+          <TrendingUp className="w-4 h-4" /> Income
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="grid gap-4 sm:grid-cols-2">
+          {/* Amount */}
+          <div className="space-y-1.5">
+            <Label htmlFor="tx-amount" className="text-sm text-muted-foreground">Amount (₹)</Label>
+            <Input id="tx-amount" type="number" step="1" placeholder="0" {...register("amount", { valueAsNumber: true })} className="bg-[hsl(var(--muted))] border-[hsl(var(--border))] text-base font-medium" />
+            {errors.amount?.message && <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-[hsl(var(--destructive))]">{errors.amount.message}</p>}
+          </div>
+
+          {/* Date */}
+          <div className="space-y-1.5">
+            <Label htmlFor="tx-date" className="text-sm text-muted-foreground">Date</Label>
+            <Input id="tx-date" type="date" {...register("date", { valueAsDate: true })} className="bg-[hsl(var(--muted))] border-[hsl(var(--border))]" />
+            {errors.date?.message && <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-[hsl(var(--destructive))]">{errors.date.message}</p>}
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="type">Type</Label>
-          <Select
-            value={watch("type")}
-            onValueChange={(value) => setValue("type", value as "income" | "expense")}
-          >
-            <SelectTrigger id="type">
-              <SelectValue placeholder="Select type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="income">Income</SelectItem>
-              <SelectItem value="expense">Expense</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor="category">Category</Label>
+        {/* Category */}
+        <div className="space-y-1.5">
+          <Label htmlFor="tx-category" className="text-sm text-muted-foreground">Category (Type to create new)</Label>
           <Controller
             control={control}
             name="category"
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger id="category">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categoryOptions.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <CreatableSelect
+                id="tx-category"
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="Select or type custom category..."
+                className="bg-[hsl(var(--muted))] border-[hsl(var(--border))]"
+                options={categoryOptions.map(cat => ({
+                  value: cat,
+                  label: cat,
+                  icon: getCategoryEmoji(cat)
+                }))}
+              />
             )}
           />
-          {errors.category?.message ? (
-            <p className="text-sm text-destructive">{errors.category.message}</p>
-          ) : null}
+          {errors.category?.message && <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-[hsl(var(--destructive))]">{errors.category.message}</p>}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="date">Date</Label>
-          <Input id="date" type="date" {...register("date", { valueAsDate: true })} />
-          {errors.date?.message ? (
-            <p className="text-sm text-destructive">{errors.date.message}</p>
-          ) : null}
+        {/* Note */}
+        <div className="space-y-1.5">
+          <Label htmlFor="tx-note" className="text-sm text-muted-foreground">Note (Optional)</Label>
+          <Input id="tx-note" type="text" placeholder="e.g. Monthly rent, Swiggy order..." {...register("note")} className="bg-[hsl(var(--muted))] border-[hsl(var(--border))]" />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="note">Note</Label>
-          <Input id="note" type="text" placeholder="Optional note" {...register("note")} />
-        </div>
-      </div>
-
-      <div className="flex justify-end">
-        <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
-          Add transaction
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full rounded-xl font-semibold h-11 text-sm bg-[hsl(var(--primary))] text-white hover:bg-[hsl(var(--primary))]/90"
+        >
+          {isSubmitting ? "Saving…" : `Add ${transactionType === "income" ? "Income" : "Expense"}`}
         </Button>
-      </div>
-    </form>
+      </form>
+    </div>
   )
 }

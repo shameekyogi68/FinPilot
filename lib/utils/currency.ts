@@ -18,9 +18,9 @@ export const currencyLocales: Record<string, string> = {
   JPY: 'ja-JP',
 };
 
-export function formatCurrency(amount: number, currency: string = 'USD'): string {
-  const locale = currencyLocales[currency] || 'en-US';
-  const symbol = currencySymbols[currency] || '$';
+export function formatCurrency(amount: number, currency: string = 'INR'): string {
+  const locale = currencyLocales[currency] || 'en-IN';
+  const symbol = currencySymbols[currency] || '₹';
   
   return new Intl.NumberFormat(locale, {
     style: 'currency',

@@ -15,7 +15,9 @@ export function getCurrencySymbol(currency: CurrencyCode) {
 }
 
 export function formatCurrency(amount: number, currency: CurrencyCode) {
-  const formatted = new Intl.NumberFormat("en-US", {
+  const locale = currency === "INR" ? "en-IN" : "en-US"
+  
+  const formatted = new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
     currencyDisplay: "symbol",

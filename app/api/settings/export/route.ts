@@ -1,27 +1,20 @@
 import { NextResponse } from "next/server"
-
-import { createSupabaseAdmin } from "@/lib/supabaseAdmin"
+import { prisma } from "@/lib/prisma"
 
 export async function GET() {
-  const supabase = createSupabaseAdmin()
-  if (!supabase) {
-    return NextResponse.json({ error: "Missing Supabase service configuration" }, { status: 500 })
+  try {
+    const transactions = await prisma.transaction.findMany({
+      orderBy: { date: 'desc' }
+    })
+
+    const exported = {
+      exported_at: new Date().toISOString(),
+      profile: null,
+      transactions: transactions ?? [],
+    }
+
+    return NextResponse.json(exported)
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
-  const [transactionsResult, profileResult] = await Promise.all([
-    supabase.from("transactions").select("*").order("date", { ascending: false }),
-    supabase.from("profile").select("*").limit(1).single(),
-  ])
-
-  if (transactionsResult.error) {
-    return NextResponse.json({ error: transactionsResult.error.message }, { status: 500 })
-  }
-
-  const exported = {
-    exported_at: new Date().toISOString(),
-    profile: profileResult.data ?? null,
-    transactions: transactionsResult.data ?? [],
-  }
-
-  return NextResponse.json(exported)
 }

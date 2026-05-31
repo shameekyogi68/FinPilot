@@ -1,4 +1,4 @@
-import { createSupabaseAdmin } from "@/lib/supabaseAdmin"
+import { prisma } from "@/lib/prisma"
 import { callOpenRouterChat, type OpenRouterMessage } from "@/services/ai/client"
 
 const INSIGHT_TYPE = "monthly_summary"
@@ -25,7 +25,12 @@ const parseMonth = (month: string) => {
   return { year, month: monthNumber }
 }
 
-const formatCurrency = (value: number) => value.toFixed(2)
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
+}
 
 const normalizeInsights = (text: string) => {
   const lines = text
@@ -80,18 +85,18 @@ const getUnusualCategories = (
   return Object.entries(currentTotals)
     .filter(([, amount]) => amount > previousAverage * 1.5)
     .sort(([, a], [, b]) => b - a)
-    .map(([category, amount]) => `${category} ($${formatCurrency(amount)})`)
+    .map(([category, amount]) => `${category} (₹${formatCurrency(amount)})`)
 }
 
 const buildSavingsTips = (coffeeTotal: number, subscriptionsTotal: number) => {
   const tips: string[] = []
 
   if (coffeeTotal > 0) {
-    tips.push(`You spent $${formatCurrency(coffeeTotal)} on coffee. Making at home saves $${formatCurrency(coffeeTotal * 0.7)}.`)
+    tips.push(`You spent ₹${formatCurrency(coffeeTotal)} on coffee. Making at home saves ₹${formatCurrency(coffeeTotal * 0.7)}.`)
   }
 
   if (subscriptionsTotal > 0) {
-    tips.push(`Your subscriptions total $${formatCurrency(subscriptionsTotal)}. Cancel unused ones.`)
+    tips.push(`Your subscriptions total ₹${formatCurrency(subscriptionsTotal)}. Cancel unused ones.`)
   }
 
   if (tips.length === 0) {
@@ -102,11 +107,6 @@ const buildSavingsTips = (coffeeTotal: number, subscriptionsTotal: number) => {
 }
 
 export async function generateMonthlyInsights(monthPeriod: string, forceRefresh = false) {
-  const supabase = createSupabaseAdmin()
-  if (!supabase) {
-    throw new Error("Missing Supabase service configuration")
-  }
-
   const { year, month } = parseMonth(monthPeriod)
   const period = `${year}-${String(month).padStart(2, "0")}`
   const monthName = monthLabel(year, month)
@@ -116,19 +116,17 @@ export async function generateMonthlyInsights(monthPeriod: string, forceRefresh 
   const previousMonthStart = new Date(year, month - 2, 1)
   const previousMonthEnd = new Date(year, month - 1, 1)
 
-  const { data: cached, error: cacheError } = await supabase
-    .from("ai_cache")
-    .select("id, value, updated_at")
-    .eq("insight_type", INSIGHT_TYPE)
-    .eq("period", period)
-    .maybeSingle()
+  const cached = await prisma.aICache.findUnique({
+    where: {
+      insightType_period: {
+        insightType: INSIGHT_TYPE,
+        period,
+      }
+    }
+  }).catch(() => null)
 
-  if (cacheError) {
-    console.warn("Unable to read AI cache", cacheError.message)
-  }
-
-  if (!forceRefresh && cached?.value && cached?.updated_at) {
-    const updatedAt = new Date(cached.updated_at)
+  if (!forceRefresh && cached?.value && cached?.updatedAt) {
+    const updatedAt = new Date(cached.updatedAt)
     const age = Date.now() - updatedAt.getTime()
 
     if (age < CACHE_TTL_MS) {
@@ -141,28 +139,25 @@ export async function generateMonthlyInsights(monthPeriod: string, forceRefresh 
     }
   }
 
-  const { data, error } = await supabase
-    .from("transactions")
-    .select("amount, type, category, date, note")
-    .gte("date", monthStart.toISOString())
-    .lt("date", nextMonth.toISOString())
+  const transactions = await prisma.transaction.findMany({
+    where: {
+      date: {
+        gte: monthStart,
+        lt: nextMonth,
+      },
+    },
+    select: { amount: true, type: true, category: true, date: true, note: true }
+  }).catch(() => [])
 
-  if (error) {
-    throw new Error(error.message)
-  }
-
-  const { data: previousData, error: previousError } = await supabase
-    .from("transactions")
-    .select("amount, type, category, date, note")
-    .gte("date", previousMonthStart.toISOString())
-    .lt("date", previousMonthEnd.toISOString())
-
-  if (previousError) {
-    console.warn("Unable to read previous month transactions", previousError.message)
-  }
-
-  const transactions = data ?? []
-  const previousTransactions = previousData ?? []
+  const previousTransactions = await prisma.transaction.findMany({
+    where: {
+      date: {
+        gte: previousMonthStart,
+        lt: previousMonthEnd,
+      },
+    },
+    select: { amount: true, type: true, category: true, date: true, note: true }
+  }).catch(() => [])
 
   const totalIncome = transactions
     .filter((transaction) => transaction.type === "income")
@@ -184,11 +179,11 @@ export async function generateMonthlyInsights(monthPeriod: string, forceRefresh 
   const topCategories = Object.entries(categoryTotals)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3)
-    .map(([category, amount]) => `${category} ($${formatCurrency(amount)})`)
+    .map(([category, amount]) => `${category} (₹${formatCurrency(amount)})`)
 
   const largestExpense = expenseTransactions.reduce((max, transaction) => {
     return transaction.amount > max.amount ? transaction : max
-  }, { amount: 0, category: "No expenses", date: "" })
+  }, { amount: 0, category: "No expenses", date: new Date() })
 
   const subscriptionExpenses = getSubscriptionExpenses(expenseTransactions)
   const subscriptionsTotal = subscriptionExpenses.reduce((sum, transaction) => sum + transaction.amount, 0)
@@ -210,32 +205,40 @@ export async function generateMonthlyInsights(monthPeriod: string, forceRefresh 
 
   const categories = topCategories.length > 0 ? topCategories.join(", ") : "No expenses"
   const largestExpenseDescription = largestExpense.amount
-    ? `${largestExpense.category} for $${formatCurrency(largestExpense.amount)}`
-    : "$0"
+    ? `${largestExpense.category} for ₹${formatCurrency(largestExpense.amount)}`
+    : "₹0"
 
-  const prompt = `You are a personal finance advisor analyzing my spending for ${monthName}.
+  const goals = await prisma.goal.findMany().catch(() => [])
+  
+  const goalsSummary = goals.length > 0 
+    ? goals.map(g => `${g.name}: ₹${formatCurrency(g.currentAmount)} / ₹${formatCurrency(g.targetAmount)} (${Math.round((g.currentAmount/g.targetAmount)*100)}%)`).join(", ")
+    : "No goals set"
+
+  const prompt = `You are an elite personal wealth manager operating in India for an Indian user using the Indian Wealth System (INR, lakhs, crores).
+You are analyzing my spending for ${monthName}. My goal is to optimize my wealth perfectly based on Indian financial context (e.g., tax-saving instruments, SIPs, fixed deposits, etc.). 
 
 My financial data:
-- Income: $${formatCurrency(totalIncome)}
-- Expenses: $${formatCurrency(totalExpenses)}
+- Income: ₹${formatCurrency(totalIncome)}
+- Expenses: ₹${formatCurrency(totalExpenses)}
 - Savings rate: ${formatCurrency(savingsRate)}%
 - Top spending categories: ${categories}
 - Largest single expense: ${largestExpenseDescription}
-- Subscription spending: $${formatCurrency(subscriptionsTotal)} (${subscriptionSummary})
+- Subscription spending: ₹${formatCurrency(subscriptionsTotal)} (${subscriptionSummary})
 - Unusual categories: ${unusualCategories.length > 0 ? unusualCategories.join(", ") : "none"}
 - Savings tips: ${savingsTipsSummary}
+- Financial Goals: ${goalsSummary}
 
 Generate exactly 3 short insights (under 20 words each):
-1. One positive observation about my finances
-2. One area where I could improve
-3. One specific actionable recommendation
+1. One positive observation about my wealth building or goal progress
+2. One area where I could optimize my spending further
+3. One specific actionable recommendation for wealth generation or hitting my goals tailored to the Indian financial ecosystem
 
-Be concise, helpful, and data-driven. Don't repeat information.`
+Be concise, highly analytical, and data-driven. Don't repeat information.`
 
   const messages: OpenRouterMessage[] = [
     {
       role: "system",
-      content: "You are a helpful personal finance advisor.",
+      content: "You are an elite personal wealth manager.",
     },
     {
       role: "user",
@@ -257,25 +260,20 @@ Be concise, helpful, and data-driven. Don't repeat information.`
   }
 
   const cachePayload = {
-    insight_type: INSIGHT_TYPE,
+    insightType: INSIGHT_TYPE,
     period,
-    value: insights,
+    value: JSON.stringify(insights),
   }
 
   if (cached?.id) {
-    const { error: updateError } = await supabase
-      .from("ai_cache")
-      .update(cachePayload)
-      .eq("id", cached.id)
-
-    if (updateError) {
-      console.warn("Unable to update AI cache", updateError.message)
-    }
+    await prisma.aICache.update({
+      where: { id: cached.id },
+      data: cachePayload
+    }).catch(() => null)
   } else {
-    const { error: insertError } = await supabase.from("ai_cache").insert(cachePayload)
-    if (insertError) {
-      console.warn("Unable to insert AI cache", insertError.message)
-    }
+    await prisma.aICache.create({
+      data: cachePayload
+    }).catch(() => null)
   }
 
   return {

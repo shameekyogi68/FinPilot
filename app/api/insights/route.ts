@@ -17,7 +17,10 @@ export async function GET(request: Request) {
   try {
     const result = await generateMonthlyInsights(month, refresh)
 
-    return NextResponse.json({ insights: result.insights, updatedAt: result.updatedAt })
+    return NextResponse.json(
+      { insights: result.insights, updatedAt: result.updatedAt },
+      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } }
+    )
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unable to load insights" },

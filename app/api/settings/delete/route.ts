@@ -1,19 +1,12 @@
 import { NextResponse } from "next/server"
-
-import { createSupabaseAdmin } from "@/lib/supabaseAdmin"
+import { prisma } from "@/lib/prisma"
 
 export async function POST() {
-  const supabase = createSupabaseAdmin()
-  if (!supabase) {
-    return NextResponse.json({ error: "Missing Supabase service configuration" }, { status: 500 })
-  }
-
   try {
-    // Delete from all tables
-    await supabase.from("transactions").delete().neq("id", 0)
-    await supabase.from("budgets").delete().neq("id", 0)
-    await supabase.from("goals").delete().neq("id", 0)
-    await supabase.from("ai_cache").delete().neq("id", 0)
+    await prisma.transaction.deleteMany()
+    await prisma.budget.deleteMany()
+    await prisma.goal.deleteMany()
+    await prisma.aICache.deleteMany()
 
     return NextResponse.json({ status: "ok" })
   } catch (error) {
@@ -25,17 +18,11 @@ export async function POST() {
 }
 
 export async function DELETE() {
-  const supabase = createSupabaseAdmin()
-  if (!supabase) {
-    return NextResponse.json({ error: "Missing Supabase service configuration" }, { status: 500 })
-  }
-
   try {
-    // Delete from all tables
-    await supabase.from("transactions").delete().neq("id", 0)
-    await supabase.from("budgets").delete().neq("id", 0)
-    await supabase.from("goals").delete().neq("id", 0)
-    await supabase.from("ai_cache").delete().neq("id", 0)
+    await prisma.transaction.deleteMany()
+    await prisma.budget.deleteMany()
+    await prisma.goal.deleteMany()
+    await prisma.aICache.deleteMany()
 
     return NextResponse.json({ status: "ok" })
   } catch (error) {

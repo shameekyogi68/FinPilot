@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
-
-import { createSupabaseAdmin } from "@/lib/supabaseAdmin"
+import { prisma } from "@/lib/prisma"
 
 const currencyValues = ["USD", "EUR", "GBP", "INR", "CAD", "AUD", "JPY"] as const
 const profileSchema = z.object({
   name: z.string().min(1),
-  email: z.string().email().optional(),
+  email: z.string().email().optional().nullable(),
   currency: z.enum(currencyValues),
   monthly_income: z.number().nonnegative(),
   savings_target: z.number().nonnegative().optional(),
@@ -15,60 +14,30 @@ const profileSchema = z.object({
   ai_enabled: z.boolean(),
 })
 
-async function ensureProfileTable(supabase: any) {
-  const sql = `
-    CREATE TABLE IF NOT EXISTS profile (
-      id INTEGER PRIMARY KEY DEFAULT 1,
-      name TEXT DEFAULT 'You',
-      email TEXT,
-      currency TEXT DEFAULT 'USD',
-      monthly_income DECIMAL(12,2) DEFAULT 0,
-      savings_target DECIMAL(12,2) DEFAULT 0,
-      theme TEXT DEFAULT 'dark',
-      default_month_view TEXT DEFAULT 'current',
-      ai_enabled BOOLEAN DEFAULT true,
-      created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
-    );
-    ALTER TABLE profile ADD COLUMN IF NOT EXISTS default_month_view TEXT DEFAULT 'current';
-    INSERT INTO profile (id, name, email, currency, monthly_income, default_month_view, ai_enabled)
-    SELECT 1, 'You', '', 'USD', 0, 'current', true
-    WHERE NOT EXISTS (SELECT 1 FROM profile WHERE id = 1);
-  `
-
-  if (typeof supabase.sql?.query !== "function") {
-    return
-  }
-
-  await supabase.sql.query(sql)
-}
-
 export async function GET() {
-  const supabase = createSupabaseAdmin()
-  if (!supabase) {
-    return NextResponse.json({ error: "Missing Supabase service configuration" }, { status: 500 })
-  }
-
   try {
-    await ensureProfileTable(supabase)
-  } catch (error) {
-    console.error("Unable to ensure profile table", error)
-  }
-
-  const { data, error } = await supabase.from("profile").select("*").limit(1).single()
-  if (error) {
+    let profile = await prisma.profile.findUnique({ where: { id: 1 } })
+    if (!profile) {
+      profile = await prisma.profile.create({
+        data: {
+          id: 1,
+          name: "You",
+          currency: "INR",
+          monthly_income: 0,
+          savings_target: 0,
+          theme: "dark",
+          default_month_view: "current",
+          ai_enabled: true,
+        },
+      })
+    }
+    return NextResponse.json(profile)
+  } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
-  return NextResponse.json(data ?? {})
 }
 
 export async function PATCH(request: Request) {
-  const supabase = createSupabaseAdmin()
-  if (!supabase) {
-    return NextResponse.json({ error: "Missing Supabase service configuration" }, { status: 500 })
-  }
-
   const body = await request.json().catch(() => null)
   const parseResult = profileSchema.safeParse(body)
 
@@ -81,23 +50,35 @@ export async function PATCH(request: Request) {
     )
   }
 
-  const payload = {
-    id: 1,
-    name: parseResult.data.name,
-    email: parseResult.data.email || null,
-    currency: parseResult.data.currency,
-    monthly_income: parseResult.data.monthly_income,
-    savings_target: parseResult.data.savings_target ?? 0,
-    theme: parseResult.data.theme,
-    default_month_view: parseResult.data.default_month_view,
-    ai_enabled: parseResult.data.ai_enabled,
-    updated_at: new Date().toISOString(),
-  }
+  const data = parseResult.data
 
-  const { error } = await supabase.from("profile").upsert(payload, { onConflict: "id" })
-  if (error) {
+  try {
+    const profile = await prisma.profile.upsert({
+      where: { id: 1 },
+      update: {
+        name: data.name,
+        email: data.email ?? null,
+        currency: data.currency,
+        monthly_income: data.monthly_income,
+        savings_target: data.savings_target ?? 0,
+        theme: data.theme,
+        default_month_view: data.default_month_view,
+        ai_enabled: data.ai_enabled,
+      },
+      create: {
+        id: 1,
+        name: data.name,
+        email: data.email ?? null,
+        currency: data.currency,
+        monthly_income: data.monthly_income,
+        savings_target: data.savings_target ?? 0,
+        theme: data.theme,
+        default_month_view: data.default_month_view,
+        ai_enabled: data.ai_enabled,
+      }
+    })
+    return NextResponse.json({ status: "ok", profile })
+  } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
-  return NextResponse.json({ status: "ok" })
 }

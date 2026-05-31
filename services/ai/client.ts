@@ -38,10 +38,10 @@ export async function callOpenRouterChat(messages: OpenRouterMessage[]): Promise
           Authorization: `Bearer ${OPENROUTER_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "deepseek/deepseek-chat",
+          model: "google/gemini-2.5-pro-exp:free",
           messages,
           temperature: 0.3,
-          max_tokens: 250,
+          max_tokens: 800,
         }),
         signal: timeout.signal,
       })

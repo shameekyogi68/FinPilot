@@ -5,7 +5,7 @@ import {
   getLast6MonthsTrend,
   getMonthlySummary,
   getYearlyTrend,
-} from "@/lib/supabase/analyticsQueries"
+} from "@/lib/queries/analyticsQueries"
 
 export async function GET(request: Request) {
   const url = new URL(request.url)

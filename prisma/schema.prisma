@@ -1,0 +1,65 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  amount    Float
+  type      String   // "income" or "expense"
+  category  String
+  date      DateTime
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  type      String   // "income" or "expense"
+  createdAt DateTime @default(now())
+}
+
+model Budget {
+  id           String   @id @default(cuid())
+  category     String
+  monthly_limit Float
+  createdAt    DateTime @default(now())
+}
+
+model Goal {
+  id           String   @id @default(cuid())
+  name         String
+  targetAmount Float
+  currentAmount Float   @default(0)
+  deadline     DateTime?
+  createdAt    DateTime @default(now())
+}
+
+model AICache {
+  id           String   @id @default(cuid())
+  insightType  String
+  period       String
+  value        String
+  updatedAt    DateTime @updatedAt
+
+  @@unique([insightType, period])
+}
+
+model Profile {
+  id                 Int      @id @default(1)
+  name               String   @default("You")
+  email              String?
+  currency           String   @default("INR")
+  monthly_income     Float    @default(0)
+  savings_target     Float    @default(0)
+  theme              String   @default("dark")
+  default_month_view String   @default("current")
+  ai_enabled         Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}

@@ -1,26 +1,32 @@
 import { NextRequest } from 'next/server'
 import { formatDateForExport, convertToCSV, convertToJSON, generatePDF } from '@/lib/utils/exportUtils'
-import { createSupabaseAdmin } from '@/lib/supabaseAdmin'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const { format = 'csv', startDate, endDate } = body
 
-    const supabase = createSupabaseAdmin()
-    if (!supabase) {
-      return new Response(JSON.stringify({ error: 'Supabase admin client not configured' }), { status: 500 })
+    let where: any = {}
+    if (startDate) {
+      where.date = { ...where.date, gte: new Date(startDate) }
+    }
+    if (endDate) {
+      where.date = { ...where.date, lte: new Date(endDate) }
     }
 
-    // Build query
-    let query = supabase.from('transactions').select('*')
-    if (startDate) query = query.gte('date', startDate)
-    if (endDate) query = query.lte('date', endDate)
-    query = query.order('date', { ascending: true })
-
-    const { data: transactions, error } = await query
-
-    if (error) {
+    let transactions
+    try {
+      const results = await prisma.transaction.findMany({
+        where,
+        orderBy: { date: 'asc' },
+      })
+      transactions = results.map(t => ({
+        ...t,
+        date: t.date.toISOString(),
+        type: t.type as "income" | "expense",
+      }))
+    } catch (error: any) {
       return new Response(JSON.stringify({ error: error.message }), { status: 500 })
     }
 

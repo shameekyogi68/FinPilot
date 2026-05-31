@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
-import { createSupabaseAdmin } from "@/lib/supabaseAdmin"
-import { getCurrentMonthExpenses } from "@/lib/supabase/queries"
+import { prisma } from "@/lib/prisma"
+import { getCurrentMonthExpenses } from "@/lib/queries/queries"
 
 const budgetSchema = z.object({
   category: z.string().min(1),
@@ -12,29 +12,19 @@ const budgetSchema = z.object({
 })
 
 export async function GET() {
-  const supabase = createSupabaseAdmin()
-
-  if (!supabase) {
-    return NextResponse.json({ error: "Missing Supabase service configuration" }, { status: 500 })
-  }
-
-  const { data: budgets, error: budgetError } = await supabase
-    .from("budgets")
-    .select("id,category,monthly_limit")
-
-  if (budgetError) {
-    return NextResponse.json({ error: budgetError.message }, { status: 500 })
-  }
-
   try {
-    const { rawExpenses, groupedByCategory } = await getCurrentMonthExpenses(supabase)
+    const budgets = await prisma.budget.findMany({
+      select: { id: true, category: true, monthly_limit: true },
+    })
+
+    const { rawExpenses, groupedByCategory, currentMonthIncome } = await getCurrentMonthExpenses()
 
     const budgetsWithSpend = (budgets ?? []).map((budget) => ({
       ...budget,
       spent_this_month: groupedByCategory[budget.category] ?? 0,
     }))
 
-    return NextResponse.json({ budgets: budgetsWithSpend, currentMonthExpenses: rawExpenses })
+    return NextResponse.json({ budgets: budgetsWithSpend, currentMonthExpenses: rawExpenses, currentMonthIncome })
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unable to load expenses" },
@@ -44,12 +34,6 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const supabase = createSupabaseAdmin()
-
-  if (!supabase) {
-    return NextResponse.json({ error: "Missing Supabase service configuration" }, { status: 500 })
-  }
-
   const body = await request.json().catch(() => null)
   const parseResult = budgetSchema.safeParse(body)
 
@@ -61,22 +45,18 @@ export async function POST(request: Request) {
   }
 
   const { category, monthly_limit } = parseResult.data
-  const { error } = await supabase.from("budgets").insert({ category, monthly_limit })
 
-  if (error) {
+  try {
+    await prisma.budget.create({
+      data: { category, monthly_limit },
+    })
+    return NextResponse.json({ status: "ok" })
+  } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
-  return NextResponse.json({ status: "ok" })
 }
 
 export async function PATCH(request: Request) {
-  const supabase = createSupabaseAdmin()
-
-  if (!supabase) {
-    return NextResponse.json({ error: "Missing Supabase service configuration" }, { status: 500 })
-  }
-
   const url = new URL(request.url)
   const id = url.searchParams.get("id")
 
@@ -95,15 +75,14 @@ export async function PATCH(request: Request) {
   }
 
   const { category, monthly_limit } = parseResult.data
-  const parsedId = Number(id)
-  const updateQuery = Number.isNaN(parsedId)
-    ? supabase.from("budgets").update({ category, monthly_limit }).eq("id", id)
-    : supabase.from("budgets").update({ category, monthly_limit }).eq("id", parsedId)
 
-  const { error } = await updateQuery
-  if (error) {
+  try {
+    await prisma.budget.update({
+      where: { id },
+      data: { category, monthly_limit },
+    })
+    return NextResponse.json({ status: "ok" })
+  } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
-  return NextResponse.json({ status: "ok" })
 }

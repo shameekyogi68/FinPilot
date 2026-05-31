@@ -1,22 +1,15 @@
 import { NextResponse } from "next/server"
-import { createSupabaseAdmin } from "@/lib/supabaseAdmin"
+import { prisma } from "@/lib/prisma"
 
 export async function GET() {
-  const supabase = createSupabaseAdmin()
-
-  if (!supabase) {
-    return NextResponse.json({ error: "Missing Supabase service configuration" }, { status: 500 })
-  }
-
-  const { data, error } = await supabase
-    .from("transactions")
-    .select("amount,type,date")
-
-  if (error) {
+  let transactions
+  try {
+    transactions = await prisma.transaction.findMany({
+      select: { amount: true, type: true, date: true }
+    })
+  } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
-  const transactions = data ?? []
   const now = new Date()
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
   const monthStartIso = monthStart.toISOString()
