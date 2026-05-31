@@ -1,80 +1,182 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FinPilot - Personal Finance Dashboard
+
+A modern, industry-standard personal finance dashboard built with Next.js 16, TypeScript, Prisma, and Tailwind CSS v4.
+
+## Features
+
+- **Dashboard**: Overview of financial metrics, AI-powered insights, expense charts, and recent transactions
+- **Transactions**: Add, edit, and categorize income and expenses
+- **Budgets**: Create and track monthly budgets with visual progress indicators
+- **Goals**: Set and track financial goals with progress visualization
+- **Analytics**: Comprehensive spending analytics with charts and breakdowns
+- **AI Advisor**: AI-powered financial advice and insights
+- **Settings**: Customize profile, currency, and preferences
+- **Export**: Export financial data to PDF
+
+## Tech Stack
+
+- **Framework**: Next.js 16.2.6 (App Router)
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS v4 with CSS variables
+- **Database**: SQLite with Prisma ORM
+- **UI Components**: Radix UI + shadcn/ui
+- **Forms**: React Hook Form + Zod validation
+- **Charts**: Recharts
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **PDF Export**: jsPDF + jsPDF-autotable
+
+## Design System
+
+- **Primary Color**: Terracotta (#E07A5F)
+- **Fonts**: Playfair Display (headings), Plus Jakarta Sans (UI), Sora (numbers)
+- **Border Radius**: rounded-xl, rounded-2xl
+- **Shadows**: Subtle layered shadows
+- **No Dark Mode**: Light-only design for consistency
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 20 or higher
+- npm, yarn, or pnpm
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/shameekyogi68/FinPilot.git
+cd FinPilot
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Set up the database:
+```bash
+npx prisma migrate dev --name init
+```
+
+4. Run the development server:
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a `.env.local` file in the root directory:
 
-## AI Insights Troubleshooting
-
-### Common Issues & Fixes
-
-- **API key invalid**: Double-check `.env.local` and restart the dev server.
-- **CORS error**: OpenRouter does not require CORS setup for server-side calls.
-- **Rate limited**: Wait 60 seconds, or rely on fallback insights.
-- **AI response too slow**: The service already uses a timeout; show a loading skeleton while waiting.
-- **Cache not working**: Check the `ai_cache` table in Supabase.
-- **No transactions**: Add test data first.
-
-### Enhancement Ideas
-
-Once basic insights work, consider adding:
-
-1. **Subscription Detection**
-
-```ts
-const subscriptions = transactions.filter((t) =>
-  t.type === "expense" &&
-  t.amount === lastMonthAmount &&
-  t.note?.toLowerCase().includes("netflix") ||
-  t.note?.toLowerCase().includes("spotify") ||
-  t.note?.toLowerCase().includes("subscription")
-)
+```env
+NODE_ENV=development
 ```
 
-2. **Unusual Spending Alerts**
+## Database
 
-```ts
-const unusual = categories.filter((c) =>
-  c.amount > previousMonthAvg * 1.5
-)
+This project uses SQLite with Prisma ORM. The database file is located at `prisma/dev.db`.
+
+### Running Migrations
+
+```bash
+npx prisma migrate dev
 ```
 
-3. **Savings Tips**
+### Regenerating Prisma Client
 
-```ts
-const tips = [
-  `You spent $${coffeeTotal} on coffee. Making at home saves $${coffeeTotal * 0.7}`,
-  `Your subscriptions total $${subscriptionsTotal}. Cancel unused ones.`,
-]
+```bash
+npx prisma generate
 ```
 
-## Learn More
+### Viewing Database
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx prisma studio
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+finpilot/
+├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   ├── dashboard/         # Dashboard pages
+│   ├── transactions/      # Transaction management
+│   ├── budgets/           # Budget management
+│   ├── goals/             # Goal tracking
+│   ├── analytics/         # Analytics page
+│   ├── ai-advisor/        # AI advisor
+│   └── settings/          # Settings page
+├── components/            # React components
+│   ├── dashboard/         # Dashboard components
+│   ├── transactions/      # Transaction components
+│   ├── ui/               # UI components (shadcn/ui)
+│   └── ai-advisor/        # AI advisor components
+├── lib/                   # Utility libraries
+│   ├── prisma.ts         # Prisma client
+│   ├── utils.ts          # Utility functions
+│   ├── env.ts            # Environment validation
+│   ├── errors.ts         # Error classes
+│   └── logger.ts         # Logging utility
+├── hooks/                # Custom React hooks
+├── prisma/               # Prisma schema and migrations
+└── public/               # Static assets
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## API Routes
+
+- `GET /api/dashboard/metrics` - Get dashboard metrics
+- `GET /api/dashboard/expenses` - Get expense data
+- `GET /api/transactions` - Get transactions
+- `POST /api/transactions` - Create transaction
+- `PUT /api/transactions/[id]` - Update transaction
+- `DELETE /api/transactions/[id]` - Delete transaction
+- `GET /api/budgets` - Get budgets
+- `POST /api/budgets` - Create budget
+- `PUT /api/budgets/[id]` - Update budget
+- `DELETE /api/budgets/[id]` - Delete budget
+- `GET /api/goals` - Get goals
+- `POST /api/goals` - Create goal
+- `PUT /api/goals/[id]` - Update goal
+- `DELETE /api/goals/[id]` - Delete goal
+- `GET /api/settings/profile` - Get user profile
+- `PATCH /api/settings/profile` - Update user profile
+- `GET /api/settings/export` - Export data to PDF
+
+## Deployment
+
+### Vercel
+
+1. Push your code to GitHub
+2. Import the project in Vercel
+3. Configure environment variables
+4. Deploy
+
+### Environment Variables for Production
+
+No additional environment variables are required for production. The database is SQLite and will be created during the build process.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a pull request
+
+## License
+
+This project is private and proprietary.
+
+## Support
+
+For issues and questions, please contact the development team.

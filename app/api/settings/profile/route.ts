@@ -16,21 +16,20 @@ const profileSchema = z.object({
 
 export async function GET() {
   try {
-    let profile = await prisma.profile.findUnique({ where: { id: 1 } })
-    if (!profile) {
-      profile = await prisma.profile.create({
-        data: {
-          id: 1,
-          name: "You",
-          currency: "INR",
-          monthly_income: 0,
-          savings_target: 0,
-          theme: "dark",
-          default_month_view: "current",
-          ai_enabled: true,
-        },
-      })
-    }
+    const profile = await prisma.profile.upsert({
+      where: { id: 1 },
+      update: {},
+      create: {
+        id: 1,
+        name: "You",
+        currency: "INR",
+        monthly_income: 0,
+        savings_target: 0,
+        theme: "dark",
+        default_month_view: "current",
+        ai_enabled: true,
+      },
+    })
     return NextResponse.json(profile)
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
