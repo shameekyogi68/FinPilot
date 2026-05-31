@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabase/client"
 
 export type Profile = {
   id?: number
@@ -27,31 +26,41 @@ export function useProfile() {
 
   async function fetchProfile() {
     setLoading(true)
-    const { data, error } = await supabase.from("profile").select("*").single()
-    if (error) {
+    try {
+      const res = await fetch("/api/settings/profile")
+      const data = await res.json()
+      if (res.ok) {
+        setProfile(data)
+      } else {
+        console.error("Unable to fetch profile", data.error)
+        setProfile(null)
+      }
+    } catch (error) {
       console.error("Unable to fetch profile", error)
       setProfile(null)
-    } else {
-      setProfile(data)
     }
     setLoading(false)
   }
 
   async function updateProfile(updates: Partial<Profile>) {
-    const { data, error } = await supabase
-      .from("profile")
-      .update(updates)
-      .eq("id", 1)
-      .select()
-      .single()
-
-    if (error) {
+    try {
+      const res = await fetch("/api/settings/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setProfile(data)
+        return data
+      } else {
+        console.error("Unable to update profile", data.error)
+        return null
+      }
+    } catch (error) {
       console.error("Unable to update profile", error)
       return null
     }
-
-    setProfile(data)
-    return data
   }
 
   return { profile, loading, updateProfile }
