@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   const authError = authenticateRequest(request)
   if (authError) return authError

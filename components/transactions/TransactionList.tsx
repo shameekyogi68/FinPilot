@@ -188,7 +188,7 @@ export function TransactionList({ refreshKey = 0 }: TransactionListProps) {
   }, [transactions])
 
   return (
-    <div className="bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] p-6">
+    <div className="bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(255,255,255,0.06),0_4px_16px_rgba(0,0,0,0.04)] p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
         <div>

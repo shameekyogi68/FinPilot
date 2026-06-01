@@ -3,6 +3,8 @@ import { z } from "zod"
 import { prisma } from "@/lib/prisma"
 import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
+export const dynamic = 'force-dynamic'
+
 const currencyValues = ["USD", "EUR", "GBP", "INR", "CAD", "AUD", "JPY"] as const
 const profileSchema = z.object({
   name: z.string().min(1),

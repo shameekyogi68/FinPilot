@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
+export const dynamic = 'force-dynamic'
+
 const routeBodySchema = z.object({
   amount: z.number().positive(),
   type: z.enum(["income", "expense"]),

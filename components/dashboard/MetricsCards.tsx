@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { useProfile } from "@/hooks/useProfile"
 import { motion } from "framer-motion"
 import { TrendingUp, TrendingDown, Wallet, PiggyBank, ArrowUpRight, ArrowDownRight } from "lucide-react"
 
@@ -81,8 +80,8 @@ function StatCard({
       >
         {/* Row 1: label + trend */}
         <div className="flex items-center gap-2">
-          <Icon size={16} strokeWidth={1.5} className="text-[#8B89A0] flex-shrink-0" aria-hidden="true" />
-          <span className="label-xs text-[#8B89A0] flex-1">{title}</span>
+          <Icon size={16} strokeWidth={1.5} className="text-[#a1a1aa] flex-shrink-0" aria-hidden="true" />
+          <span className="label-xs text-[#a1a1aa] flex-1">{title}</span>
           {trend && (
             <span
               className={`fp-chip text-[10px] ${trend.up ? "fp-chip-gain" : "fp-chip-loss"}`}
@@ -97,9 +96,9 @@ function StatCard({
 
         {/* Row 2: amount */}
         {loading ? (
-          <div className="h-8 w-32 rounded-[6px] bg-[#F5F3FF] animate-pulse" />
+          <div className="h-8 w-32 rounded-[6px] bg-[rgba(255,255,255,0.1)] animate-pulse" />
         ) : (
-          <div className="metric-value text-[#0F0E17]">
+          <div className="metric-value text-[#fafafa]">
             <span ref={countRef} className="tabular-nums">
               {value.toLocaleString("en-IN", {
                 style: "currency",
@@ -111,21 +110,19 @@ function StatCard({
         )}
 
         {/* Row 3: subtitle */}
-        <p className="text-[12px] text-[#8B89A0] leading-tight">{description}</p>
+        <p className="text-[12px] text-[#a1a1aa] leading-tight">{description}</p>
       </div>
     </motion.div>
   )
 }
 
 export function MetricsCards({ data, loading, error }: MetricsCardsProps) {
-  const { profile } = useProfile()
-
   const savingsRate = data?.savingsRate ?? null
   const balancePositive = (data?.currentBalance ?? 0) >= 0
 
   if (error) {
     return (
-      <div className="fp-card p-5 text-[#DC2626] text-sm">
+      <div className="fp-card p-5 text-[#ef4444] text-sm">
         <p className="font-medium">Unable to load metrics</p>
         <p className="text-xs mt-1 opacity-75">{error}</p>
       </div>
@@ -146,7 +143,7 @@ export function MetricsCards({ data, loading, error }: MetricsCardsProps) {
       value: data?.monthlyExpenses ?? 0,
       description: "Total spent this month",
       Icon: TrendingDown,
-      accentColor: "#DC2626",
+      accentColor: "#ef4444",
       trend: null,
     },
     {
@@ -188,8 +185,8 @@ export function MetricsCards({ data, loading, error }: MetricsCardsProps) {
                 style={{ borderLeft: "3px solid #D97706" }}
               >
                 <div className="flex items-center gap-2">
-                  <PiggyBank size={16} strokeWidth={1.5} className="text-[#8B89A0] flex-shrink-0" aria-hidden="true" />
-                  <span className="label-xs text-[#8B89A0] flex-1">Savings Rate</span>
+                  <PiggyBank size={16} strokeWidth={1.5} className="text-[#a1a1aa] flex-shrink-0" aria-hidden="true" />
+                  <span className="label-xs text-[#a1a1aa] flex-1">Savings Rate</span>
                   {card.trend && (
                     <span className={`fp-chip text-[10px] ${card.trend.up ? "fp-chip-gain" : "fp-chip-loss"}`}>
                       {card.trend.up
@@ -200,13 +197,13 @@ export function MetricsCards({ data, loading, error }: MetricsCardsProps) {
                   )}
                 </div>
                 {loading ? (
-                  <div className="h-8 w-20 rounded-[6px] bg-[#F5F3FF] animate-pulse" />
+                  <div className="h-8 w-20 rounded-[6px] bg-[rgba(255,255,255,0.1)] animate-pulse" />
                 ) : (
-                  <div className="metric-value text-[#0F0E17] tabular-nums">
+                  <div className="metric-value text-[#fafafa] tabular-nums">
                     {data && savingsRate !== null ? `${savingsRate.toFixed(1)}%` : "N/A"}
                   </div>
                 )}
-                <p className="text-[12px] text-[#8B89A0] leading-tight">Share of income saved</p>
+                <p className="text-[12px] text-[#a1a1aa] leading-tight">Share of income saved</p>
               </div>
             </motion.div>
           )

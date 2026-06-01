@@ -32,7 +32,7 @@ function Alert({ className, variant = "default", ...props }: AlertProps) {
 
   return (
     <div className={cn("relative grid gap-3 rounded-lg border p-4 md:grid-cols-[auto_1fr]", alertVariants[variant], className)} {...props}>
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/80 text-current shadow-sm dark:bg-slate-950/80">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(20,20,25,0.6)]/80 text-current shadow-sm dark:bg-slate-950/80">
         <Icon className="size-4" />
       </div>
       <div className="min-w-0">

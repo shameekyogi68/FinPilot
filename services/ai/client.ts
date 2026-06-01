@@ -38,7 +38,7 @@ export async function callOpenRouterChat(messages: OpenRouterMessage[]): Promise
           Authorization: `Bearer ${OPENROUTER_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-pro-exp:free",
+          model: "google/gemini-2.5-flash",
           messages,
           temperature: 0.3,
           max_tokens: 800,

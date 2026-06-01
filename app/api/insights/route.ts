@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { generateMonthlyInsights } from "@/services/ai/monthlyInsights"
 import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: Request) {
   const authError = authenticateRequest(request)
   if (authError) return authError

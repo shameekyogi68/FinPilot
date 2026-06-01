@@ -84,7 +84,7 @@ export function CreatableSelect({ value, onChange, options, placeholder, id, cla
                   key={opt.value}
                   type="button"
                   onClick={() => handleSelect(opt.value)}
-                  className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-white/10 transition-colors flex items-center gap-2"
+                  className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-[rgba(20,20,25,0.6)]/10 transition-colors flex items-center gap-2"
                 >
                   {opt.icon && <span>{opt.icon}</span>}
                   <span className="capitalize">{opt.label}</span>
@@ -94,7 +94,7 @@ export function CreatableSelect({ value, onChange, options, placeholder, id, cla
           ) : (
             <div className="p-3 text-sm text-muted-foreground flex items-center justify-between">
               <span>Create "{inputValue}"</span>
-              <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded">Enter</span>
+              <span className="text-[10px] bg-[rgba(20,20,25,0.6)]/10 px-1.5 py-0.5 rounded">Enter</span>
             </div>
           )}
         </div>

@@ -190,13 +190,13 @@ export default function BudgetsPage() {
             className="flex items-center justify-between"
           >
             <div>
-              <h1 className="text-[22px] font-medium text-[#0F0E17] leading-tight">Budget Management</h1>
-              <p className="text-[14px] text-[#8B89A0] mt-0.5">Set monthly spending limits per category</p>
+              <h1 className="text-[22px] font-medium text-[#fafafa] leading-tight">Budget Management</h1>
+              <p className="text-[14px] text-[#a1a1aa] mt-0.5">Set monthly spending limits per category</p>
             </div>
             <Button
               onClick={() => openAddBudgetDialog()}
               variant="outline"
-              className="gap-1.5 h-9 px-3 rounded-[10px] border-[rgba(124,58,237,0.3)] text-[#7C3AED] text-[13px] font-medium hover:bg-[#F5F3FF] hover:border-[#7C3AED] transition-all duration-150"
+              className="gap-1.5 h-9 px-3 rounded-[10px] border-[rgba(124,58,237,0.3)] text-[#7C3AED] text-[13px] font-medium hover:bg-[rgba(255,255,255,0.1)] hover:border-[#7C3AED] transition-all duration-150"
             >
               <Plus className="h-3.5 w-3.5" strokeWidth={1.5} /> Add Budget
             </Button>
@@ -206,7 +206,7 @@ export default function BudgetsPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="rounded-[10px] bg-[#FEF2F2] border border-[rgba(220,38,38,0.15)] p-4 text-[#DC2626] text-[13px]"
+              className="rounded-[10px] bg-[#FEF2F2] border border-[rgba(220,38,38,0.15)] p-4 text-[#ef4444] text-[13px]"
             >
               <p className="font-medium">Error loading budgets</p>
               <p className="opacity-75">{error}</p>
@@ -226,10 +226,10 @@ export default function BudgetsPage() {
                   className="fp-card p-5"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <Icon size={14} strokeWidth={1.5} className="text-[#8B89A0]" aria-hidden="true" />
-                    <span className="label-xs text-[#8B89A0]">{card.title}</span>
+                    <Icon size={14} strokeWidth={1.5} className="text-[#a1a1aa]" aria-hidden="true" />
+                    <span className="label-xs text-[#a1a1aa]">{card.title}</span>
                   </div>
-                  <p className="metric-value text-[#0F0E17] tabular-nums">{card.value}</p>
+                  <p className="metric-value text-[#fafafa] tabular-nums">{card.value}</p>
                 </motion.div>
               )
             })}
@@ -240,9 +240,9 @@ export default function BudgetsPage() {
             {loading
               ? Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="fp-card p-5 animate-pulse">
-                    <div className="h-4 w-1/2 rounded-full bg-[#F8F7FF] mb-4" />
-                    <div className="h-1.5 w-full rounded-full bg-[#F8F7FF] mb-2" />
-                    <div className="h-3 w-1/3 rounded-full bg-[#F8F7FF]" />
+                    <div className="h-4 w-1/2 rounded-full bg-[rgba(255,255,255,0.05)] mb-4" />
+                    <div className="h-1.5 w-full rounded-full bg-[rgba(255,255,255,0.05)] mb-2" />
+                    <div className="h-3 w-1/3 rounded-full bg-[rgba(255,255,255,0.05)]" />
                   </div>
                 ))
               : budgets.length > 0
@@ -254,7 +254,7 @@ export default function BudgetsPage() {
                   const StatusIcon = getProgressColor(pct).icon
 
                   // Progress bar color
-                  const barColor = pct >= 100 ? "#DC2626" : pct >= 75 ? "#D97706" : "#7C3AED"
+                  const barColor = pct >= 100 ? "#ef4444" : pct >= 75 ? "#D97706" : "#7C3AED"
 
                   return (
                     <motion.div
@@ -266,8 +266,8 @@ export default function BudgetsPage() {
                     >
                       {/* Row 1 */}
                       <div className="flex items-center mb-3">
-                        <Icon size={16} strokeWidth={1.5} className="text-[#4B4963] mr-2.5" aria-hidden="true" />
-                        <span className="text-[15px] font-medium text-[#0F0E17] capitalize flex-1">{budget.category}</span>
+                        <Icon size={16} strokeWidth={1.5} className="text-[#e4e4e7] mr-2.5" aria-hidden="true" />
+                        <span className="text-[15px] font-medium text-[#fafafa] capitalize flex-1">{budget.category}</span>
                         <div className={`fp-chip text-[10px] ${
                           pct >= 100 ? "fp-chip-loss" : pct >= 75 ? "fp-chip-warn" : "fp-chip-gain"
                         }`}>
@@ -278,7 +278,7 @@ export default function BudgetsPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => openEditBudgetDialog(budget)}
-                          className="ml-2 h-7 w-7 p-0 text-[#8B89A0] hover:text-[#0F0E17] hover:bg-[#F8F7FF] rounded-[8px]"
+                          className="ml-2 h-7 w-7 p-0 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-[rgba(255,255,255,0.05)] rounded-[8px]"
                           aria-label={`Edit ${budget.category} budget`}
                         >
                           <Pencil size={13} strokeWidth={1.5} aria-hidden="true" />
@@ -297,10 +297,10 @@ export default function BudgetsPage() {
                       </div>
 
                       {/* Row 3 */}
-                      <p className="text-[12px] text-[#8B89A0] tabular-nums">
+                      <p className="text-[12px] text-[#a1a1aa] tabular-nums">
                         {formatCurrency(spent, currency)} spent of {formatCurrency(limit, currency)}
                         {pct >= 100
-                          ? <span className="text-[#DC2626]"> — Over by {formatCurrency(spent - limit, currency)}</span>
+                          ? <span className="text-[#ef4444]"> — Over by {formatCurrency(spent - limit, currency)}</span>
                           : <span> — {formatCurrency(limit - spent, currency)} remaining</span>
                         }
                       </p>
@@ -315,8 +315,8 @@ export default function BudgetsPage() {
                     <rect x="18" y="34" width="20" height="3" rx="1.5" fill="#DDD6FE" />
                     <rect x="18" y="40" width="28" height="3" rx="1.5" fill="#DDD6FE" />
                   </svg>
-                  <p className="text-[15px] font-medium text-[#0F0E17] mb-1">No budgets yet</p>
-                  <p className="text-[13px] text-[#8B89A0] mb-4">Set monthly limits for categories to track spending.</p>
+                  <p className="text-[15px] font-medium text-[#fafafa] mb-1">No budgets yet</p>
+                  <p className="text-[13px] text-[#a1a1aa] mb-4">Set monthly limits for categories to track spending.</p>
                   <Button onClick={() => openAddBudgetDialog()} className="rounded-[10px] bg-[#7C3AED] hover:bg-[#6D28D9] text-white">Create First Budget</Button>
                 </div>
               )}
@@ -329,23 +329,23 @@ export default function BudgetsPage() {
               animate={{ opacity: 1, y: 0 }}
               className="fp-card p-5"
             >
-              <h2 className="text-[15px] font-medium text-[#0F0E17] mb-0.5">Unbudgeted Categories</h2>
-              <p className="text-[12px] text-[#8B89A0] mb-4">These categories have spending but no budget set.</p>
+              <h2 className="text-[15px] font-medium text-[#fafafa] mb-0.5">Unbudgeted Categories</h2>
+              <p className="text-[12px] text-[#a1a1aa] mb-4">These categories have spending but no budget set.</p>
               <div className="space-y-2">
                 {unbudgeted.map((item) => {
                   const Icon = getCategoryIcon(item.category)
                   return (
                     <div key={item.category} className="flex items-center gap-3 py-2.5 border-b border-[rgba(0,0,0,0.05)] last:border-0">
-                      <Icon size={14} strokeWidth={1.5} className="text-[#8B89A0] flex-shrink-0" aria-hidden="true" />
+                      <Icon size={14} strokeWidth={1.5} className="text-[#a1a1aa] flex-shrink-0" aria-hidden="true" />
                       <div className="flex-1">
-                        <p className="text-[14px] font-medium capitalize text-[#0F0E17]">{item.category}</p>
-                        <p className="text-[12px] text-[#8B89A0] tabular-nums">{formatCurrency(item.amount, currency)} · {item.count} transaction{item.count > 1 ? "s" : ""}</p>
+                        <p className="text-[14px] font-medium capitalize text-[#fafafa]">{item.category}</p>
+                        <p className="text-[12px] text-[#a1a1aa] tabular-nums">{formatCurrency(item.amount, currency)} · {item.count} transaction{item.count > 1 ? "s" : ""}</p>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => openAddBudgetDialog(item.category)}
-                        className="h-7 px-3 text-[12px] text-[#7C3AED] hover:bg-[#F5F3FF] hover:text-[#6D28D9] rounded-[8px] font-medium"
+                        className="h-7 px-3 text-[12px] text-[#7C3AED] hover:bg-[rgba(255,255,255,0.1)] hover:text-[#6D28D9] rounded-[8px] font-medium"
                       >
                         + Budget
                       </Button>
@@ -358,7 +358,7 @@ export default function BudgetsPage() {
 
         {/* Dialog */}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="bg-white rounded-[20px] border border-[rgba(0,0,0,0.06)] sm:max-w-md" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)" }}>
+          <DialogContent className="bg-[rgba(20,20,25,0.6)] rounded-[20px] border border-[rgba(255,255,255,0.06)] sm:max-w-md" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.06)" }}>
             <DialogHeader>
               <DialogTitle className="font-jakarta font-semibold text-foreground">{activeBudget ? "Edit Budget" : "Add Budget"}</DialogTitle>
               <DialogDescription className="text-muted-foreground">Set a monthly spending limit for a category.</DialogDescription>
@@ -412,16 +412,16 @@ export default function BudgetsPage() {
 
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>
-          <AlertDialogContent className="bg-white rounded-[20px] border border-[rgba(0,0,0,0.06)]" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)" }}>
+          <AlertDialogContent className="bg-[rgba(20,20,25,0.6)] rounded-[20px] border border-[rgba(255,255,255,0.06)]" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.06)" }}>
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-[16px] font-medium text-[#0F0E17]">Delete Budget</AlertDialogTitle>
-              <AlertDialogDescription className="text-[13px] text-[#4B4963]">
+              <AlertDialogTitle className="text-[16px] font-medium text-[#fafafa]">Delete Budget</AlertDialogTitle>
+              <AlertDialogDescription className="text-[13px] text-[#e4e4e7]">
                 Are you sure you want to delete this budget? Your spending analytics will not be affected, but the limit will be removed.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="rounded-[10px] border-[rgba(0,0,0,0.10)] text-[#4B4963] hover:bg-[#F8F7FF]">Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteConfirm} className="rounded-[10px] bg-[#DC2626] text-white hover:bg-[#b91c1c]" disabled={deleting}>
+              <AlertDialogCancel className="rounded-[10px] border-[rgba(0,0,0,0.10)] text-[#e4e4e7] hover:bg-[rgba(255,255,255,0.05)]">Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteConfirm} className="rounded-[10px] bg-[#ef4444] text-white hover:bg-[#b91c1c]" disabled={deleting}>
                 {deleting ? "Deleting…" : "Delete Budget"}
               </AlertDialogAction>
             </AlertDialogFooter>

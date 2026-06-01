@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   RefreshCw,
@@ -45,7 +44,7 @@ const insightConfig = [
     bg: "rgba(124,58,237,0.06)",
     borderColor: "#C4B5FD",
     iconColor: "#7C3AED",
-    textColor: "#4B4963",
+    textColor: "#e4e4e7",
     actionIcon: Settings,
     actionLabel: "Take Action",
   },
@@ -72,7 +71,6 @@ function TypingText({ text, active }: { text: string; active: boolean }) {
 
 export function AIInsightCard({ month }: AIInsightCardProps) {
   const [insights, setInsights] = useState<string[] | null>(null)
-  const [updatedAt, setUpdatedAt] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [justRefreshed, setJustRefreshed] = useState(false)
@@ -92,7 +90,6 @@ export function AIInsightCard({ month }: AIInsightCardProps) {
       if (!response.ok) throw new Error(payload.error || "Unable to load AI insights")
 
       setInsights(payload.insights ?? [])
-      setUpdatedAt(payload.updatedAt ?? new Date().toISOString())
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to load AI insights")
       setInsights(null)
@@ -124,7 +121,7 @@ export function AIInsightCard({ month }: AIInsightCardProps) {
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2.5">
           <Sparkles size={16} strokeWidth={1.5} className="text-[#7C3AED]" aria-hidden="true" />
-          <h2 className="text-[15px] font-medium text-[#0F0E17]">AI Insights</h2>
+          <h2 className="text-[15px] font-medium text-[#fafafa]">AI Insights</h2>
           {!loading && (
             <span className="fp-chip fp-chip-brand">
               92% confidence
@@ -135,7 +132,7 @@ export function AIInsightCard({ month }: AIInsightCardProps) {
           onClick={() => fetchInsights(true)}
           disabled={loading}
           aria-label="Refresh AI insights"
-          className="flex items-center gap-1.5 h-8 px-3 rounded-[8px] border border-[rgba(0,0,0,0.08)] bg-white text-[12px] text-[#4B4963] font-medium hover:border-[rgba(0,0,0,0.14)] hover:text-[#0F0E17] transition-all duration-150 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2"
+          className="flex items-center gap-1.5 h-8 px-3 rounded-[8px] border border-[rgba(255,255,255,0.08)] bg-[rgba(20,20,25,0.6)] text-[12px] text-[#e4e4e7] font-medium hover:border-[rgba(255,255,255,0.14)] hover:text-[#fafafa] transition-all duration-150 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2"
         >
           <RefreshCw
             size={13}
@@ -153,16 +150,16 @@ export function AIInsightCard({ month }: AIInsightCardProps) {
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="rounded-[10px] bg-[#F8F7FF] p-4 animate-pulse"
+              className="rounded-[10px] bg-[rgba(255,255,255,0.05)] p-4 animate-pulse"
               style={{ animationDelay: `${i * 100}ms` }}
             >
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-4 h-4 rounded-full bg-[rgba(0,0,0,0.06)]" />
-                <div className="h-3 w-20 rounded-full bg-[rgba(0,0,0,0.06)]" />
+                <div className="w-4 h-4 rounded-full bg-[rgba(255,255,255,0.06)]" />
+                <div className="h-3 w-20 rounded-full bg-[rgba(255,255,255,0.06)]" />
               </div>
               <div className="space-y-2">
-                <div className="h-3 w-full rounded-full bg-[rgba(0,0,0,0.06)]" />
-                <div className="h-3 w-3/4 rounded-full bg-[rgba(0,0,0,0.06)]" />
+                <div className="h-3 w-full rounded-full bg-[rgba(255,255,255,0.06)]" />
+                <div className="h-3 w-3/4 rounded-full bg-[rgba(255,255,255,0.06)]" />
               </div>
             </div>
           ))}
@@ -170,7 +167,7 @@ export function AIInsightCard({ month }: AIInsightCardProps) {
             <span className="typing-dot" />
             <span className="typing-dot" />
             <span className="typing-dot" />
-            <span className="text-[13px] text-[#8B89A0] ml-1">FinPilot is analyzing your finances</span>
+            <span className="text-[13px] text-[#a1a1aa] ml-1">FinPilot is analyzing your finances</span>
           </div>
         </div>
       )}
@@ -219,17 +216,17 @@ export function AIInsightCard({ month }: AIInsightCardProps) {
                       </span>
                     </div>
                     <button
-                      className="flex items-center gap-1 text-[11px] text-[#8B89A0] hover:text-[#0F0E17] transition-colors duration-150 flex-shrink-0 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 rounded-[4px] px-1"
+                      className="flex items-center gap-1 text-[11px] text-[#a1a1aa] hover:text-[#fafafa] transition-colors duration-150 flex-shrink-0 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 rounded-[4px] px-1"
                     >
                       <ActionIcon size={11} strokeWidth={1.5} aria-hidden="true" />
                       {item.actionLabel}
                     </button>
                   </div>
-                  <p className="text-[14px] leading-[1.6] text-[#0F0E17]">
+                  <p className="text-[14px] leading-[1.6] text-[#fafafa]">
                     {item.value ? (
                       <TypingText text={item.value} active={justRefreshed} />
                     ) : (
-                      <span className="text-[#8B89A0] italic">No data available</span>
+                      <span className="text-[#a1a1aa] italic">No data available</span>
                     )}
                   </p>
                 </motion.div>

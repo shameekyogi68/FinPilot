@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma"
 import { getCurrentMonthExpenses } from "@/lib/queries/queries"
 import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
+export const dynamic = 'force-dynamic'
+
 const budgetSchema = z.object({
   category: z.string().min(1),
   monthly_limit: z

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { advisorChat } from "../../../services/ai/advisorChat"
 
+export const dynamic = 'force-dynamic'
+
 const messageSchema = z.object({
   message: z.string().trim().min(1, "Message cannot be empty").max(500, "Message must be 500 characters or fewer"),
   history: z

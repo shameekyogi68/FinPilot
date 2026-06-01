@@ -190,43 +190,43 @@ export default function GoalsPage() {
             className="flex items-center justify-between"
           >
             <div>
-              <h1 className="text-[22px] font-medium text-[#0F0E17] leading-tight">Financial Goals</h1>
-              <p className="text-[14px] text-[#8B89A0] mt-0.5">Track milestones toward your financial future</p>
+              <h1 className="text-[22px] font-medium text-[#fafafa] leading-tight">Financial Goals</h1>
+              <p className="text-[14px] text-[#a1a1aa] mt-0.5">Track milestones toward your financial future</p>
             </div>
             <Dialog open={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) setEditId(null) }}>
               <DialogTrigger asChild>
                 <Button
                   onClick={openCreate}
                   variant="outline"
-                  className="gap-1.5 h-9 px-3 rounded-[10px] border-[rgba(124,58,237,0.3)] text-[#7C3AED] text-[13px] font-medium hover:bg-[#F5F3FF] hover:border-[#7C3AED] transition-all duration-150"
+                  className="gap-1.5 h-9 px-3 rounded-[10px] border-[rgba(124,58,237,0.3)] text-[#7C3AED] text-[13px] font-medium hover:bg-[rgba(255,255,255,0.1)] hover:border-[#7C3AED] transition-all duration-150"
                 >
                   <Plus className="h-3.5 w-3.5" strokeWidth={1.5} /> New Goal
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-white rounded-[20px] border border-[rgba(0,0,0,0.06)] sm:max-w-md" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)" }}>
+              <DialogContent className="bg-[rgba(20,20,25,0.6)] rounded-[20px] border border-[rgba(255,255,255,0.06)] sm:max-w-md" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.06)" }}>
                 <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2 text-[16px] font-medium text-[#0F0E17]">
+                  <DialogTitle className="flex items-center gap-2 text-[16px] font-medium text-[#fafafa]">
                     <Target size={16} strokeWidth={1.5} className="text-[#7C3AED]" /> {editId ? "Edit Goal" : "Create New Goal"}
                   </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleCreate} className="space-y-4 pt-2">
                   <div className="space-y-1.5">
-                    <label htmlFor="goal-name" className="block text-[12px] font-medium text-[#4B4963]">Goal Name</label>
-                    <input id="goal-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Emergency Fund, New Laptop, Trip to Goa" required className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#0F0E17] bg-white outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]" />
+                    <label htmlFor="goal-name" className="block text-[12px] font-medium text-[#e4e4e7]">Goal Name</label>
+                    <input id="goal-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Emergency Fund, New Laptop, Trip to Goa" required className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#fafafa] bg-[rgba(20,20,25,0.6)] outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <label htmlFor="goal-target" className="block text-[12px] font-medium text-[#4B4963]">Target Amount (₹)</label>
-                      <input id="goal-target" type="number" step="1" value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} required className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#0F0E17] bg-white outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]" placeholder="50000" />
+                      <label htmlFor="goal-target" className="block text-[12px] font-medium text-[#e4e4e7]">Target Amount (₹)</label>
+                      <input id="goal-target" type="number" step="1" value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} required className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#fafafa] bg-[rgba(20,20,25,0.6)] outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]" placeholder="50000" />
                     </div>
                     <div className="space-y-1.5">
-                      <label htmlFor="goal-current" className="block text-[12px] font-medium text-[#4B4963]">Already Saved (₹)</label>
-                      <input id="goal-current" type="number" step="1" value={currentAmount} onChange={(e) => setCurrentAmount(e.target.value)} className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#0F0E17] bg-white outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]" placeholder="0" />
+                      <label htmlFor="goal-current" className="block text-[12px] font-medium text-[#e4e4e7]">Already Saved (₹)</label>
+                      <input id="goal-current" type="number" step="1" value={currentAmount} onChange={(e) => setCurrentAmount(e.target.value)} className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#fafafa] bg-[rgba(20,20,25,0.6)] outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]" placeholder="0" />
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <label htmlFor="goal-deadline" className="block text-[12px] font-medium text-[#4B4963]">Target Date <span className="text-[#8B89A0] font-normal">(Optional)</span></label>
-                    <input id="goal-deadline" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#0F0E17] bg-white outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]" />
+                    <label htmlFor="goal-deadline" className="block text-[12px] font-medium text-[#e4e4e7]">Target Date <span className="text-[#a1a1aa] font-normal">(Optional)</span></label>
+                    <input id="goal-deadline" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#fafafa] bg-[rgba(20,20,25,0.6)] outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]" />
                   </div>
                   <div className="flex gap-2 pt-2">
                     <button type="submit" className="flex-1 h-12 rounded-[10px] bg-[#7C3AED] text-white text-[15px] font-medium hover:bg-[#6D28D9] transition-colors">
@@ -243,19 +243,19 @@ export default function GoalsPage() {
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div>
-                  <p className="label-xs text-[#8B89A0] mb-1">Total Goals</p>
-                  <p className="metric-value text-[#0F0E17] tabular-nums">{goals.length}</p>
+                  <p className="label-xs text-[#a1a1aa] mb-1">Total Goals</p>
+                  <p className="metric-value text-[#fafafa] tabular-nums">{goals.length}</p>
                 </div>
                 <div>
-                  <p className="label-xs text-[#8B89A0] mb-1">Total Saved</p>
+                  <p className="label-xs text-[#a1a1aa] mb-1">Total Saved</p>
                   <p className="metric-value text-[#059669] tabular-nums">{formatCurrency(totalSaved, currency)}</p>
                 </div>
                 <div>
-                  <p className="label-xs text-[#8B89A0] mb-1">Total Target</p>
-                  <p className="metric-value text-[#4B4963] tabular-nums">{formatCurrency(totalTarget, currency)}</p>
+                  <p className="label-xs text-[#a1a1aa] mb-1">Total Target</p>
+                  <p className="metric-value text-[#e4e4e7] tabular-nums">{formatCurrency(totalTarget, currency)}</p>
                 </div>
                 <div>
-                  <p className="label-xs text-[#8B89A0] mb-1">Overall Progress</p>
+                  <p className="label-xs text-[#a1a1aa] mb-1">Overall Progress</p>
                   <div className="flex items-center gap-2">
                     <p className="metric-value text-[#7C3AED] tabular-nums">{totalProgress.toFixed(1)}%</p>
                     <PieChart size={16} strokeWidth={1.5} className="text-[#C4B5FD]" aria-hidden="true" />
@@ -267,16 +267,16 @@ export default function GoalsPage() {
 
           {/* Delete Confirmation Dialog */}
           <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
-            <AlertDialogContent className="bg-white rounded-[20px] border border-[rgba(0,0,0,0.06)]" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)" }}>
+            <AlertDialogContent className="bg-[rgba(20,20,25,0.6)] rounded-[20px] border border-[rgba(255,255,255,0.06)]" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.06)" }}>
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-[16px] font-medium text-[#0F0E17]">Delete Goal</AlertDialogTitle>
-                <AlertDialogDescription className="text-[13px] text-[#4B4963]">
+                <AlertDialogTitle className="text-[16px] font-medium text-[#fafafa]">Delete Goal</AlertDialogTitle>
+                <AlertDialogDescription className="text-[13px] text-[#e4e4e7]">
                   Are you sure you want to delete this goal? This action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="rounded-[10px] border-[rgba(0,0,0,0.10)] text-[#4B4963] hover:bg-[#F8F7FF]">Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className="rounded-[10px] bg-[#DC2626] text-white hover:bg-[#b91c1c]">
+                <AlertDialogCancel className="rounded-[10px] border-[rgba(0,0,0,0.10)] text-[#e4e4e7] hover:bg-[rgba(255,255,255,0.05)]">Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete} className="rounded-[10px] bg-[#ef4444] text-white hover:bg-[#b91c1c]">
                   Delete Goal
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -289,13 +289,13 @@ export default function GoalsPage() {
               {[1, 2, 3].map((i) => (
                 <div key={i} className="fp-card p-5 h-48 animate-pulse">
                   <div className="flex gap-4">
-                    <div className="w-[40px] h-[40px] rounded-[10px] bg-[#F8F7FF] flex-shrink-0" />
+                    <div className="w-[40px] h-[40px] rounded-[10px] bg-[rgba(255,255,255,0.05)] flex-shrink-0" />
                     <div className="flex-1 space-y-2 pt-1">
-                      <div className="h-4 w-2/3 rounded-full bg-[#F8F7FF]" />
-                      <div className="h-3 w-1/2 rounded-full bg-[#F8F7FF]" />
+                      <div className="h-4 w-2/3 rounded-full bg-[rgba(255,255,255,0.05)]" />
+                      <div className="h-3 w-1/2 rounded-full bg-[rgba(255,255,255,0.05)]" />
                     </div>
                   </div>
-                  <div className="mt-5 h-1.5 w-full rounded-full bg-[#F8F7FF]" />
+                  <div className="mt-5 h-1.5 w-full rounded-full bg-[rgba(255,255,255,0.05)]" />
                 </div>
               ))}
             </div>
@@ -312,8 +312,8 @@ export default function GoalsPage() {
                 <line x1="32" y1="4" x2="32" y2="14" stroke="#C4B5FD" strokeWidth="2.5" strokeLinecap="round" />
                 <line x1="32" y1="50" x2="32" y2="60" stroke="#C4B5FD" strokeWidth="2.5" strokeLinecap="round" />
               </svg>
-              <p className="text-[15px] font-medium text-[#0F0E17] mb-1">No goals yet</p>
-              <p className="text-[13px] text-[#8B89A0] max-w-sm mx-auto mb-5">
+              <p className="text-[15px] font-medium text-[#fafafa] mb-1">No goals yet</p>
+              <p className="text-[13px] text-[#a1a1aa] max-w-sm mx-auto mb-5">
                 Start building your financial future. Set your first goal.
               </p>
               <button onClick={openCreate} className="h-10 px-5 rounded-[10px] bg-[#7C3AED] text-white text-[14px] font-medium hover:bg-[#6D28D9] transition-colors">Create First Goal</button>

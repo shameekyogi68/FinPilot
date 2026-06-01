@@ -2,10 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { formatCurrency, updateCurrencyInAllAmounts } from "@/lib/utils/settings"
@@ -146,8 +144,8 @@ export default function SettingsPage() {
                 {loading ? "…" : initials}
               </div>
               <div>
-                <h1 className="text-[22px] font-medium text-[#0F0E17] leading-tight">Account Settings</h1>
-                <p className="text-[14px] text-[#8B89A0] mt-0.5">Member since {memberSince}</p>
+                <h1 className="text-[22px] font-medium text-[#fafafa] leading-tight">Account Settings</h1>
+                <p className="text-[14px] text-[#a1a1aa] mt-0.5">Member since {memberSince}</p>
               </div>
             </div>
             <button
@@ -171,20 +169,20 @@ export default function SettingsPage() {
 
           {/* Profile section */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
-            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
-              <User size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
+            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
+              <User size={15} strokeWidth={1.5} className="text-[#e4e4e7]" aria-hidden="true" />
               <div>
-                <h2 className="text-[15px] font-medium text-[#0F0E17]">Profile</h2>
-                <p className="text-[12px] text-[#8B89A0] mt-0.5">Your name and account details</p>
+                <h2 className="text-[15px] font-medium text-[#fafafa]">Profile</h2>
+                <p className="text-[12px] text-[#a1a1aa] mt-0.5">Your name and account details</p>
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <label htmlFor="settings-name" className="block text-[12px] font-medium text-[#4B4963]">Display Name</label>
+                <label htmlFor="settings-name" className="block text-[12px] font-medium text-[#e4e4e7]">Display Name</label>
                 <Input id="settings-name" value={state.name} onChange={(e) => setState({ ...state, name: e.target.value })} placeholder="Your name" />
               </div>
               <div className="space-y-1.5">
-                <label htmlFor="settings-email" className="block text-[12px] font-medium text-[#4B4963]">Email</label>
+                <label htmlFor="settings-email" className="block text-[12px] font-medium text-[#e4e4e7]">Email</label>
                 <Input id="settings-email" value={state.email} readOnly className="opacity-60 cursor-default" placeholder="Not set" />
               </div>
             </div>
@@ -192,17 +190,17 @@ export default function SettingsPage() {
 
           {/* Financial settings */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
-            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
-              <IndianRupee size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
+            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
+              <IndianRupee size={15} strokeWidth={1.5} className="text-[#e4e4e7]" aria-hidden="true" />
               <div>
-                <h2 className="text-[15px] font-medium text-[#0F0E17]">Financial Settings</h2>
-                <p className="text-[12px] text-[#8B89A0] mt-0.5">Currency, income &amp; savings targets</p>
+                <h2 className="text-[15px] font-medium text-[#fafafa]">Financial Settings</h2>
+                <p className="text-[12px] text-[#a1a1aa] mt-0.5">Currency, income &amp; savings targets</p>
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <label htmlFor="settings-currency" className="block text-[12px] font-medium text-[#4B4963]">Currency</label>
+                <label htmlFor="settings-currency" className="block text-[12px] font-medium text-[#e4e4e7]">Currency</label>
                 <Select value={state.currency} onValueChange={(v) => setState({ ...state, currency: v as CurrencyOption })}>
                   <SelectTrigger id="settings-currency">
                     <SelectValue placeholder="Select currency" />
@@ -217,21 +215,21 @@ export default function SettingsPage() {
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <label htmlFor="settings-income" className="block text-[12px] font-medium text-[#4B4963]">Monthly Income</label>
+                <label htmlFor="settings-income" className="block text-[12px] font-medium text-[#e4e4e7]">Monthly Income</label>
                 <Input id="settings-income" type="number" step="1" min="0" value={state.monthlyIncome} onChange={(e) => setState({ ...state, monthlyIncome: e.target.value })} placeholder="e.g. 80000" />
               </div>
               <div className="space-y-1.5 sm:col-span-2">
-                <label htmlFor="settings-savings" className="block text-[12px] font-medium text-[#4B4963]">Savings Target (Monthly)</label>
+                <label htmlFor="settings-savings" className="block text-[12px] font-medium text-[#e4e4e7]">Savings Target (Monthly)</label>
                 <Input id="settings-savings" type="number" step="1" min="0" value={state.savingsTarget} onChange={(e) => setState({ ...state, savingsTarget: e.target.value })} placeholder="e.g. 20000" />
               </div>
             </div>
 
             {/* Preview */}
-            <div className="mt-4 rounded-[10px] px-4 py-3 text-[13px] font-medium text-[#7C3AED] flex items-center gap-2" style={{ background: "#F5F3FF", border: "1px solid rgba(196,181,253,0.5)" }}>
+            <div className="mt-4 rounded-[10px] px-4 py-3 text-[13px] font-medium text-[#7C3AED] flex items-center gap-2" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(196,181,253,0.5)" }}>
               <BarChart3 size={14} strokeWidth={1.5} className="flex-shrink-0" aria-hidden="true" />
               <span className="tabular-nums">{formatCurrency(monthlyIncomePreview, state.currency)} income · {formatCurrency(savingsTargetPreview, state.currency)} savings target</span>
               {monthlyIncomePreview > 0 && savingsTargetPreview > 0 && (
-                <span className="text-[#8B89A0] font-normal">
+                <span className="text-[#a1a1aa] font-normal">
                   ({((savingsTargetPreview / monthlyIncomePreview) * 100).toFixed(0)}% rate)
                 </span>
               )}
@@ -240,22 +238,22 @@ export default function SettingsPage() {
 
           {/* Preferences with toggles */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
-            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
-              <SlidersHorizontal size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
+            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
+              <SlidersHorizontal size={15} strokeWidth={1.5} className="text-[#e4e4e7]" aria-hidden="true" />
               <div>
-                <h2 className="text-[15px] font-medium text-[#0F0E17]">Preferences</h2>
-                <p className="text-[12px] text-[#8B89A0] mt-0.5">Month view &amp; AI features</p>
+                <h2 className="text-[15px] font-medium text-[#fafafa]">Preferences</h2>
+                <p className="text-[12px] text-[#a1a1aa] mt-0.5">Month view &amp; AI features</p>
               </div>
             </div>
 
             <div className="space-y-4">
               {/* AI Insights */}
-              <div className="flex items-center justify-between rounded-[10px] px-4 py-3.5" style={{ background: "#F8F7FF" }}>
+              <div className="flex items-center justify-between rounded-[10px] px-4 py-3.5" style={{ background: "rgba(255,255,255,0.05)" }}>
                 <div className="flex items-center gap-3">
                   <BrainCircuit size={16} strokeWidth={1.5} className="text-[#7C3AED]" aria-hidden="true" />
                   <div>
-                    <p className="text-[14px] font-medium text-[#0F0E17]">AI Insights</p>
-                    <p className="text-[12px] text-[#8B89A0]">Powered by Gemini · Free forever</p>
+                    <p className="text-[14px] font-medium text-[#fafafa]">AI Insights</p>
+                    <p className="text-[12px] text-[#a1a1aa]">Powered by Gemini · Free forever</p>
                   </div>
                 </div>
                 <Switch
@@ -266,8 +264,8 @@ export default function SettingsPage() {
               </div>
 
               {/* Month view */}
-              <div className="rounded-[10px] px-4 py-3.5 space-y-3" style={{ background: "#F8F7FF" }}>
-                <label className="block text-[12px] font-medium text-[#4B4963]">Default Month View</label>
+              <div className="rounded-[10px] px-4 py-3.5 space-y-3" style={{ background: "rgba(255,255,255,0.05)" }}>
+                <label className="block text-[12px] font-medium text-[#e4e4e7]">Default Month View</label>
                 <Select value={state.monthView} onValueChange={(v) => setState({ ...state, monthView: v as MonthView })}>
                   <SelectTrigger className="h-10">
                     <SelectValue />
@@ -284,10 +282,10 @@ export default function SettingsPage() {
           {/* Danger zone */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
             <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(220,38,38,0.12)]">
-              <AlertOctagon size={15} strokeWidth={1.5} className="text-[#DC2626]" aria-hidden="true" />
+              <AlertOctagon size={15} strokeWidth={1.5} className="text-[#ef4444]" aria-hidden="true" />
               <div>
-                <h2 className="text-[15px] font-medium text-[#DC2626]">Danger Zone</h2>
-                <p className="text-[12px] text-[#8B89A0] mt-0.5">Export or permanently delete your data</p>
+                <h2 className="text-[15px] font-medium text-[#ef4444]">Danger Zone</h2>
+                <p className="text-[12px] text-[#a1a1aa] mt-0.5">Export or permanently delete your data</p>
               </div>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">

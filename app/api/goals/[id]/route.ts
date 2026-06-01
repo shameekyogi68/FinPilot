@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
+export const dynamic = 'force-dynamic'
+
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const authError = authenticateRequest(_request)
   if (authError) return authError

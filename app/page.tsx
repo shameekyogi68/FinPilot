@@ -87,10 +87,10 @@ export default function Home() {
         {/* ── Top bar ── */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-[22px] font-medium text-[#0F0E17] leading-tight">
-              Good morning, Shameek
+            <h1 className="text-[24px] font-semibold text-[#fafafa] leading-tight">
+              Good morning, <span className="text-gradient">Shameek</span>
             </h1>
-            <p className="text-[14px] text-[#8B89A0] mt-0.5 font-variant-tabular">
+            <p className="text-[14px] text-[#a1a1aa] mt-1 font-variant-tabular">
               {dateLabel}
               {netWorth !== null && (
                 <>
@@ -110,7 +110,7 @@ export default function Home() {
               onClick={handleRefresh}
               disabled={loading || refreshing}
               aria-label="Refresh dashboard data"
-              className="w-9 h-9 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-white flex items-center justify-center text-[#8B89A0] hover:text-[#0F0E17] hover:border-[rgba(0,0,0,0.14)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2"
+              className="w-9 h-9 rounded-[10px] border border-[rgba(255,255,255,0.08)] bg-[rgba(20,20,25,0.6)] flex items-center justify-center text-[#a1a1aa] hover:text-[#fafafa] hover:border-[rgba(255,255,255,0.14)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 backdrop-blur-md"
             >
               <RefreshCw
                 size={16}
@@ -121,8 +121,8 @@ export default function Home() {
             </button>
 
             {/* Date chip */}
-            <div className="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-white text-[13px] text-[#4B4963] font-medium">
-              <CalendarDays size={14} strokeWidth={1.5} className="text-[#8B89A0]" aria-hidden="true" />
+            <div className="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-[rgba(255,255,255,0.08)] bg-[rgba(20,20,25,0.6)] text-[13px] text-[#e4e4e7] font-medium backdrop-blur-md">
+              <CalendarDays size={14} strokeWidth={1.5} className="text-[#a1a1aa]" aria-hidden="true" />
               {new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
             </div>
           </div>
@@ -131,7 +131,7 @@ export default function Home() {
         {/* ── Metrics ── */}
         <ErrorBoundary
           fallback={
-            <div className="rounded-[14px] border border-red-100 bg-red-50 p-5 text-red-600 text-sm">
+            <div className="rounded-[14px] border border-red-900/30 bg-red-900/10 p-5 text-red-400 text-sm">
               Unable to render dashboard metrics.
             </div>
           }
@@ -142,7 +142,7 @@ export default function Home() {
         {/* ── AI Insights ── */}
         <ErrorBoundary
           fallback={
-            <div className="rounded-[14px] border border-red-100 bg-red-50 p-5 text-red-600 text-sm">
+            <div className="rounded-[14px] border border-red-900/30 bg-red-900/10 p-5 text-red-400 text-sm">
               Unable to render AI insights.
             </div>
           }
@@ -154,7 +154,7 @@ export default function Home() {
         <div className="grid gap-5 md:grid-cols-[40%_60%]">
           <ErrorBoundary
             fallback={
-              <div className="rounded-[14px] border border-red-100 bg-red-50 p-5 text-red-600 text-sm">
+              <div className="rounded-[14px] border border-red-900/30 bg-red-900/10 p-5 text-red-400 text-sm">
                 Unable to render chart.
               </div>
             }
@@ -163,7 +163,7 @@ export default function Home() {
           </ErrorBoundary>
           <ErrorBoundary
             fallback={
-              <div className="rounded-[14px] border border-red-100 bg-red-50 p-5 text-red-600 text-sm">
+              <div className="rounded-[14px] border border-red-900/30 bg-red-900/10 p-5 text-red-400 text-sm">
                 Unable to render recent transactions.
               </div>
             }

@@ -31,13 +31,13 @@ interface ChartTooltipProps {
 function ChartTooltip({ active, payload, label, currency }: ChartTooltipProps) {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-white rounded-[10px] px-4 py-3 min-w-[160px]" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)" }}>
-      <p className="label-xs text-[#8B89A0] mb-2">{label}</p>
+    <div className="bg-[rgba(20,20,25,0.6)] rounded-[10px] px-4 py-3 min-w-[160px]" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.06)" }}>
+      <p className="label-xs text-[#a1a1aa] mb-2">{label}</p>
       {payload.map((p) => (
         <div key={p.dataKey} className="flex items-center gap-2 text-[12px]">
           <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: p.color }} />
-          <span className="capitalize text-[#8B89A0]">{p.dataKey}:</span>
-          <span className="font-medium text-[#0F0E17] tabular-nums">{formatCurrency(Number(p.value), currency)}</span>
+          <span className="capitalize text-[#a1a1aa]">{p.dataKey}:</span>
+          <span className="font-medium text-[#fafafa] tabular-nums">{formatCurrency(Number(p.value), currency)}</span>
         </div>
       ))}
     </div>
@@ -102,28 +102,28 @@ export default function AnalyticsPage() {
             className="flex flex-wrap items-center justify-between gap-3"
           >
             <div>
-              <h1 className="text-[22px] font-medium text-[#0F0E17] leading-tight">Analytics</h1>
-              <p className="text-[14px] text-[#8B89A0] mt-0.5">Spending trends and monthly breakdowns</p>
+              <h1 className="text-[22px] font-medium text-[#fafafa] leading-tight">Analytics</h1>
+              <p className="text-[14px] text-[#a1a1aa] mt-0.5">Spending trends and monthly breakdowns</p>
             </div>
             <div className="flex items-center gap-2">
               <select
                 value={month}
                 onChange={(e) => setMonth(Number(e.target.value))}
-                className="h-9 px-3 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-white text-[13px] text-[#4B4963] font-medium outline-none hover:border-[rgba(0,0,0,0.14)] transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
+                className="h-9 px-3 rounded-[10px] border border-[rgba(255,255,255,0.08)] bg-[rgba(20,20,25,0.6)] text-[13px] text-[#e4e4e7] font-medium outline-none hover:border-[rgba(255,255,255,0.14)] transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
               >
                 {monthNames.map((n, i) => <option key={n} value={i + 1}>{n}</option>)}
               </select>
               <select
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
-                className="h-9 px-3 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-white text-[13px] text-[#4B4963] font-medium outline-none hover:border-[rgba(0,0,0,0.14)] transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
+                className="h-9 px-3 rounded-[10px] border border-[rgba(255,255,255,0.08)] bg-[rgba(20,20,25,0.6)] text-[13px] text-[#e4e4e7] font-medium outline-none hover:border-[rgba(255,255,255,0.14)] transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
               >
                 {yearOptions.map((y) => <option key={y} value={y}>{y}</option>)}
               </select>
               <button
                 onClick={() => fetchAnalytics(month, year)}
                 disabled={loading}
-                className="h-9 px-3 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-white text-[13px] text-[#4B4963] font-medium hover:border-[rgba(0,0,0,0.14)] hover:text-[#0F0E17] transition-all duration-150 disabled:opacity-50"
+                className="h-9 px-3 rounded-[10px] border border-[rgba(255,255,255,0.08)] bg-[rgba(20,20,25,0.6)] text-[13px] text-[#e4e4e7] font-medium hover:border-[rgba(255,255,255,0.14)] hover:text-[#fafafa] transition-all duration-150 disabled:opacity-50"
               >
                 {loading ? "Loading…" : "Refresh"}
               </button>
@@ -134,7 +134,7 @@ export default function AnalyticsPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="rounded-[10px] bg-[#FEF2F2] border border-[rgba(220,38,38,0.15)] p-4 text-[#DC2626] text-[13px]"
+              className="rounded-[10px] bg-[#FEF2F2] border border-[rgba(220,38,38,0.15)] p-4 text-[#ef4444] text-[13px]"
             >
               <p className="font-medium">Unable to load analytics</p>
               <p className="opacity-75">{error}</p>
@@ -145,17 +145,17 @@ export default function AnalyticsPage() {
           <div className="grid gap-5 lg:grid-cols-2">
             {/* Summary metrics */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
-              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-[rgba(0,0,0,0.06)]">
-                <TrendingUp size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
-                <h2 className="text-[15px] font-medium text-[#0F0E17]">Monthly Summary</h2>
-                {data && <span className="text-[12px] text-[#8B89A0] ml-auto">{data.monthlySummary.monthLabel}</span>}
+              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-[rgba(255,255,255,0.06)]">
+                <TrendingUp size={15} strokeWidth={1.5} className="text-[#e4e4e7]" aria-hidden="true" />
+                <h2 className="text-[15px] font-medium text-[#fafafa]">Monthly Summary</h2>
+                {data && <span className="text-[12px] text-[#a1a1aa] ml-auto">{data.monthlySummary.monthLabel}</span>}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {summaryMetrics.map((m) => (
-                  <div key={m.label} className="rounded-[10px] p-4" style={{ background: "#F8F7FF" }}>
-                    <p className="label-xs text-[#8B89A0] mb-1.5">{m.label}</p>
+                  <div key={m.label} className="rounded-[10px] p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
+                    <p className="label-xs text-[#a1a1aa] mb-1.5">{m.label}</p>
                     <p className={`text-[18px] font-medium tabular-nums ${m.color}`}>
-                      {loading ? <span className="inline-block w-20 h-5 rounded-[6px] bg-[rgba(0,0,0,0.06)] animate-pulse" /> : m.value}
+                      {loading ? <span className="inline-block w-20 h-5 rounded-[6px] bg-[rgba(255,255,255,0.06)] animate-pulse" /> : m.value}
                     </p>
                   </div>
                 ))}
@@ -164,18 +164,18 @@ export default function AnalyticsPage() {
 
             {/* Category breakdown with horizontal bars */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
-              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-[rgba(0,0,0,0.06)]">
-                <PieChart size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
-                <h2 className="text-[15px] font-medium text-[#0F0E17]">Category Breakdown</h2>
+              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-[rgba(255,255,255,0.06)]">
+                <PieChart size={15} strokeWidth={1.5} className="text-[#e4e4e7]" aria-hidden="true" />
+                <h2 className="text-[15px] font-medium text-[#fafafa]">Category Breakdown</h2>
               </div>
               {loading || !data ? (
                 <div className="space-y-3">
                   {[80, 60, 70, 50, 40].map((w, i) => (
-                    <div key={i} className="h-8 rounded-[8px] bg-[#F8F7FF] animate-pulse" style={{ width: `${w}%` }} />
+                    <div key={i} className="h-8 rounded-[8px] bg-[rgba(255,255,255,0.05)] animate-pulse" style={{ width: `${w}%` }} />
                   ))}
                 </div>
               ) : data.categoryBreakdown.length === 0 ? (
-                <p className="text-[13px] text-[#8B89A0]">No spending data this month.</p>
+                <p className="text-[13px] text-[#a1a1aa]">No spending data this month.</p>
               ) : (
                 <div className="space-y-3">
                   {data.categoryBreakdown.slice(0, 5).map((cat, i) => {
@@ -188,14 +188,14 @@ export default function AnalyticsPage() {
                         <div className="flex items-center justify-between text-[12px]">
                           <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
-                            <span className="capitalize text-[#4B4963] font-medium">{cat.category}</span>
+                            <span className="capitalize text-[#e4e4e7] font-medium">{cat.category}</span>
                           </div>
                           <div className="flex items-center gap-3">
-                            <span className="text-[#8B89A0] tabular-nums">{pct}%</span>
-                            <span className="font-medium text-[#0F0E17] tabular-nums">{formatCurrency(cat.amount, currency)}</span>
+                            <span className="text-[#a1a1aa] tabular-nums">{pct}%</span>
+                            <span className="font-medium text-[#fafafa] tabular-nums">{formatCurrency(cat.amount, currency)}</span>
                           </div>
                         </div>
-                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.06)" }}>
+                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${pct}%` }}
@@ -214,9 +214,9 @@ export default function AnalyticsPage() {
 
           {/* 6-month area chart */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
-            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
               <TrendingUp size={15} strokeWidth={1.5} className="text-[#059669]" aria-hidden="true" />
-              <h2 className="text-[15px] font-medium text-[#0F0E17]">6-Month Income vs Expenses</h2>
+              <h2 className="text-[15px] font-medium text-[#fafafa]">6-Month Income vs Expenses</h2>
             </div>
             <div className="h-72">
               {loading || !data ? (
@@ -261,9 +261,9 @@ export default function AnalyticsPage() {
 
           {/* Yearly bar chart */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
-            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
-              <BarChart2 size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
-              <h2 className="text-[15px] font-medium text-[#0F0E17]">Yearly Expense Trend ({year})</h2>
+            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
+              <BarChart2 size={15} strokeWidth={1.5} className="text-[#e4e4e7]" aria-hidden="true" />
+              <h2 className="text-[15px] font-medium text-[#fafafa]">Yearly Expense Trend ({year})</h2>
             </div>
             <div className="h-64">
               {loading || !data ? (
@@ -303,9 +303,9 @@ export default function AnalyticsPage() {
 
           {/* Daily spending heatmap */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
-            <div className="flex items-center gap-2 mb-4 pb-4 border-b border-[rgba(0,0,0,0.06)]">
-              <Calendar size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
-              <h2 className="text-[15px] font-medium text-[#0F0E17]">Daily Spending Heatmap</h2>
+            <div className="flex items-center gap-2 mb-4 pb-4 border-b border-[rgba(255,255,255,0.06)]">
+              <Calendar size={15} strokeWidth={1.5} className="text-[#e4e4e7]" aria-hidden="true" />
+              <h2 className="text-[15px] font-medium text-[#fafafa]">Daily Spending Heatmap</h2>
             </div>
             {loading || !data ? (
               <div className="h-40 w-full rounded-2xl bg-[hsl(var(--muted))] animate-pulse" />

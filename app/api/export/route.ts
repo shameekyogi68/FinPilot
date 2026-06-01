@@ -3,6 +3,8 @@ import { formatDateForExport, convertToCSV, convertToJSON, generatePDF } from '@
 import { prisma } from '@/lib/prisma'
 import { authenticateRequest, checkRateLimit, safeErrorResponse } from '@/lib/middleware'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: NextRequest) {
   const authError = authenticateRequest(req)
   if (authError) return authError

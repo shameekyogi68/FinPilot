@@ -136,7 +136,7 @@ export function ChatInterface() {
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl px-5 py-4 mb-4 flex items-center justify-between"
+        className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(255,255,255,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl px-5 py-4 mb-4 flex items-center justify-between"
       >
         <div className="flex items-center gap-3">
           <div className="relative">
@@ -169,7 +169,7 @@ export function ChatInterface() {
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-4 sm:p-6 space-y-4 relative"
+        className="flex-1 overflow-y-auto bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(255,255,255,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-4 sm:p-6 space-y-4 relative"
       >
         <AnimatePresence>
           {messages.map((msg, i) => (
@@ -226,7 +226,7 @@ export function ChatInterface() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-4 mt-4"
+        className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(255,255,255,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-4 mt-4"
       >
         {/* Suggestion chips */}
         <div className="flex gap-2 overflow-x-auto whitespace-nowrap mb-3 pb-1">

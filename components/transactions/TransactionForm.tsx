@@ -124,8 +124,8 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
     <div className="fp-card p-5">
       {/* ── Type Toggle ── */}
       <div
-        className="flex mb-5 p-1 rounded-[999px] border border-[rgba(0,0,0,0.06)]"
-        style={{ background: "#F8F7FF" }}
+        className="flex mb-5 p-1 rounded-[999px] border border-[rgba(255,255,255,0.06)]"
+        style={{ background: "rgba(255,255,255,0.05)" }}
         role="group"
         aria-label="Transaction type"
       >
@@ -136,8 +136,8 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
           aria-pressed={transactionType === "expense"}
           className={`flex-1 flex items-center justify-center gap-2 h-9 rounded-[999px] text-[14px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-1 ${
             transactionType === "expense"
-              ? "bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_0_0_1px_rgba(0,0,0,0.06)] text-[#0F0E17]"
-              : "text-[#8B89A0] hover:text-[#4B4963]"
+              ? "bg-[rgba(20,20,25,0.6)] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_0_0_1px_rgba(255,255,255,0.06)] text-[#fafafa]"
+              : "text-[#a1a1aa] hover:text-[#e4e4e7]"
           }`}
         >
           <TrendingDown size={14} strokeWidth={1.5} aria-hidden="true" />
@@ -150,8 +150,8 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
           aria-pressed={transactionType === "income"}
           className={`flex-1 flex items-center justify-center gap-2 h-9 rounded-[999px] text-[14px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-1 ${
             transactionType === "income"
-              ? "bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_0_0_1px_rgba(0,0,0,0.06)] text-[#0F0E17]"
-              : "text-[#8B89A0] hover:text-[#4B4963]"
+              ? "bg-[rgba(20,20,25,0.6)] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_0_0_1px_rgba(255,255,255,0.06)] text-[#fafafa]"
+              : "text-[#a1a1aa] hover:text-[#e4e4e7]"
           }`}
         >
           <TrendingUp size={14} strokeWidth={1.5} aria-hidden="true" />
@@ -164,14 +164,14 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
         <div>
           <label
             htmlFor="tx-amount"
-            className="block text-[12px] font-medium text-[#4B4963] mb-1.5"
+            className="block text-[12px] font-medium text-[#e4e4e7] mb-1.5"
           >
             Amount
           </label>
           <div className="flex rounded-[10px] border border-[rgba(0,0,0,0.10)] overflow-hidden focus-within:border-[#7C3AED] focus-within:ring-[3px] focus-within:ring-[rgba(124,58,237,0.18)] transition-all duration-150">
             <div
-              className="w-12 flex items-center justify-center text-[18px] font-medium text-[#4B4963] border-r border-[rgba(0,0,0,0.08)] flex-shrink-0"
-              style={{ background: "#F8F7FF" }}
+              className="w-12 flex items-center justify-center text-[18px] font-medium text-[#e4e4e7] border-r border-[rgba(255,255,255,0.08)] flex-shrink-0"
+              style={{ background: "rgba(255,255,255,0.05)" }}
               aria-hidden="true"
             >
               ₹
@@ -183,14 +183,14 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
               min="0"
               placeholder="0"
               {...register("amount", { valueAsNumber: true })}
-              className="flex-1 h-[52px] px-4 text-[22px] font-medium text-[#0F0E17] tabular-nums bg-white outline-none border-0 focus:ring-0 focus:outline-none"
+              className="flex-1 h-[52px] px-4 text-[22px] font-medium text-[#fafafa] tabular-nums bg-[rgba(20,20,25,0.6)] outline-none border-0 focus:ring-0 focus:outline-none"
               aria-invalid={!!errors.amount}
               aria-describedby={errors.amount ? "tx-amount-error" : undefined}
               style={{ fontVariantNumeric: "tabular-nums" }}
             />
           </div>
           {errors.amount?.message && (
-            <p id="tx-amount-error" className="text-[11px] text-[#DC2626] mt-1">
+            <p id="tx-amount-error" className="text-[11px] text-[#ef4444] mt-1">
               {errors.amount.message}
             </p>
           )}
@@ -199,24 +199,24 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
         <div className="grid gap-4 sm:grid-cols-2">
           {/* ── Date ── */}
           <div>
-            <label htmlFor="tx-date" className="block text-[12px] font-medium text-[#4B4963] mb-1.5">
+            <label htmlFor="tx-date" className="block text-[12px] font-medium text-[#e4e4e7] mb-1.5">
               Date
             </label>
             <input
               id="tx-date"
               type="date"
               {...register("date", { valueAsDate: true })}
-              className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#0F0E17] bg-white outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
+              className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#fafafa] bg-[rgba(20,20,25,0.6)] outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
               aria-invalid={!!errors.date}
             />
             {errors.date?.message && (
-              <p className="text-[11px] text-[#DC2626] mt-1">{errors.date.message}</p>
+              <p className="text-[11px] text-[#ef4444] mt-1">{errors.date.message}</p>
             )}
           </div>
 
           {/* ── Category ── */}
           <div>
-            <label htmlFor="tx-category" className="block text-[12px] font-medium text-[#4B4963] mb-1.5">
+            <label htmlFor="tx-category" className="block text-[12px] font-medium text-[#e4e4e7] mb-1.5">
               Category
             </label>
             <Controller
@@ -237,22 +237,22 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
               )}
             />
             {errors.category?.message && (
-              <p className="text-[11px] text-[#DC2626] mt-1">{errors.category.message}</p>
+              <p className="text-[11px] text-[#ef4444] mt-1">{errors.category.message}</p>
             )}
           </div>
         </div>
 
         {/* ── Note ── */}
         <div>
-          <label htmlFor="tx-note" className="block text-[12px] font-medium text-[#4B4963] mb-1.5">
-            Note <span className="text-[#8B89A0] font-normal">(Optional)</span>
+          <label htmlFor="tx-note" className="block text-[12px] font-medium text-[#e4e4e7] mb-1.5">
+            Note <span className="text-[#a1a1aa] font-normal">(Optional)</span>
           </label>
           <input
             id="tx-note"
             type="text"
             placeholder="e.g. Monthly rent, Swiggy order..."
             {...register("note")}
-            className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#0F0E17] bg-white outline-none placeholder:text-[#C4C2D4] transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
+            className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#fafafa] bg-[rgba(20,20,25,0.6)] outline-none placeholder:text-[#C4C2D4] transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
           />
         </div>
 

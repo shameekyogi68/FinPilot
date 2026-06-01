@@ -22,7 +22,7 @@ function Card({
       className={cn(
         baseClasses,
         sizeClasses[size],
-        "bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)]",
+        "bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(255,255,255,0.06),0_4px_16px_rgba(0,0,0,0.04)]",
         className
       )}
       {...props}
