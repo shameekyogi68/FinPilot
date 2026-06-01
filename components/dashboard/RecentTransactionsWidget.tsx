@@ -4,7 +4,12 @@ import Link from "next/link"
 import { useProfile } from "@/hooks/useProfile"
 import { formatCurrency } from "@/lib/utils/currency"
 import { motion } from "framer-motion"
-import { ArrowRight, Receipt, Utensils, Car, ShoppingBag, Smartphone, Clapperboard, Stethoscope, BookOpen, Plane, Package, ShoppingCart, Home, Lightbulb, Briefcase, Wallet, Laptop, TrendingUp, CreditCard, ClipboardList } from "lucide-react"
+import {
+  ArrowRight, Receipt, Utensils, Car, ShoppingBag, Smartphone,
+  Clapperboard, Stethoscope, BookOpen, Plane, Package, ShoppingCart,
+  Home, Lightbulb, Briefcase, Wallet, Laptop, TrendingUp, CreditCard,
+  ClipboardList,
+} from "lucide-react"
 
 export type RecentTransaction = {
   id: number | string
@@ -21,7 +26,7 @@ type RecentTransactionsWidgetProps = {
   error: string | null
 }
 
-const categoryIcons: Record<string, any> = {
+const categoryIcons: Record<string, React.ElementType> = {
   food: Utensils, transport: Car, shopping: ShoppingBag, bills: Receipt,
   subscriptions: Smartphone, entertainment: Clapperboard, healthcare: Stethoscope,
   education: BookOpen, travel: Plane, miscellaneous: Package,
@@ -30,7 +35,7 @@ const categoryIcons: Record<string, any> = {
   investment: TrendingUp, default: CreditCard,
 }
 
-function getCategoryIcon(category: string) {
+function getCategoryIcon(category: string): React.ElementType {
   const key = category.toLowerCase()
   for (const [k, v] of Object.entries(categoryIcons)) {
     if (key.includes(k)) return v
@@ -38,32 +43,44 @@ function getCategoryIcon(category: string) {
   return categoryIcons.default
 }
 
+// Category dot color
+function getCategoryColor(category: string): string {
+  const palette = [
+    "#7C3AED", "#059669", "#D97706", "#06B6D4", "#EC4899",
+    "#8B5CF6", "#10B981", "#64748B",
+  ]
+  let hash = 0
+  for (const c of category) hash = (hash * 31 + c.charCodeAt(0)) % palette.length
+  return palette[hash]
+}
+
 function formatRelativeDate(dateStr: string): string {
   const date = new Date(dateStr)
   const today = new Date()
   const yesterday = new Date(today)
   yesterday.setDate(today.getDate() - 1)
-
   if (date.toDateString() === today.toDateString()) return "Today"
   if (date.toDateString() === yesterday.toDateString()) return "Yesterday"
   return date.toLocaleDateString("en-IN", { day: "numeric", month: "short" })
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.06 },
-  },
+// Group by date
+function groupByDate(txs: RecentTransaction[]) {
+  const groups: Record<string, RecentTransaction[]> = {}
+  for (const tx of txs) {
+    const key = formatRelativeDate(tx.date)
+    if (!groups[key]) groups[key] = []
+    groups[key].push(tx)
+  }
+  return groups
 }
 
+const containerVariants = {
+  animate: { transition: { staggerChildren: 0.04, delayChildren: 0.05 } }
+}
 const itemVariants = {
-  hidden: { opacity: 0, x: 16 },
-  show: {
-    opacity: 1,
-    x: 0,
-    transition: { type: "spring" as const, stiffness: 300, damping: 28 },
-  },
+  initial: { opacity: 0, x: 8 },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] as const } },
 }
 
 export function RecentTransactionsWidget({
@@ -76,59 +93,58 @@ export function RecentTransactionsWidget({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.35, type: "spring", stiffness: 300, damping: 30 }}
-      className="bg-card rounded-2xl p-6 border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] h-full flex flex-col relative overflow-hidden"
+      initial={{ opacity: 0, y: 12, scale: 0.99 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: 0.15, duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+      className="fp-card p-6 h-full flex flex-col"
     >
-      <div className="relative z-10 flex-1 flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center">
-              <Receipt className="w-4 h-4 text-[hsl(var(--primary))]" />
-            </div>
-            <h3 className="font-jakarta font-semibold text-base text-foreground">Recent Transactions</h3>
-          </div>
-          <Link
-            href="/transactions"
-            className="text-xs font-semibold text-[hsl(var(--primary))] hover:text-[hsl(var(--primary))]/80 transition-colors flex items-center gap-1"
-          >
-            View all <ArrowRight className="w-3 h-3" />
-          </Link>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+        <div className="flex items-center gap-2">
+          <Receipt size={16} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
+          <h2 className="text-[15px] font-medium text-[#0F0E17]">Recent Transactions</h2>
         </div>
+        <Link
+          href="/transactions"
+          className="flex items-center gap-1 text-[12px] text-[#7C3AED] font-medium hover:text-[#6D28D9] transition-colors focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 rounded-[4px] px-1"
+        >
+          View all <ArrowRight size={12} strokeWidth={1.5} aria-hidden="true" />
+        </Link>
+      </div>
 
-        {/* Content */}
+      <div className="flex-1">
         {loading ? (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 rounded-xl bg-[hsl(var(--muted))] p-3 animate-pulse"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[hsl(var(--border))] flex-shrink-0" />
+              <div key={i} className="flex items-center gap-3 py-3 border-b border-[rgba(0,0,0,0.05)] last:border-0 animate-pulse">
+                <div className="w-8 h-8 rounded-full bg-[#F8F7FF] flex-shrink-0" />
                 <div className="flex-1 space-y-1.5">
-                  <div className="h-3 w-2/3 rounded bg-[hsl(var(--border))]" />
-                  <div className="h-2.5 w-1/3 rounded bg-[hsl(var(--border))]" />
+                  <div className="h-3 w-2/3 rounded-full bg-[#F8F7FF]" />
+                  <div className="h-2.5 w-1/3 rounded-full bg-[#F8F7FF]" />
                 </div>
-                <div className="h-4 w-16 rounded bg-[hsl(var(--border))]" />
+                <div className="h-3.5 w-16 rounded-full bg-[#F8F7FF]" />
               </div>
             ))}
           </div>
         ) : error ? (
-          <div className="text-sm text-[hsl(var(--destructive))] bg-[var(--expense-bg)] p-4 rounded-xl border border-[var(--expense-border)]">
+          <div className="text-[13px] text-[#DC2626] bg-[#FEF2F2] p-4 rounded-[10px] border border-[rgba(220,38,38,0.15)]">
             {error}
           </div>
         ) : !transactions || transactions.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center rounded-2xl border-dashed border-[hsl(var(--border-strong))] bg-card p-8 text-center">
+          <div className="flex flex-1 items-center justify-center py-12 text-center">
             <div>
-              <div className="mx-auto w-12 h-12 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center mb-3">
-                <ClipboardList className="w-6 h-6 text-muted-foreground" />
-              </div>
-              <p className="text-sm font-semibold text-foreground">No transactions yet</p>
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="mx-auto mb-4" aria-hidden="true">
+                <rect x="12" y="16" width="40" height="32" rx="4" fill="#EDE9FE" />
+                <rect x="18" y="24" width="28" height="2.5" rx="1.25" fill="#C4B5FD" />
+                <rect x="18" y="30" width="20" height="2.5" rx="1.25" fill="#DDD6FE" />
+                <rect x="18" y="36" width="14" height="2.5" rx="1.25" fill="#DDD6FE" />
+                <circle cx="50" cy="46" r="10" fill="#F5F3FF" stroke="#C4B5FD" strokeWidth="1.5" />
+                <path d="M50 42v4l2.5 2.5" stroke="#7C3AED" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <p className="text-[14px] text-[#4B4963]">No transactions yet</p>
               <Link
                 href="/transactions"
-                className="text-xs text-[hsl(var(--primary))] hover:text-[hsl(var(--primary))]/80 mt-2 inline-block font-semibold"
+                className="text-[13px] text-[#7C3AED] underline mt-1.5 inline-block hover:text-[#6D28D9] transition-colors focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 rounded-[4px]"
               >
                 Add your first transaction →
               </Link>
@@ -136,57 +152,67 @@ export function RecentTransactionsWidget({
           </div>
         ) : (
           <motion.div
-            className="space-y-2"
             variants={containerVariants}
-            initial="hidden"
-            animate="show"
+            initial="initial"
+            animate="animate"
           >
-            {transactions.map((tx) => {
-              const isIncome = tx.type === "income"
-              const Icon = getCategoryIcon(tx.category)
+            {Object.entries(groupByDate(transactions)).map(([dateLabel, txs]) => (
+              <div key={dateLabel}>
+                {/* Sticky date header */}
+                <div className="sticky top-0 py-1 bg-white z-10">
+                  <span className="label-xs text-[#8B89A0]">{dateLabel}</span>
+                </div>
 
-              return (
-                <motion.div
-                  key={tx.id}
-                  variants={itemVariants}
-                  className="flex items-center gap-3 rounded-xl bg-card hover:bg-[hsl(var(--muted))] border-b border-[hsl(var(--border))] last:border-0 p-3.5 transition-colors cursor-default"
-                >
-                  {/* Icon */}
-                  <div
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-base ${
-                      isIncome ? "bg-[var(--income-bg)]" : "bg-[var(--expense-bg)]"
-                    }`}
-                  >
-                    <Icon className={`w-5 h-5 ${isIncome ? "text-[hsl(var(--income))]" : "text-[hsl(var(--expense))]"}`} />
-                  </div>
+                {txs.map((tx) => {
+                  const isIncome = tx.type === "income"
+                  const Icon = getCategoryIcon(tx.category)
+                  const dotColor = getCategoryColor(tx.category)
 
-                  {/* Details */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground capitalize leading-tight truncate">
-                      {tx.category}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-0.5 leading-tight">
-                      {formatRelativeDate(tx.date)}
-                      {tx.note && (
-                        <span className="hidden sm:inline"> · {tx.note}</span>
-                      )}
-                    </p>
-                  </div>
+                  return (
+                    <motion.div
+                      key={tx.id}
+                      variants={itemVariants}
+                      className="flex items-center gap-3 min-h-[56px] py-2 border-b border-[rgba(0,0,0,0.05)] last:border-0 hover:bg-[#F8F7FF] transition-colors duration-150 cursor-default rounded-[6px] px-1 -mx-1"
+                    >
+                      {/* Left: category dot + icon */}
+                      <div className="flex items-center gap-1.5 w-10 flex-shrink-0 justify-end">
+                        <span
+                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: dotColor }}
+                          aria-hidden="true"
+                        />
+                        <Icon
+                          size={16}
+                          strokeWidth={1.5}
+                          className="text-[#8B89A0]"
+                          aria-hidden="true"
+                        />
+                      </div>
 
-                  {/* Amount */}
-                  <p
-                    className={`font-sora text-sm font-semibold flex-shrink-0 ${
-                      isIncome
-                        ? "text-[hsl(var(--income))]"
-                        : "text-[hsl(var(--expense))]"
-                    }`}
-                  >
-                    {isIncome ? "+" : "-"}
-                    {formatCurrency(tx.amount, currency)}
-                  </p>
-                </motion.div>
-              )
-            })}
+                      {/* Center: merchant name + note */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[14px] font-medium text-[#0F0E17] capitalize leading-tight truncate">
+                          {tx.category}
+                        </p>
+                        {tx.note && (
+                          <p className="text-[13px] text-[#8B89A0] leading-tight truncate mt-0.5">{tx.note}</p>
+                        )}
+                      </div>
+
+                      {/* Right: amount */}
+                      <p
+                        className={`text-[14px] font-medium tabular-nums flex-shrink-0 ${
+                          isIncome ? "text-[#059669]" : "text-[#DC2626]"
+                        }`}
+                      >
+                        {isIncome ? "+" : "-"}
+                        {formatCurrency(tx.amount, currency)}
+                      </p>
+                    </motion.div>
+                  )
+                })}
+              </div>
+            ))}
           </motion.div>
         )}
       </div>

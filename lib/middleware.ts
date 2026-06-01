@@ -1,6 +1,29 @@
 import { NextResponse } from "next/server"
 import { logger } from "./logger"
 
+function getUrlHost(value: string | null): string | null {
+  if (!value) return null
+
+  try {
+    return new URL(value).host
+  } catch {
+    return null
+  }
+}
+
+function isSameOriginRequest(request: Request): boolean {
+  const requestHost = getUrlHost(request.url)
+  if (!requestHost) return false
+
+  const originHost = getUrlHost(request.headers.get("origin"))
+  if (originHost) return originHost === requestHost
+
+  const refererHost = getUrlHost(request.headers.get("referer"))
+  if (refererHost) return refererHost === requestHost
+
+  return request.headers.get("sec-fetch-site") === "same-origin"
+}
+
 // Simple API key authentication for production
 // In development, we allow requests without authentication
 export function authenticateRequest(request: Request): NextResponse | null {
@@ -8,6 +31,10 @@ export function authenticateRequest(request: Request): NextResponse | null {
   
   if (isDevelopment) {
     return null // Allow all requests in development
+  }
+
+  if (isSameOriginRequest(request)) {
+    return null // Allow the app's own browser requests in production
   }
 
   const apiKey = request.headers.get("x-api-key")

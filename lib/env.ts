@@ -2,8 +2,9 @@ import { z } from "zod"
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
-  API_KEY: z.string().min(1, "API_KEY is required for production").optional(),
+  POSTGRES_PRISMA_URL: z.string().min(1, "POSTGRES_PRISMA_URL is required"),
+  POSTGRES_URL_NON_POOLING: z.string().min(1, "POSTGRES_URL_NON_POOLING is required").optional(),
+  OPENROUTER_API_KEY: z.string().min(1, "OPENROUTER_API_KEY is required for production").optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)
@@ -18,10 +19,10 @@ if (!parsed.success) {
 
 const env = parsed.data
 
-// Validate API_KEY in production
-if (env.NODE_ENV === "production" && !env.API_KEY) {
-  console.error("❌ API_KEY is required in production")
-  throw new Error("API_KEY is required in production")
+// Validate OPENROUTER_API_KEY in production
+if (env.NODE_ENV === "production" && !env.OPENROUTER_API_KEY) {
+  console.error("❌ OPENROUTER_API_KEY is required in production")
+  throw new Error("OPENROUTER_API_KEY is required in production")
 }
 
 export { env }

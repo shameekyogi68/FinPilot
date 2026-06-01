@@ -112,12 +112,13 @@ export async function POST(request: Request) {
       if (Array.isArray(goals) && goals.length > 0) {
         await tx.goal.deleteMany()
         const goalData = goals.map((g: unknown) => {
-          const goal = g as { name: unknown; targetAmount: unknown; currentAmount: unknown; targetDate?: unknown }
+          const goal = g as { name: unknown; targetAmount: unknown; currentAmount: unknown; deadline?: unknown; targetDate?: unknown }
+          const deadline = goal.deadline ?? goal.targetDate
           return {
             name: String(goal.name),
             targetAmount: Number(goal.targetAmount),
             currentAmount: Number(goal.currentAmount),
-            targetDate: goal.targetDate ? new Date(String(goal.targetDate)) : null,
+            deadline: deadline ? new Date(String(deadline)) : null,
           }
         })
         await tx.goal.createMany({

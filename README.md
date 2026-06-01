@@ -18,7 +18,7 @@ A modern, industry-standard personal finance dashboard built with Next.js 16, Ty
 - **Framework**: Next.js 16.2.6 (App Router)
 - **Language**: TypeScript 5
 - **Styling**: Tailwind CSS v4 with CSS variables
-- **Database**: SQLite with Prisma ORM
+- **Database**: PostgreSQL with Prisma ORM
 - **UI Components**: Radix UI + shadcn/ui
 - **Forms**: React Hook Form + Zod validation
 - **Charts**: Recharts
@@ -38,24 +38,25 @@ A modern, industry-standard personal finance dashboard built with Next.js 16, Ty
 
 ### Local Development
 
-Create a `.env.local` file in the project root:
+Create a `.env.local` or `.env` file in the project root:
 
 ```env
-DATABASE_URL="file:./dev.db"
+POSTGRES_PRISMA_URL="postgresql://..."
 NODE_ENV="development"
 ```
 
 ### Vercel Deployment
 
-The following environment variables are configured in `vercel.json`:
+The following environment variables must be configured in Vercel project settings:
 
-- `DATABASE_URL`: Database connection URL (use Vercel Postgres or external database)
+- `POSTGRES_PRISMA_URL`: PostgreSQL connection URL
+- `OPENROUTER_API_KEY`: Required in production for AI features
 - `NODE_ENV`: Set to `production` automatically
 
 **For Vercel Postgres:**
 1. Add a Vercel Postgres database to your project
 2. The `DATABASE_URL` will be automatically provided
-3. Run migrations on deployment using the build script
+3. Migrations are applied by `npm run vercel-build`
 
 **For External Database:**
 1. Set `DATABASE_URL` in Vercel project settings
@@ -66,7 +67,6 @@ The following environment variables are configured in `vercel.json`:
 
 The app includes automatic backup functionality:
 - **Manual Backup**: Use Settings → Backup & Restore to export all data as JSON
-- **Automatic Backup**: Vercel cron job runs daily at 2 AM UTC (`/api/cron/backup`)
 - **Restore**: Import previously exported JSON backup file
 
 ## Getting Started
@@ -111,7 +111,7 @@ NODE_ENV=development
 
 ## Database
 
-This project uses SQLite with Prisma ORM. The database file is located at `prisma/dev.db`.
+This project uses PostgreSQL with Prisma ORM. Schema changes should be captured in `prisma/migrations` and applied with `prisma migrate deploy` in production.
 
 ### Running Migrations
 
@@ -135,8 +135,11 @@ npx prisma studio
 
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
+- `npm run vercel-build` - Apply migrations and build on Vercel
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
+- `npm run typecheck` - Run TypeScript checks
+- `npm run smoke:prod` - Verify the deployed production dashboard
 
 ## Project Structure
 
@@ -198,7 +201,7 @@ finpilot/
 
 ### Environment Variables for Production
 
-No additional environment variables are required for production. The database is SQLite and will be created during the build process.
+Production requires `POSTGRES_PRISMA_URL` and `OPENROUTER_API_KEY` in Vercel project settings.
 
 ## Contributing
 

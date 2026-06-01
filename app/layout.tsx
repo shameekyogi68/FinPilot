@@ -1,34 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans, Sora } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Navigation } from "@/components/Navigation";
 
-const playfairDisplay = Playfair_Display({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  display: "optional",
-  preload: true,
-});
-
-const plusJakartaSans = Plus_Jakarta_Sans({
+const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  display: "optional",
-  preload: true,
-});
-
-const sora = Sora({
-  variable: "--font-mono",
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  display: "optional",
+  axes: ["opsz"],
+  display: "swap",
   preload: true,
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000"),
   title: {
     default: "FinPilot — Shameek Yogi's Personal Wealth Manager",
     template: "%s | FinPilot",
@@ -65,8 +50,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf9f6" },
-    { media: "(prefers-color-scheme: dark)", color: "#faf9f6" },
+    { media: "(prefers-color-scheme: light)", color: "#F8F7FF" },
+    { media: "(prefers-color-scheme: dark)",  color: "#F8F7FF" },
   ],
   viewportFit: "cover",
 };
@@ -80,16 +65,25 @@ export default function RootLayout({
     <html
       lang="en-IN"
       suppressHydrationWarning
-      className={`${playfairDisplay.variable} ${plusJakartaSans.variable} ${sora.variable} h-full`}
+      className={`${inter.variable} h-full`}
     >
       <head>
         <meta name="view-transition" content="same-origin" />
       </head>
-      <body className="min-h-full flex flex-col antialiased bg-[hsl(var(--background))] text-[hsl(var(--foreground))] font-jakarta">
-        <main className="flex-1 pb-24">
-          {children}
-        </main>
+      <body
+        className="min-h-full antialiased"
+        style={{ backgroundColor: "#F8F7FF", color: "#0F0E17" }}
+      >
+        {/* Desktop: content shifted by sidebar; Mobile: content + bottom nav */}
         <Navigation />
+        <main
+          className="lg:ml-[220px] pb-20 lg:pb-0"
+          style={{ minHeight: "100vh" }}
+        >
+          <div className="lg:px-10 lg:py-8 px-4 py-6 max-w-[1280px]">
+            {children}
+          </div>
+        </main>
         <Toaster position="top-right" richColors />
       </body>
     </html>

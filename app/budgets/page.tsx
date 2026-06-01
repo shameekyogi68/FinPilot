@@ -25,7 +25,6 @@ import { useProfile } from "@/hooks/useProfile"
 import { formatCurrency } from "@/lib/utils/currency"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { motion } from "framer-motion"
-import { Sparkles } from "lucide-react"
 
 const defaultCategories = [
   "food", "transport", "shopping", "bills", "subscriptions",
@@ -33,7 +32,7 @@ const defaultCategories = [
   "rent", "utilities", "groceries", "insurance", "dining", "gym",
 ]
 
-const categoryIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+const categoryIcons: Record<string, any> = {
   food: Utensils, transport: Car, shopping: ShoppingBag, bills: Receipt,
   subscriptions: Smartphone, entertainment: Clapperboard, healthcare: Stethoscope,
   education: BookOpen, travel: Plane, miscellaneous: Package,
@@ -181,29 +180,25 @@ export default function BudgetsPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl space-y-6">
+      <div className="min-h-screen space-y-6">
 
-          {/* Header */}
+          {/* ── Page Header ── */}
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+            className="flex items-center justify-between"
           >
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
-                <span className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">Budgets</span>
-              </div>
-              <h1 className="font-display text-2xl font-semibold text-foreground">
-                Budget <span className="text-[hsl(var(--primary))]">management</span>
-              </h1>
+            <div>
+              <h1 className="text-[22px] font-medium text-[#0F0E17] leading-tight">Budget Management</h1>
+              <p className="text-[14px] text-[#8B89A0] mt-0.5">Set monthly spending limits per category</p>
             </div>
             <Button
               onClick={() => openAddBudgetDialog()}
-              className="gap-2 rounded-xl"
+              variant="outline"
+              className="gap-1.5 h-9 px-3 rounded-[10px] border-[rgba(124,58,237,0.3)] text-[#7C3AED] text-[13px] font-medium hover:bg-[#F5F3FF] hover:border-[#7C3AED] transition-all duration-150"
             >
-              <Plus className="h-4 w-4" /> Add Budget
+              <Plus className="h-3.5 w-3.5" strokeWidth={1.5} /> Add Budget
             </Button>
           </motion.div>
 
@@ -211,44 +206,43 @@ export default function BudgetsPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-[hsl(var(--muted))] rounded-xl p-5 text-[hsl(var(--destructive))] text-sm"
+              className="rounded-[10px] bg-[#FEF2F2] border border-[rgba(220,38,38,0.15)] p-4 text-[#DC2626] text-[13px]"
             >
-              <p className="font-semibold">Error loading budgets</p>
-              <p>{error}</p>
+              <p className="font-medium">Error loading budgets</p>
+              <p className="opacity-75">{error}</p>
             </motion.div>
           )}
 
-          {/* Summary cards */}
+          {/* Summary strip */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {summaryCards.map((card) => {
               const Icon = card.icon
               return (
                 <motion.div
                   key={card.title}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] p-5"
+                  initial={{ opacity: 0, y: 12, scale: 0.99 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+                  className="fp-card p-5"
                 >
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className={`w-10 h-10 rounded-xl ${card.bg} flex items-center justify-center`}>
-                      <Icon className={`w-5 h-5 ${card.color}`} />
-                    </div>
-                    <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">{card.title}</p>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon size={14} strokeWidth={1.5} className="text-[#8B89A0]" aria-hidden="true" />
+                    <span className="label-xs text-[#8B89A0]">{card.title}</span>
                   </div>
-                  <p className="font-sora text-lg font-semibold text-foreground">{card.value}</p>
+                  <p className="metric-value text-[#0F0E17] tabular-nums">{card.value}</p>
                 </motion.div>
               )
             })}
           </div>
 
-          {/* Budget cards with circular progress */}
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {/* Budget list items */}
+          <div className="space-y-3">
             {loading
               ? Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] p-6 h-56 animate-pulse">
-                    <div className="h-4 w-1/2 rounded bg-[hsl(var(--border))] mb-4" />
-                    <div className="h-8 w-2/3 rounded bg-[hsl(var(--border))] mb-6" />
-                    <div className="h-2.5 w-full rounded-full bg-[hsl(var(--border))]" />
+                  <div key={i} className="fp-card p-5 animate-pulse">
+                    <div className="h-4 w-1/2 rounded-full bg-[#F8F7FF] mb-4" />
+                    <div className="h-1.5 w-full rounded-full bg-[#F8F7FF] mb-2" />
+                    <div className="h-3 w-1/3 rounded-full bg-[#F8F7FF]" />
                   </div>
                 ))
               : budgets.length > 0
@@ -256,113 +250,74 @@ export default function BudgetsPage() {
                   const spent = budget.spent_this_month
                   const limit = budget.monthly_limit
                   const pct = limit > 0 ? Math.round((spent / limit) * 100) : 0
-                  const colorConfig = getProgressColor(pct)
                   const Icon = getCategoryIcon(budget.category)
-                  const StatusIcon = colorConfig.icon
-                  const circumference = 2 * Math.PI * 40
-                  const strokeDashoffset = circumference - (Math.min(pct, 100) / 100) * circumference
+                  const StatusIcon = getProgressColor(pct).icon
+
+                  // Progress bar color
+                  const barColor = pct >= 100 ? "#DC2626" : pct >= 75 ? "#D97706" : "#7C3AED"
 
                   return (
                     <motion.div
                       key={budget.id}
-                      initial={{ opacity: 0, scale: 0.96 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] p-6 flex flex-col"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+                      className="fp-card p-5"
                     >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center">
-                            <Icon className="w-6 h-6 text-[hsl(var(--primary))]" />
-                          </div>
-                          <div>
-                            <h3 className="font-jakarta font-semibold capitalize text-base text-foreground">{budget.category}</h3>
-                            <p className="text-xs text-muted-foreground">Limit: {formatCurrency(limit, currency)}</p>
-                          </div>
-                        </div>
-                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-semibold ${
-                          pct > 100 ? "bg-[var(--expense-bg)] text-[hsl(var(--expense))]" : pct >= 90 ? "bg-[var(--warning-bg)] text-[hsl(var(--warning))]" : "bg-[var(--income-bg)] text-[hsl(var(--income))]"
+                      {/* Row 1 */}
+                      <div className="flex items-center mb-3">
+                        <Icon size={16} strokeWidth={1.5} className="text-[#4B4963] mr-2.5" aria-hidden="true" />
+                        <span className="text-[15px] font-medium text-[#0F0E17] capitalize flex-1">{budget.category}</span>
+                        <div className={`fp-chip text-[10px] ${
+                          pct >= 100 ? "fp-chip-loss" : pct >= 75 ? "fp-chip-warn" : "fp-chip-gain"
                         }`}>
-                          <StatusIcon className="w-3.5 h-3.5" />
-                          {pct > 100 ? "Over" : pct >= 90 ? "Warning" : "On Track"}
+                          <StatusIcon size={10} aria-hidden="true" />
+                          {formatCurrency(spent, currency)} / {formatCurrency(limit, currency)}
                         </div>
-                      </div>
-
-                      {/* Circular Progress */}
-                      <div className="flex items-center justify-center mb-4">
-                        <div className="relative">
-                          <svg className="w-24 h-24 transform -rotate-90">
-                            <circle
-                              cx="48"
-                              cy="48"
-                              r="40"
-                              stroke="currentColor"
-                              strokeWidth="8"
-                              fill="none"
-                              className="text-[hsl(var(--border))]"
-                            />
-                            <motion.circle
-                              cx="48"
-                              cy="48"
-                              r="40"
-                              stroke="currentColor"
-                              strokeWidth="8"
-                              fill="none"
-                              className={colorConfig.text}
-                              strokeLinecap="round"
-                              initial={{ strokeDashoffset: circumference }}
-                              animate={{ strokeDashoffset }}
-                              transition={{ duration: 0.8, ease: "easeOut" }}
-                              style={{ strokeDasharray: circumference }}
-                            />
-                          </svg>
-                          <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <span className={`text-xl font-semibold ${colorConfig.text} font-sora`}>{pct}%</span>
-                            <span className="text-xs text-muted-foreground">used</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between text-xs mb-4">
-                        <span className="text-muted-foreground">Spent: {formatCurrency(spent, currency)}</span>
-                        <span className={pct > 100 ? "text-[hsl(var(--expense))] font-semibold" : "text-muted-foreground"}>
-                          {pct > 100 ? `Over by ${formatCurrency(spent - limit, currency)}` : `${formatCurrency(limit - spent, currency)} left`}
-                        </span>
-                      </div>
-
-                      {/* Quick Adjust */}
-                      <div className="flex items-center gap-2 mb-4">
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => openEditBudgetDialog({ ...budget, monthly_limit: budget.monthly_limit + 500 })}
-                          className="flex-1 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-[hsl(var(--muted))] rounded-xl"
+                          onClick={() => openEditBudgetDialog(budget)}
+                          className="ml-2 h-7 w-7 p-0 text-[#8B89A0] hover:text-[#0F0E17] hover:bg-[#F8F7FF] rounded-[8px]"
+                          aria-label={`Edit ${budget.category} budget`}
                         >
-                          +₹500
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openEditBudgetDialog({ ...budget, monthly_limit: Math.max(0, budget.monthly_limit - 500) })}
-                          className="flex-1 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-[hsl(var(--muted))] rounded-xl"
-                        >
-                          -₹500
+                          <Pencil size={13} strokeWidth={1.5} aria-hidden="true" />
                         </Button>
                       </div>
 
-                      <div className="mt-auto flex justify-end">
-                        <Button variant="ghost" size="sm" onClick={() => openEditBudgetDialog(budget)} className="text-xs gap-1.5 h-8 text-muted-foreground hover:text-foreground hover:bg-[hsl(var(--muted))] rounded-xl">
-                          <Pencil className="w-3.5 h-3.5" /> Edit
-                        </Button>
+                      {/* Row 2: Progress bar */}
+                      <div className="progress-bar mb-2">
+                        <motion.div
+                          className="progress-fill"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min(pct, 100)}%` }}
+                          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.1 }}
+                          style={{ backgroundColor: barColor }}
+                        />
                       </div>
+
+                      {/* Row 3 */}
+                      <p className="text-[12px] text-[#8B89A0] tabular-nums">
+                        {formatCurrency(spent, currency)} spent of {formatCurrency(limit, currency)}
+                        {pct >= 100
+                          ? <span className="text-[#DC2626]"> — Over by {formatCurrency(spent - limit, currency)}</span>
+                          : <span> — {formatCurrency(limit - spent, currency)} remaining</span>
+                        }
+                      </p>
                     </motion.div>
                   )
                 })
               : (
-                <div className="col-span-3 bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] p-12 text-center border-dashed border-[hsl(var(--border-strong))]">
-                  <Wallet className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="font-jakarta font-semibold text-lg mb-2 text-foreground">No budgets yet</h3>
-                  <p className="text-sm text-muted-foreground mb-4">Set monthly limits for categories to track your spending.</p>
-                  <Button onClick={() => openAddBudgetDialog()} className="rounded-xl">Create First Budget</Button>
+                <div className="fp-card p-12 text-center">
+                  <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="mx-auto mb-4" aria-hidden="true">
+                    <rect x="10" y="20" width="44" height="30" rx="4" fill="#EDE9FE" />
+                    <rect x="10" y="20" width="44" height="8" rx="4" fill="#C4B5FD" />
+                    <rect x="18" y="34" width="20" height="3" rx="1.5" fill="#DDD6FE" />
+                    <rect x="18" y="40" width="28" height="3" rx="1.5" fill="#DDD6FE" />
+                  </svg>
+                  <p className="text-[15px] font-medium text-[#0F0E17] mb-1">No budgets yet</p>
+                  <p className="text-[13px] text-[#8B89A0] mb-4">Set monthly limits for categories to track spending.</p>
+                  <Button onClick={() => openAddBudgetDialog()} className="rounded-[10px] bg-[#7C3AED] hover:bg-[#6D28D9] text-white">Create First Budget</Button>
                 </div>
               )}
           </div>
@@ -370,27 +325,28 @@ export default function BudgetsPage() {
           {/* Unbudgeted expenses */}
           {unbudgeted.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] p-6"
+              className="fp-card p-5"
             >
-              <h3 className="font-jakarta font-semibold text-base mb-1 text-foreground">Uncategorized Expenses</h3>
-              <p className="text-xs text-muted-foreground mb-4">These categories have spending but no budget set.</p>
+              <h2 className="text-[15px] font-medium text-[#0F0E17] mb-0.5">Unbudgeted Categories</h2>
+              <p className="text-[12px] text-[#8B89A0] mb-4">These categories have spending but no budget set.</p>
               <div className="space-y-2">
                 {unbudgeted.map((item) => {
                   const Icon = getCategoryIcon(item.category)
                   return (
-                    <div key={item.category} className="flex items-center justify-between rounded-xl bg-[hsl(var(--muted))] px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[hsl(var(--border))] flex items-center justify-center">
-                          <Icon className="w-5 h-5 text-muted-foreground" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold capitalize text-foreground">{item.category}</p>
-                          <p className="text-xs text-muted-foreground">{formatCurrency(item.amount, currency)} across {item.count} expense{item.count > 1 ? "s" : ""}</p>
-                        </div>
+                    <div key={item.category} className="flex items-center gap-3 py-2.5 border-b border-[rgba(0,0,0,0.05)] last:border-0">
+                      <Icon size={14} strokeWidth={1.5} className="text-[#8B89A0] flex-shrink-0" aria-hidden="true" />
+                      <div className="flex-1">
+                        <p className="text-[14px] font-medium capitalize text-[#0F0E17]">{item.category}</p>
+                        <p className="text-[12px] text-[#8B89A0] tabular-nums">{formatCurrency(item.amount, currency)} · {item.count} transaction{item.count > 1 ? "s" : ""}</p>
                       </div>
-                      <Button variant="ghost" size="sm" onClick={() => openAddBudgetDialog(item.category)} className="text-xs h-8 text-muted-foreground hover:text-foreground hover:bg-[hsl(var(--border))] rounded-xl">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openAddBudgetDialog(item.category)}
+                        className="h-7 px-3 text-[12px] text-[#7C3AED] hover:bg-[#F5F3FF] hover:text-[#6D28D9] rounded-[8px] font-medium"
+                      >
                         + Budget
                       </Button>
                     </div>
@@ -399,11 +355,10 @@ export default function BudgetsPage() {
               </div>
             </motion.div>
           )}
-        </div>
 
         {/* Dialog */}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] sm:max-w-md">
+          <DialogContent className="bg-white rounded-[20px] border border-[rgba(0,0,0,0.06)] sm:max-w-md" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)" }}>
             <DialogHeader>
               <DialogTitle className="font-jakarta font-semibold text-foreground">{activeBudget ? "Edit Budget" : "Add Budget"}</DialogTitle>
               <DialogDescription className="text-muted-foreground">Set a monthly spending limit for a category.</DialogDescription>
@@ -457,16 +412,16 @@ export default function BudgetsPage() {
 
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>
-          <AlertDialogContent className="bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)]">
+          <AlertDialogContent className="bg-white rounded-[20px] border border-[rgba(0,0,0,0.06)]" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)" }}>
             <AlertDialogHeader>
-              <AlertDialogTitle className="font-jakarta font-semibold text-foreground">Delete Budget</AlertDialogTitle>
-              <AlertDialogDescription className="text-muted-foreground">
+              <AlertDialogTitle className="text-[16px] font-medium text-[#0F0E17]">Delete Budget</AlertDialogTitle>
+              <AlertDialogDescription className="text-[13px] text-[#4B4963]">
                 Are you sure you want to delete this budget? Your spending analytics will not be affected, but the limit will be removed.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="bg-[hsl(var(--muted))] hover:bg-[hsl(var(--border))] text-muted-foreground hover:text-foreground rounded-xl">Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteConfirm} className="bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))] hover:bg-[hsl(var(--destructive))]/90 rounded-xl" disabled={deleting}>
+              <AlertDialogCancel className="rounded-[10px] border-[rgba(0,0,0,0.10)] text-[#4B4963] hover:bg-[#F8F7FF]">Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteConfirm} className="rounded-[10px] bg-[#DC2626] text-white hover:bg-[#b91c1c]" disabled={deleting}>
                 {deleting ? "Deleting…" : "Delete Budget"}
               </AlertDialogAction>
             </AlertDialogFooter>

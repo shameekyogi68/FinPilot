@@ -8,9 +8,8 @@ import {
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { useProfile } from "@/hooks/useProfile"
 import { formatCurrency } from "@/lib/utils/currency"
-import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
-import { TrendingUp, BarChart2, Sparkles, Calendar, PieChart } from "lucide-react"
+import { TrendingUp, BarChart2, Calendar, PieChart } from "lucide-react"
 
 const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 
@@ -32,13 +31,13 @@ interface ChartTooltipProps {
 function ChartTooltip({ active, payload, label, currency }: ChartTooltipProps) {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-card rounded-2xl px-4 py-3 shadow-lg border border-[hsl(var(--border))]">
-      <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-2">{label}</p>
+    <div className="bg-white rounded-[10px] px-4 py-3 min-w-[160px]" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)" }}>
+      <p className="label-xs text-[#8B89A0] mb-2">{label}</p>
       {payload.map((p) => (
-        <div key={p.dataKey} className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.1em]">
-          <span className="w-2 h-2 rounded-full" style={{ background: p.color }} />
-          <span className="capitalize text-muted-foreground">{p.dataKey}:</span>
-          <span className="font-medium font-sora text-foreground">{formatCurrency(Number(p.value), currency)}</span>
+        <div key={p.dataKey} className="flex items-center gap-2 text-[12px]">
+          <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: p.color }} />
+          <span className="capitalize text-[#8B89A0]">{p.dataKey}:</span>
+          <span className="font-medium text-[#0F0E17] tabular-nums">{formatCurrency(Number(p.value), currency)}</span>
         </div>
       ))}
     </div>
@@ -93,48 +92,41 @@ export default function AnalyticsPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl space-y-6">
+      <div className="min-h-screen space-y-6">
 
-          {/* Header */}
+          {/* ── Page Header ── */}
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+            className="flex flex-wrap items-center justify-between gap-3"
           >
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
-                <span className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">Analytics</span>
-              </div>
-              <h1 className="font-display text-2xl font-semibold text-foreground">
-                Spending <span className="text-[hsl(var(--primary))]">trends & insights</span>
-              </h1>
+            <div>
+              <h1 className="text-[22px] font-medium text-[#0F0E17] leading-tight">Analytics</h1>
+              <p className="text-[14px] text-[#8B89A0] mt-0.5">Spending trends and monthly breakdowns</p>
             </div>
-
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2">
               <select
                 value={month}
                 onChange={(e) => setMonth(Number(e.target.value))}
-                className="bg-[hsl(var(--muted))] border-[hsl(var(--border))] rounded-xl px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.1em] outline-none text-foreground"
+                className="h-9 px-3 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-white text-[13px] text-[#4B4963] font-medium outline-none hover:border-[rgba(0,0,0,0.14)] transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
               >
                 {monthNames.map((n, i) => <option key={n} value={i + 1}>{n}</option>)}
               </select>
               <select
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
-                className="bg-[hsl(var(--muted))] border-[hsl(var(--border))] rounded-xl px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.1em] outline-none text-foreground"
+                className="h-9 px-3 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-white text-[13px] text-[#4B4963] font-medium outline-none hover:border-[rgba(0,0,0,0.14)] transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
               >
                 {yearOptions.map((y) => <option key={y} value={y}>{y}</option>)}
               </select>
-              <Button
+              <button
                 onClick={() => fetchAnalytics(month, year)}
                 disabled={loading}
-                size="sm"
-                className="rounded-xl"
+                className="h-9 px-3 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-white text-[13px] text-[#4B4963] font-medium hover:border-[rgba(0,0,0,0.14)] hover:text-[#0F0E17] transition-all duration-150 disabled:opacity-50"
               >
                 {loading ? "Loading…" : "Refresh"}
-              </Button>
+              </button>
             </div>
           </motion.div>
 
@@ -142,28 +134,28 @@ export default function AnalyticsPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-card border border-[hsl(var(--destructive-border))] rounded-2xl p-5 text-[hsl(var(--destructive))] text-sm shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)]"
+              className="rounded-[10px] bg-[#FEF2F2] border border-[rgba(220,38,38,0.15)] p-4 text-[#DC2626] text-[13px]"
             >
-              <p className="font-jakarta font-semibold">Unable to load analytics</p>
-              <p>{error}</p>
+              <p className="font-medium">Unable to load analytics</p>
+              <p className="opacity-75">{error}</p>
             </motion.div>
           )}
 
           {/* Monthly Summary + Category Breakdown */}
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-5 lg:grid-cols-2">
             {/* Summary metrics */}
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <TrendingUp className="w-5 h-5 text-[hsl(var(--primary))]" />
-                <h2 className="font-jakarta font-semibold text-base text-foreground">Monthly Summary</h2>
-                {data && <span className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground ml-auto">{data.monthlySummary.monthLabel}</span>}
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
+              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+                <TrendingUp size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
+                <h2 className="text-[15px] font-medium text-[#0F0E17]">Monthly Summary</h2>
+                {data && <span className="text-[12px] text-[#8B89A0] ml-auto">{data.monthlySummary.monthLabel}</span>}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {summaryMetrics.map((m) => (
-                  <div key={m.label} className="bg-[hsl(var(--muted))] rounded-xl p-4">
-                    <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-1">{m.label}</p>
-                    <p className={`font-sora text-lg font-semibold ${m.color}`}>
-                      {loading ? <span className="inline-block w-20 h-5 rounded bg-[hsl(var(--border))] animate-pulse" /> : m.value}
+                  <div key={m.label} className="rounded-[10px] p-4" style={{ background: "#F8F7FF" }}>
+                    <p className="label-xs text-[#8B89A0] mb-1.5">{m.label}</p>
+                    <p className={`text-[18px] font-medium tabular-nums ${m.color}`}>
+                      {loading ? <span className="inline-block w-20 h-5 rounded-[6px] bg-[rgba(0,0,0,0.06)] animate-pulse" /> : m.value}
                     </p>
                   </div>
                 ))}
@@ -171,43 +163,43 @@ export default function AnalyticsPage() {
             </motion.div>
 
             {/* Category breakdown with horizontal bars */}
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <PieChart className="w-5 h-5 text-[hsl(var(--primary))]" />
-                <h2 className="font-jakarta font-semibold text-base text-foreground">Category Breakdown</h2>
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
+              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+                <PieChart size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
+                <h2 className="text-[15px] font-medium text-[#0F0E17]">Category Breakdown</h2>
               </div>
               {loading || !data ? (
                 <div className="space-y-3">
                   {[80, 60, 70, 50, 40].map((w, i) => (
-                    <div key={i} className="h-12 rounded-xl bg-[hsl(var(--border))] animate-pulse" style={{ width: `${w}%` }} />
+                    <div key={i} className="h-8 rounded-[8px] bg-[#F8F7FF] animate-pulse" style={{ width: `${w}%` }} />
                   ))}
                 </div>
               ) : data.categoryBreakdown.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No spending data this month.</p>
+                <p className="text-[13px] text-[#8B89A0]">No spending data this month.</p>
               ) : (
                 <div className="space-y-3">
                   {data.categoryBreakdown.slice(0, 5).map((cat, i) => {
                     const total = data.categoryBreakdown.reduce((s, c) => s + c.amount, 0)
                     const pct = total > 0 ? ((cat.amount / total) * 100).toFixed(0) : "0"
-                    const COLORS = ["#c26b48", "#4caf82", "#f59e0b", "#e06b6b", "#6b7280"]
+                    const COLORS = ["#7C3AED", "#059669", "#D97706", "#06B6D4", "#EC4899"]
                     const color = COLORS[i % COLORS.length]
                     return (
                       <div key={cat.category} className="space-y-1.5">
-                        <div className="flex items-center justify-between text-[10px] font-semibold tracking-[0.1em] uppercase">
+                        <div className="flex items-center justify-between text-[12px]">
                           <div className="flex items-center gap-2">
-                            <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color }} />
-                            <span className="capitalize font-medium text-foreground">{cat.category}</span>
+                            <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
+                            <span className="capitalize text-[#4B4963] font-medium">{cat.category}</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground">{pct}%</span>
-                            <span className="font-medium font-sora text-foreground">{formatCurrency(cat.amount, currency)}</span>
+                          <div className="flex items-center gap-3">
+                            <span className="text-[#8B89A0] tabular-nums">{pct}%</span>
+                            <span className="font-medium text-[#0F0E17] tabular-nums">{formatCurrency(cat.amount, currency)}</span>
                           </div>
                         </div>
-                        <div className="h-2 rounded-full bg-[hsl(var(--border))] overflow-hidden">
+                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.06)" }}>
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${pct}%` }}
-                            transition={{ duration: 0.8, delay: i * 0.1 }}
+                            transition={{ duration: 0.8, delay: i * 0.1, ease: [0.25, 0.46, 0.45, 0.94] as const }}
                             className="h-full rounded-full"
                             style={{ background: color }}
                           />
@@ -221,10 +213,10 @@ export default function AnalyticsPage() {
           </div>
 
           {/* 6-month area chart */}
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
-            <div className="flex items-center gap-2 mb-5">
-              <TrendingUp className="w-5 h-5 text-[hsl(var(--income))]" />
-              <h2 className="font-display font-medium text-base text-foreground">6-Month Income vs Expenses</h2>
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
+            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+              <TrendingUp size={15} strokeWidth={1.5} className="text-[#059669]" aria-hidden="true" />
+              <h2 className="text-[15px] font-medium text-[#0F0E17]">6-Month Income vs Expenses</h2>
             </div>
             <div className="h-72">
               {loading || !data ? (
@@ -268,10 +260,10 @@ export default function AnalyticsPage() {
           </motion.div>
 
           {/* Yearly bar chart */}
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
-            <div className="flex items-center gap-2 mb-5">
-              <BarChart2 className="w-5 h-5 text-[hsl(var(--primary))]" />
-              <h2 className="font-jakarta font-semibold text-base text-foreground">Yearly Expense Trend ({year})</h2>
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
+            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+              <BarChart2 size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
+              <h2 className="text-[15px] font-medium text-[#0F0E17]">Yearly Expense Trend ({year})</h2>
             </div>
             <div className="h-64">
               {loading || !data ? (
@@ -310,10 +302,10 @@ export default function AnalyticsPage() {
           </motion.div>
 
           {/* Daily spending heatmap */}
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Calendar className="w-5 h-5 text-[hsl(var(--primary))]" />
-              <h2 className="font-jakarta font-semibold text-base text-foreground">Daily Spending Heatmap</h2>
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
+            <div className="flex items-center gap-2 mb-4 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+              <Calendar size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
+              <h2 className="text-[15px] font-medium text-[#0F0E17]">Daily Spending Heatmap</h2>
             </div>
             {loading || !data ? (
               <div className="h-40 w-full rounded-2xl bg-[hsl(var(--muted))] animate-pulse" />
@@ -362,7 +354,6 @@ export default function AnalyticsPage() {
               </div>
             )}
           </motion.div>
-        </div>
       </div>
     </ErrorBoundary>
   )

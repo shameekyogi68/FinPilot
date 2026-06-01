@@ -6,12 +6,18 @@ import { AIInsightCard } from "@/components/dashboard/AIInsightCard"
 import { ExpenseChart, type ExpenseCategorySlice } from "@/components/dashboard/ExpenseChart"
 import { RecentTransactionsWidget, type RecentTransaction } from "@/components/dashboard/RecentTransactionsWidget"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
-import { Toaster } from "@/components/ui/sonner"
+import { motion } from "framer-motion"
+import { RefreshCw, CalendarDays } from "lucide-react"
 
 type DashboardState = {
   metrics: DashboardMetrics | null
   expenseData: ExpenseCategorySlice[] | null
   recentTransactions: RecentTransaction[] | null
+}
+
+const pageVariants = {
+  initial:  { opacity: 0, y: 8 },
+  animate:  { opacity: 1, y: 0, transition: { duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const } },
 }
 
 export default function Home() {
@@ -22,68 +28,146 @@ export default function Home() {
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
 
-  useEffect(() => {
-    const metricsPromise = fetch("/api/dashboard/metrics").then(async (res) => {
-      if (!res.ok) throw new Error((await res.json()).error || "Failed to load metrics")
-      return res.json()
-    })
+  const fetchAll = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const [metrics, expenseData, recentTransactions] = await Promise.all([
+        fetch("/api/dashboard/metrics").then(async (r) => {
+          if (!r.ok) throw new Error((await r.json()).error || "Failed")
+          return r.json()
+        }),
+        fetch("/api/dashboard/expenses").then(async (r) => {
+          if (!r.ok) throw new Error((await r.json()).error || "Failed")
+          return r.json()
+        }),
+        fetch("/api/transactions?limit=5").then(async (r) => {
+          if (!r.ok) throw new Error((await r.json()).error || "Failed")
+          return r.json()
+        }),
+      ])
+      setState({ metrics, expenseData, recentTransactions })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to load dashboard")
+    } finally {
+      setLoading(false)
+    }
+  }
 
-    const expensePromise = fetch("/api/dashboard/expenses").then(async (res) => {
-      if (!res.ok) throw new Error((await res.json()).error || "Failed to load expenses")
-      return res.json()
-    })
+  useEffect(() => { fetchAll() }, [])
 
-    const recentPromise = fetch("/api/transactions?limit=5").then(async (res) => {
-      if (!res.ok) throw new Error((await res.json()).error || "Failed to load transactions")
-      return res.json()
-    })
-
-    Promise.all([metricsPromise, expensePromise, recentPromise])
-      .then(([metrics, expenseData, recentTransactions]) => {
-        setState({ metrics, expenseData, recentTransactions })
-      })
-      .catch((err) => {
-        console.error(err)
-        setError(err?.message ?? "Unable to load dashboard")
-      })
-      .finally(() => setLoading(false))
-  }, [])
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await fetchAll()
+    setRefreshing(false)
+  }
 
   const currentMonth = useMemo(() => {
     const now = new Date()
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
   }, [])
 
+  const dateLabel = useMemo(() => {
+    const now = new Date()
+    return now.toLocaleDateString("en-IN", { month: "long", year: "numeric" })
+  }, [])
+
+  const netWorth = state.metrics?.currentBalance ?? null
+
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-slate-50 py-10 px-4 dark:bg-slate-950 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl space-y-8">
-          <header className="rounded-3xl border border-border bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Dashboard</p>
-              <h1 className="mt-3 text-3xl font-semibold text-slate-950 dark:text-white">Shameek Yogi's Financial Overview</h1>
-              <p className="mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
-                Monitor your balance, income, expenses, and recent activity in one place.
-              </p>
-            </div>
-            </div>
-        </header>
+      <motion.div
+        variants={pageVariants}
+        initial="initial"
+        animate="animate"
+        className="space-y-6"
+      >
+        {/* ── Top bar ── */}
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-[22px] font-medium text-[#0F0E17] leading-tight">
+              Good morning, Shameek
+            </h1>
+            <p className="text-[14px] text-[#8B89A0] mt-0.5 font-variant-tabular">
+              {dateLabel}
+              {netWorth !== null && (
+                <>
+                  {" · "}
+                  <span className="tabular-nums">
+                    {netWorth.toLocaleString("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 })}
+                  </span>
+                  {" net worth"}
+                </>
+              )}
+            </p>
+          </div>
 
-        <ErrorBoundary fallback={<div className="rounded-3xl border border-destructive/20 bg-destructive/10 p-8 text-destructive">Unable to render dashboard.</div>}>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Refresh */}
+            <button
+              onClick={handleRefresh}
+              disabled={loading || refreshing}
+              aria-label="Refresh dashboard data"
+              className="w-9 h-9 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-white flex items-center justify-center text-[#8B89A0] hover:text-[#0F0E17] hover:border-[rgba(0,0,0,0.14)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2"
+            >
+              <RefreshCw
+                size={16}
+                strokeWidth={1.5}
+                className={(loading || refreshing) ? "animate-spin" : ""}
+                aria-hidden="true"
+              />
+            </button>
+
+            {/* Date chip */}
+            <div className="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-white text-[13px] text-[#4B4963] font-medium">
+              <CalendarDays size={14} strokeWidth={1.5} className="text-[#8B89A0]" aria-hidden="true" />
+              {new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Metrics ── */}
+        <ErrorBoundary
+          fallback={
+            <div className="rounded-[14px] border border-red-100 bg-red-50 p-5 text-red-600 text-sm">
+              Unable to render dashboard metrics.
+            </div>
+          }
+        >
           <MetricsCards data={state.metrics} loading={loading} error={error} />
         </ErrorBoundary>
 
-        <ErrorBoundary fallback={<div className="rounded-3xl border border-destructive/20 bg-destructive/10 p-8 text-destructive">Unable to render AI insights.</div>}>
+        {/* ── AI Insights ── */}
+        <ErrorBoundary
+          fallback={
+            <div className="rounded-[14px] border border-red-100 bg-red-50 p-5 text-red-600 text-sm">
+              Unable to render AI insights.
+            </div>
+          }
+        >
           <AIInsightCard month={currentMonth} />
         </ErrorBoundary>
 
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-[40%_60%]">
-          <ErrorBoundary fallback={<div className="rounded-3xl border border-destructive/20 bg-destructive/10 p-8 text-destructive">Unable to render chart.</div>}>
+        {/* ── Charts + Transactions ── */}
+        <div className="grid gap-5 md:grid-cols-[40%_60%]">
+          <ErrorBoundary
+            fallback={
+              <div className="rounded-[14px] border border-red-100 bg-red-50 p-5 text-red-600 text-sm">
+                Unable to render chart.
+              </div>
+            }
+          >
             <ExpenseChart data={state.expenseData} loading={loading} error={error} />
           </ErrorBoundary>
-          <ErrorBoundary fallback={<div className="rounded-3xl border border-destructive/20 bg-destructive/10 p-8 text-destructive">Unable to render recent transactions.</div>}>
+          <ErrorBoundary
+            fallback={
+              <div className="rounded-[14px] border border-red-100 bg-red-50 p-5 text-red-600 text-sm">
+                Unable to render recent transactions.
+              </div>
+            }
+          >
             <RecentTransactionsWidget
               transactions={state.recentTransactions}
               loading={loading}
@@ -91,9 +175,7 @@ export default function Home() {
             />
           </ErrorBoundary>
         </div>
-        </div>
-        <Toaster />
-      </div>
+      </motion.div>
     </ErrorBoundary>
   )
 }

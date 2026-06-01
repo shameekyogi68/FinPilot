@@ -17,15 +17,16 @@ type ExpenseChartProps = {
   error: string | null
 }
 
+// Spec colors — no plain blue
 const CHART_COLORS = [
-  "#D4AF37", // gold
-  "#8B5CF6", // violet
-  "#22C55E", // emerald
-  "#F59E0B", // amber
-  "#3B82F6", // blue
+  "#7C3AED", // brand-600
+  "#059669", // gain
+  "#D97706", // warn
+  "#06B6D4", // cyan
   "#EC4899", // pink
-  "#14B8A6", // teal
-  "#6366F1", // indigo
+  "#8B5CF6", // brand-500
+  "#10B981", // emerald
+  "#64748B", // slate
 ]
 
 interface CustomTooltipProps {
@@ -34,17 +35,19 @@ interface CustomTooltipProps {
 }
 
 function CustomTooltip({ active, payload }: CustomTooltipProps) {
-  if (!active || !payload?.length) return null
   const { profile } = useProfile()
   const currency = profile?.currency ?? "INR"
+
+  if (!active || !payload?.length) return null
   const item = payload[0]
 
   return (
-    <div className="bg-card border border-[hsl(var(--border))] rounded-xl px-4 py-3 shadow-[0_4px_20px_rgba(0,0,0,0.09)] min-w-[140px]">
-      <p className="text-[10px] font-semibold text-muted-foreground tracking-[0.1em] uppercase mb-1">
-        {item.name}
-      </p>
-      <p className="font-sora text-sm font-semibold text-foreground">
+    <div
+      className="bg-white rounded-[10px] px-4 py-3 min-w-[140px]"
+      style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)" }}
+    >
+      <p className="label-xs text-[#8B89A0] mb-1">{item.name}</p>
+      <p className="text-[14px] font-medium text-[#0F0E17] tabular-nums">
         {formatCurrency(item.value, currency)}
       </p>
     </div>
@@ -57,9 +60,9 @@ export function ExpenseChart({ data, loading, error }: ExpenseChartProps) {
 
   if (error) {
     return (
-      <div className="bg-card rounded-2xl p-6 border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)]">
-        <h3 className="font-jakarta font-semibold text-base mb-4 text-foreground">Expenses by Category</h3>
-        <div className="text-sm text-[hsl(var(--destructive))]">{error}</div>
+      <div className="fp-card p-6">
+        <h2 className="text-[15px] font-medium text-[#0F0E17] mb-4">Expenses by Category</h2>
+        <div className="text-[13px] text-[#DC2626]">{error}</div>
       </div>
     )
   }
@@ -68,47 +71,49 @@ export function ExpenseChart({ data, loading, error }: ExpenseChartProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 30 }}
-      className="bg-card rounded-2xl p-6 border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] h-full flex flex-col relative overflow-hidden"
+      initial={{ opacity: 0, y: 12, scale: 0.99 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: 0.1, duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+      className="fp-card p-6 h-full flex flex-col"
     >
-      <div className="relative z-10 flex items-center gap-2 mb-6">
-        <div className="w-10 h-10 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center">
-          <BarChart3 className="w-5 h-5 text-[hsl(var(--primary))]" />
-        </div>
-        <div>
-          <h3 className="font-jakarta font-semibold text-base leading-tight text-foreground">Expenses by Category</h3>
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+        <BarChart3 size={16} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
+        <div className="flex-1">
+          <h2 className="text-[15px] font-medium text-[#0F0E17] leading-tight">Expenses by Category</h2>
           {!loading && data && data.length > 0 && (
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-[12px] text-[#8B89A0] mt-0.5 tabular-nums">
               Total: {formatCurrency(totalExpenses, currency)}
             </p>
           )}
         </div>
       </div>
 
-      <div className="flex-1 relative z-10">
+      <div className="flex-1">
         {loading ? (
-          <div className="flex flex-col gap-4 py-6">
-            <div className="h-44 w-full rounded-xl bg-[hsl(var(--muted))] animate-pulse shimmer" />
-            <div className="space-y-3 w-full mt-4">
-              {[80, 60, 70, 50].map((w, i) => (
-                <div
-                  key={i}
-                  className="h-3 rounded-full bg-[hsl(var(--muted))] animate-pulse"
-                  style={{ width: `${w}%` }}
-                />
-              ))}
-            </div>
+          <div className="space-y-3 py-2">
+            <div className="h-48 w-full rounded-[10px] bg-[#F8F7FF] animate-pulse" />
+            {[80, 60, 70, 50].map((w, i) => (
+              <div key={i} className="h-2.5 rounded-full bg-[#F8F7FF] animate-pulse" style={{ width: `${w}%` }} />
+            ))}
           </div>
         ) : !data || data.length === 0 ? (
-          <div className="flex h-[18rem] items-center justify-center rounded-2xl border-dashed border-[hsl(var(--border-strong))] bg-card p-8 text-center">
+          <div className="flex flex-1 items-center justify-center py-12 text-center">
             <div>
-              <div className="mx-auto w-14 h-14 rounded-2xl bg-[hsl(var(--muted))] flex items-center justify-center mb-4">
-                <BarChart3 className="w-6 h-6 text-muted-foreground" />
-              </div>
-              <p className="text-sm font-semibold text-foreground mb-1">No expenses this month</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">Add transactions to see the breakdown</p>
+              {/* Abstract SVG geometric illustration */}
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="mx-auto mb-4" aria-hidden="true">
+                <rect x="8" y="32" width="12" height="24" rx="3" fill="#EDE9FE" />
+                <rect x="26" y="20" width="12" height="36" rx="3" fill="#DDD6FE" />
+                <rect x="44" y="12" width="12" height="44" rx="3" fill="#C4B5FD" />
+                <rect x="8" y="30" width="48" height="2" rx="1" fill="#8B89A0" opacity="0.2" />
+              </svg>
+              <p className="text-[14px] text-[#4B4963]">No expenses this month</p>
+              <a
+                href="/transactions"
+                className="text-[13px] text-[#7C3AED] underline mt-1.5 inline-block hover:text-[#6D28D9] transition-colors focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 rounded-[4px]"
+              >
+                Add your first transaction
+              </a>
             </div>
           </div>
         ) : (
@@ -118,19 +123,26 @@ export function ExpenseChart({ data, loading, error }: ExpenseChartProps) {
                 <BarChart
                   data={data}
                   layout="vertical"
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                  margin={{ top: 5, right: 32, left: 16, bottom: 5 }}
                 >
                   <XAxis type="number" hide />
                   <YAxis
                     type="category"
                     dataKey="category"
-                    width={100}
-                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11, fontFamily: "Plus Jakarta Sans" }}
+                    width={90}
+                    tick={{
+                      fill: "#8B89A0",
+                      fontSize: 12,
+                      fontFamily: "Inter var, Inter, system-ui, sans-serif",
+                    }}
                     axisLine={false}
                     tickLine={false}
                   />
-                  <Tooltip content={<CustomTooltip />} cursor={{ fill: "transparent" }} />
-                  <Bar dataKey="amount" radius={[0, 4, 4, 0]} barSize={24}>
+                  <Tooltip
+                    content={<CustomTooltip />}
+                    cursor={{ fill: "rgba(0,0,0,0.03)" }}
+                  />
+                  <Bar dataKey="amount" radius={[0, 6, 6, 0]} barSize={22}>
                     {data.map((entry, index) => (
                       <Cell
                         key={entry.category}
@@ -142,30 +154,30 @@ export function ExpenseChart({ data, loading, error }: ExpenseChartProps) {
               </ResponsiveContainer>
             </div>
 
-            {/* Legend */}
-            <div className="space-y-1.5 mt-2">
+            {/* Category legend rows */}
+            <div className="space-y-1 mt-1">
               {data.slice(0, 5).map((entry, index) => {
                 const pct = totalExpenses > 0 ? ((entry.amount / totalExpenses) * 100).toFixed(0) : "0"
                 return (
-                  <div key={entry.category} className="flex items-center justify-between text-xs py-1">
+                  <div key={entry.category} className="flex items-center justify-between text-[12px] py-1">
                     <div className="flex items-center gap-2">
                       <span
-                        className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-sm"
+                        className="w-2 h-2 rounded-full flex-shrink-0"
                         style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
                       />
-                      <span className="text-muted-foreground capitalize font-medium">
-                        {entry.category}
-                      </span>
+                      <span className="text-[#4B4963] capitalize">{entry.category}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground/70">{pct}%</span>
-                      <span className="font-sora font-semibold text-foreground">{formatCurrency(entry.amount, currency)}</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[#8B89A0] tabular-nums">{pct}%</span>
+                      <span className="font-medium text-[#0F0E17] tabular-nums">
+                        {formatCurrency(entry.amount, currency)}
+                      </span>
                     </div>
                   </div>
                 )
               })}
               {data.length > 5 && (
-                <p className="text-xs text-muted-foreground/70 text-center pt-2">
+                <p className="text-[11px] text-[#8B89A0] text-center pt-1">
                   +{data.length - 5} more categories
                 </p>
               )}

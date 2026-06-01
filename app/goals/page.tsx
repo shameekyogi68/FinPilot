@@ -6,7 +6,7 @@ import { formatCurrency } from "@/lib/utils/currency"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   AlertDialog,
@@ -19,7 +19,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
-import { Trash2, TrendingUp, Plus, Target, Calendar, Sparkles, Trophy, Edit2, PieChart } from "lucide-react"
+import { Trash2, Plus, Target, Calendar, Trophy, Edit2, PieChart } from "lucide-react"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 type Goal = {
@@ -180,60 +180,58 @@ export default function GoalsPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl space-y-6">
+      <div className="min-h-screen space-y-6">
 
-          {/* Header */}
+          {/* ── Page Header ── */}
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+            className="flex items-center justify-between"
           >
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
-                <span className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">Financial Goals</span>
-              </div>
-              <h1 className="font-display text-2xl font-semibold text-foreground">
-                Track your <span className="text-[hsl(var(--primary))]">milestones</span>
-              </h1>
+            <div>
+              <h1 className="text-[22px] font-medium text-[#0F0E17] leading-tight">Financial Goals</h1>
+              <p className="text-[14px] text-[#8B89A0] mt-0.5">Track milestones toward your financial future</p>
             </div>
-
             <Dialog open={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) setEditId(null) }}>
               <DialogTrigger asChild>
-                <Button onClick={openCreate} className="gap-2 rounded-xl">
-                  <Plus className="h-4 w-4" /> New Goal
+                <Button
+                  onClick={openCreate}
+                  variant="outline"
+                  className="gap-1.5 h-9 px-3 rounded-[10px] border-[rgba(124,58,237,0.3)] text-[#7C3AED] text-[13px] font-medium hover:bg-[#F5F3FF] hover:border-[#7C3AED] transition-all duration-150"
+                >
+                  <Plus className="h-3.5 w-3.5" strokeWidth={1.5} /> New Goal
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] sm:max-w-md">
+              <DialogContent className="bg-white rounded-[20px] border border-[rgba(0,0,0,0.06)] sm:max-w-md" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)" }}>
                 <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2 font-jakarta font-semibold text-foreground">
-                    <Target className="w-4 h-4 text-[hsl(var(--primary))]" /> {editId ? "Edit Goal" : "Create New Goal"}
+                  <DialogTitle className="flex items-center gap-2 text-[16px] font-medium text-[#0F0E17]">
+                    <Target size={16} strokeWidth={1.5} className="text-[#7C3AED]" /> {editId ? "Edit Goal" : "Create New Goal"}
                   </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleCreate} className="space-y-4 pt-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="goal-name" className="text-sm text-muted-foreground">Goal Name</Label>
-                    <Input id="goal-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Emergency Fund, New Laptop, Trip to Goa" required className="bg-[hsl(var(--muted))] border-[hsl(var(--border))]" />
+                    <label htmlFor="goal-name" className="block text-[12px] font-medium text-[#4B4963]">Goal Name</label>
+                    <input id="goal-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Emergency Fund, New Laptop, Trip to Goa" required className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#0F0E17] bg-white outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <Label htmlFor="goal-target" className="text-sm text-muted-foreground">Target Amount (₹)</Label>
-                      <Input id="goal-target" type="number" step="1" value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} required className="bg-[hsl(var(--muted))] border-[hsl(var(--border))]" placeholder="50000" />
+                      <label htmlFor="goal-target" className="block text-[12px] font-medium text-[#4B4963]">Target Amount (₹)</label>
+                      <input id="goal-target" type="number" step="1" value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} required className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#0F0E17] bg-white outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]" placeholder="50000" />
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="goal-current" className="text-sm text-muted-foreground">Already Saved (₹)</Label>
-                      <Input id="goal-current" type="number" step="1" value={currentAmount} onChange={(e) => setCurrentAmount(e.target.value)} className="bg-[hsl(var(--muted))] border-[hsl(var(--border))]" placeholder="0" />
+                      <label htmlFor="goal-current" className="block text-[12px] font-medium text-[#4B4963]">Already Saved (₹)</label>
+                      <input id="goal-current" type="number" step="1" value={currentAmount} onChange={(e) => setCurrentAmount(e.target.value)} className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#0F0E17] bg-white outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]" placeholder="0" />
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="goal-deadline" className="text-sm text-muted-foreground">Target Date (Optional)</Label>
-                    <Input id="goal-deadline" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="bg-[hsl(var(--muted))] border-[hsl(var(--border))]" />
+                    <label htmlFor="goal-deadline" className="block text-[12px] font-medium text-[#4B4963]">Target Date <span className="text-[#8B89A0] font-normal">(Optional)</span></label>
+                    <input id="goal-deadline" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#0F0E17] bg-white outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]" />
                   </div>
                   <div className="flex gap-2 pt-2">
-                    <Button type="submit" className="flex-1 rounded-xl">
+                    <button type="submit" className="flex-1 h-12 rounded-[10px] bg-[#7C3AED] text-white text-[15px] font-medium hover:bg-[#6D28D9] transition-colors">
                       {editId ? "Update Goal" : "Save Goal"}
-                    </Button>
+                    </button>
                   </div>
                 </form>
               </DialogContent>
@@ -242,25 +240,25 @@ export default function GoalsPage() {
 
           {/* Overview Stats */}
           {!loading && goals.length > 0 && (
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-5 sm:p-6">
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div>
-                  <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-1">Total Goals</p>
-                  <p className="font-sora text-xl font-semibold text-foreground">{goals.length}</p>
+                  <p className="label-xs text-[#8B89A0] mb-1">Total Goals</p>
+                  <p className="metric-value text-[#0F0E17] tabular-nums">{goals.length}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-1">Total Saved</p>
-                  <p className="font-sora text-xl font-semibold text-[hsl(var(--income))]">{formatCurrency(totalSaved, currency)}</p>
+                  <p className="label-xs text-[#8B89A0] mb-1">Total Saved</p>
+                  <p className="metric-value text-[#059669] tabular-nums">{formatCurrency(totalSaved, currency)}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-1">Total Target</p>
-                  <p className="font-sora text-xl font-semibold text-muted-foreground">{formatCurrency(totalTarget, currency)}</p>
+                  <p className="label-xs text-[#8B89A0] mb-1">Total Target</p>
+                  <p className="metric-value text-[#4B4963] tabular-nums">{formatCurrency(totalTarget, currency)}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-1">Overall Progress</p>
+                  <p className="label-xs text-[#8B89A0] mb-1">Overall Progress</p>
                   <div className="flex items-center gap-2">
-                    <p className="font-sora text-xl font-semibold text-[hsl(var(--primary))]">{totalProgress.toFixed(1)}%</p>
-                    <PieChart className="w-5 h-5 text-[hsl(var(--primary))]/50" />
+                    <p className="metric-value text-[#7C3AED] tabular-nums">{totalProgress.toFixed(1)}%</p>
+                    <PieChart size={16} strokeWidth={1.5} className="text-[#C4B5FD]" aria-hidden="true" />
                   </div>
                 </div>
               </div>
@@ -269,16 +267,16 @@ export default function GoalsPage() {
 
           {/* Delete Confirmation Dialog */}
           <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
-            <AlertDialogContent className="bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)]">
+            <AlertDialogContent className="bg-white rounded-[20px] border border-[rgba(0,0,0,0.06)]" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)" }}>
               <AlertDialogHeader>
-                <AlertDialogTitle className="font-jakarta font-semibold text-foreground">Delete Goal</AlertDialogTitle>
-                <AlertDialogDescription className="text-muted-foreground">
-                  Are you sure you want to delete this goal? This action cannot be undone and your progress tracking for this goal will be lost.
+                <AlertDialogTitle className="text-[16px] font-medium text-[#0F0E17]">Delete Goal</AlertDialogTitle>
+                <AlertDialogDescription className="text-[13px] text-[#4B4963]">
+                  Are you sure you want to delete this goal? This action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="bg-[hsl(var(--muted))] hover:bg-[hsl(var(--border))] text-muted-foreground hover:text-foreground rounded-xl">Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className="bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))] hover:bg-[hsl(var(--destructive))]/90 rounded-xl">
+                <AlertDialogCancel className="rounded-[10px] border-[rgba(0,0,0,0.10)] text-[#4B4963] hover:bg-[#F8F7FF]">Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete} className="rounded-[10px] bg-[#DC2626] text-white hover:bg-[#b91c1c]">
                   Delete Goal
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -289,38 +287,43 @@ export default function GoalsPage() {
           {loading ? (
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-5 h-56 animate-pulse">
+                <div key={i} className="fp-card p-5 h-48 animate-pulse">
                   <div className="flex gap-4">
-                    <div className="w-24 h-24 rounded-full bg-[hsl(var(--border))]" />
-                    <div className="flex-1 space-y-1 pt-2">
-                      <div className="h-4 w-2/3 rounded bg-[hsl(var(--border))]" />
-                      <div className="h-3 w-1/2 rounded bg-[hsl(var(--border))]" />
+                    <div className="w-[40px] h-[40px] rounded-[10px] bg-[#F8F7FF] flex-shrink-0" />
+                    <div className="flex-1 space-y-2 pt-1">
+                      <div className="h-4 w-2/3 rounded-full bg-[#F8F7FF]" />
+                      <div className="h-3 w-1/2 rounded-full bg-[#F8F7FF]" />
                     </div>
                   </div>
+                  <div className="mt-5 h-1.5 w-full rounded-full bg-[#F8F7FF]" />
                 </div>
               ))}
             </div>
           ) : goals.length === 0 ? (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-16 text-center border-dashed border-[hsl(var(--border-strong))]"
+              className="fp-card p-16 text-center"
             >
-              <div className="mx-auto w-16 h-16 bg-[hsl(var(--muted))] rounded-2xl flex items-center justify-center mb-4">
-                <TrendingUp className="h-8 w-8 text-[hsl(var(--primary))]" />
-              </div>
-              <h3 className="font-jakarta font-semibold text-lg mb-2 text-foreground">No goals yet</h3>
-              <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-6">
-                Start building your financial future. Set your first goal — an emergency fund, a trip, or a new asset.
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="mx-auto mb-4" aria-hidden="true">
+                <circle cx="32" cy="32" r="22" fill="#EDE9FE" />
+                <circle cx="32" cy="32" r="14" fill="#DDD6FE" />
+                <circle cx="32" cy="32" r="5" fill="#7C3AED" />
+                <line x1="32" y1="4" x2="32" y2="14" stroke="#C4B5FD" strokeWidth="2.5" strokeLinecap="round" />
+                <line x1="32" y1="50" x2="32" y2="60" stroke="#C4B5FD" strokeWidth="2.5" strokeLinecap="round" />
+              </svg>
+              <p className="text-[15px] font-medium text-[#0F0E17] mb-1">No goals yet</p>
+              <p className="text-[13px] text-[#8B89A0] max-w-sm mx-auto mb-5">
+                Start building your financial future. Set your first goal.
               </p>
-              <Button onClick={openCreate} className="rounded-xl">Create First Goal</Button>
+              <button onClick={openCreate} className="h-10 px-5 rounded-[10px] bg-[#7C3AED] text-white text-[14px] font-medium hover:bg-[#6D28D9] transition-colors">Create First Goal</button>
             </motion.div>
           ) : (
             <motion.div
               className="grid gap-5 md:grid-cols-2 lg:grid-cols-3"
               initial="hidden"
               animate="show"
-              variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } }}
+              variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } }}
             >
               <AnimatePresence>
                 {goals.map((goal, idx) => {
@@ -334,10 +337,11 @@ export default function GoalsPage() {
                     <motion.div
                       key={goal.id}
                       variants={{
-                        hidden: { opacity: 0, scale: 0.95, y: 16 },
-                        show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 28 } },
+                        hidden: { opacity: 0, scale: 0.98, y: 12 },
+                        show: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] as const } },
                       }}
-                      className={`group bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-5 relative overflow-hidden`}
+                      className="fp-card p-5 relative overflow-hidden group"
+                      style={{ borderRadius: "20px" }}
                     >
                       {isComplete && (
                         <div className="absolute top-0 right-0 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-[10px] font-semibold tracking-[0.1em] uppercase py-1 px-3 rounded-bl-xl z-10">
@@ -423,7 +427,6 @@ export default function GoalsPage() {
               </AnimatePresence>
             </motion.div>
           )}
-        </div>
       </div>
     </ErrorBoundary>
   )

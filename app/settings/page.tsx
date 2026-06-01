@@ -15,7 +15,7 @@ import BackupRestore from "@/components/settings/BackupRestore"
 import { motion } from "framer-motion"
 import {
   User, IndianRupee, SlidersHorizontal, AlertOctagon,
-  Save, CheckCircle2, Sparkles, BrainCircuit, BarChart3
+  Save, CheckCircle2, BrainCircuit, BarChart3
 } from "lucide-react"
 
 const currencyOptions = [
@@ -127,89 +127,87 @@ export default function SettingsPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl space-y-6">
+      <div className="min-h-screen space-y-6 max-w-3xl">
 
-          {/* Header */}
+          {/* ── Page Header ── */}
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-4"
+            transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+            className="flex items-center justify-between"
           >
-            {/* Avatar */}
-            <div className="w-16 h-16 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center text-[hsl(var(--primary))] text-xl font-semibold flex-shrink-0">
-              {loading ? "…" : initials}
-            </div>
-            <div className="flex-1 space-y-2">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
-                <span className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">Settings</span>
-              </div>
-              <h1 className="font-display text-2xl font-semibold text-foreground">
-                Account <span className="text-[hsl(var(--primary))]">Preferences</span>
-              </h1>
-              <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground mt-0.5">Member since {memberSince}</p>
-            </div>
-            <div className="ml-auto">
-              <Button
-                onClick={handleSave}
-                disabled={loading || saving}
-                className={`gap-2 rounded-xl ${savedPulse ? "bg-[hsl(var(--income))]" : ""}`}
+            <div className="flex items-center gap-4">
+              {/* Avatar */}
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 text-[15px] font-semibold text-[#6D28D9] select-none"
+                style={{ background: "#EDE9FE" }}
+                aria-hidden="true"
               >
-                {savedPulse ? (
-                  <><CheckCircle2 className="w-4 h-4" /> Saved!</>
-                ) : saving ? (
-                  <><Save className="w-4 h-4 animate-spin" /> Saving…</>
-                ) : (
-                  <><Save className="w-4 h-4" /> Save All</>
-                )}
-              </Button>
+                {loading ? "…" : initials}
+              </div>
+              <div>
+                <h1 className="text-[22px] font-medium text-[#0F0E17] leading-tight">Account Settings</h1>
+                <p className="text-[14px] text-[#8B89A0] mt-0.5">Member since {memberSince}</p>
+              </div>
             </div>
+            <button
+              onClick={handleSave}
+              disabled={loading || saving}
+              className={`flex items-center gap-1.5 h-9 px-4 rounded-[10px] text-[13px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 disabled:opacity-50 ${
+                savedPulse
+                  ? "bg-[#ECFDF5] text-[#065F46] border border-[rgba(5,150,105,0.2)]"
+                  : "bg-[#7C3AED] text-white hover:bg-[#6D28D9] active:scale-[0.99]"
+              }`}
+            >
+              {savedPulse ? (
+                <><CheckCircle2 size={14} strokeWidth={1.5} aria-hidden="true" /> Saved!′</>
+              ) : saving ? (
+                <><Save size={14} strokeWidth={1.5} className="animate-spin" aria-hidden="true" /> Saving…</>
+              ) : (
+                <><Save size={14} strokeWidth={1.5} aria-hidden="true" /> Save Settings</>
+              )}
+            </button>
           </motion.div>
 
           {/* Profile section */}
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center">
-                <User className="w-5 h-5 text-[hsl(var(--primary))]" />
-              </div>
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
+            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+              <User size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
               <div>
-                <h2 className="font-jakarta font-semibold text-base text-foreground">Profile</h2>
-                <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">Your name and account details</p>
+                <h2 className="text-[15px] font-medium text-[#0F0E17]">Profile</h2>
+                <p className="text-[12px] text-[#8B89A0] mt-0.5">Your name and account details</p>
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="settings-name" className="text-sm font-medium text-muted-foreground">Display Name</Label>
-                <Input id="settings-name" value={state.name} onChange={(e) => setState({ ...state, name: e.target.value })} placeholder="Your name" className="bg-[hsl(var(--muted))] border-[hsl(var(--border))]" />
+                <label htmlFor="settings-name" className="block text-[12px] font-medium text-[#4B4963]">Display Name</label>
+                <Input id="settings-name" value={state.name} onChange={(e) => setState({ ...state, name: e.target.value })} placeholder="Your name" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="settings-email" className="text-sm font-medium text-muted-foreground">Email</Label>
-                <Input id="settings-email" value={state.email} readOnly className="bg-[hsl(var(--muted))] border-[hsl(var(--border))] opacity-60 cursor-default" placeholder="Not set" />
+                <label htmlFor="settings-email" className="block text-[12px] font-medium text-[#4B4963]">Email</label>
+                <Input id="settings-email" value={state.email} readOnly className="opacity-60 cursor-default" placeholder="Not set" />
               </div>
             </div>
           </motion.div>
 
           {/* Financial settings */}
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center">
-                <IndianRupee className="w-5 h-5 text-[hsl(var(--primary))]" />
-              </div>
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
+            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+              <IndianRupee size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
               <div>
-                <h2 className="font-jakarta font-semibold text-base text-foreground">Financial Settings</h2>
-                <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">Currency, income & savings targets</p>
+                <h2 className="text-[15px] font-medium text-[#0F0E17]">Financial Settings</h2>
+                <p className="text-[12px] text-[#8B89A0] mt-0.5">Currency, income &amp; savings targets</p>
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="settings-currency" className="text-sm font-medium text-muted-foreground">Currency</Label>
+                <label htmlFor="settings-currency" className="block text-[12px] font-medium text-[#4B4963]">Currency</label>
                 <Select value={state.currency} onValueChange={(v) => setState({ ...state, currency: v as CurrencyOption })}>
-                  <SelectTrigger id="settings-currency" className="bg-[hsl(var(--muted))] border-[hsl(var(--border))]">
+                  <SelectTrigger id="settings-currency">
                     <SelectValue placeholder="Select currency" />
                   </SelectTrigger>
-                  <SelectContent className="bg-card border-[hsl(var(--border))]">
+                  <SelectContent>
                     {currencyOptions.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value}>
                         {opt.flag} {opt.label}
@@ -219,68 +217,62 @@ export default function SettingsPage() {
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="settings-income" className="text-sm font-medium text-muted-foreground">Monthly Income</Label>
-                <Input id="settings-income" type="number" step="1" min="0" value={state.monthlyIncome} onChange={(e) => setState({ ...state, monthlyIncome: e.target.value })} placeholder="e.g. 80000" className="bg-[hsl(var(--muted))] border-[hsl(var(--border))]" />
+                <label htmlFor="settings-income" className="block text-[12px] font-medium text-[#4B4963]">Monthly Income</label>
+                <Input id="settings-income" type="number" step="1" min="0" value={state.monthlyIncome} onChange={(e) => setState({ ...state, monthlyIncome: e.target.value })} placeholder="e.g. 80000" />
               </div>
               <div className="space-y-1.5 sm:col-span-2">
-                <Label htmlFor="settings-savings" className="text-sm font-medium text-muted-foreground">Savings Target (Monthly)</Label>
-                <Input id="settings-savings" type="number" step="1" min="0" value={state.savingsTarget} onChange={(e) => setState({ ...state, savingsTarget: e.target.value })} placeholder="e.g. 20000" className="bg-[hsl(var(--muted))] border-[hsl(var(--border))]" />
+                <label htmlFor="settings-savings" className="block text-[12px] font-medium text-[#4B4963]">Savings Target (Monthly)</label>
+                <Input id="settings-savings" type="number" step="1" min="0" value={state.savingsTarget} onChange={(e) => setState({ ...state, savingsTarget: e.target.value })} placeholder="e.g. 20000" />
               </div>
             </div>
 
             {/* Preview */}
-            <div className="mt-4 rounded-xl bg-[hsl(var(--muted))] border-[hsl(var(--border))] px-4 py-3 text-[10px] font-semibold tracking-[0.1em] text-[hsl(var(--primary))]">
-              <div className="flex items-center gap-2">
-                <BarChart3 className="w-5 h-5" />
-                <span>Preview: {formatCurrency(monthlyIncomePreview, state.currency)} monthly income · Target {formatCurrency(savingsTargetPreview, state.currency)} in savings</span>
-              </div>
+            <div className="mt-4 rounded-[10px] px-4 py-3 text-[13px] font-medium text-[#7C3AED] flex items-center gap-2" style={{ background: "#F5F3FF", border: "1px solid rgba(196,181,253,0.5)" }}>
+              <BarChart3 size={14} strokeWidth={1.5} className="flex-shrink-0" aria-hidden="true" />
+              <span className="tabular-nums">{formatCurrency(monthlyIncomePreview, state.currency)} income · {formatCurrency(savingsTargetPreview, state.currency)} savings target</span>
               {monthlyIncomePreview > 0 && savingsTargetPreview > 0 && (
-                <span className="ml-2 opacity-70">
-                  ({((savingsTargetPreview / monthlyIncomePreview) * 100).toFixed(0)}% savings rate goal)
+                <span className="text-[#8B89A0] font-normal">
+                  ({((savingsTargetPreview / monthlyIncomePreview) * 100).toFixed(0)}% rate)
                 </span>
               )}
             </div>
           </motion.div>
 
           {/* Preferences with toggles */}
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center">
-                <SlidersHorizontal className="w-5 h-5 text-[hsl(var(--primary))]" />
-              </div>
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
+            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+              <SlidersHorizontal size={15} strokeWidth={1.5} className="text-[#4B4963]" aria-hidden="true" />
               <div>
-                <h2 className="font-jakarta font-semibold text-base text-foreground">Preferences</h2>
-                <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">Month view & AI features</p>
+                <h2 className="text-[15px] font-medium text-[#0F0E17]">Preferences</h2>
+                <p className="text-[12px] text-[#8B89A0] mt-0.5">Month view &amp; AI features</p>
               </div>
             </div>
 
             <div className="space-y-4">
               {/* AI Insights */}
-              <div className="flex items-center justify-between rounded-xl bg-[hsl(var(--muted))] border-[hsl(var(--border))] px-4 py-4">
+              <div className="flex items-center justify-between rounded-[10px] px-4 py-3.5" style={{ background: "#F8F7FF" }}>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center">
-                    <BrainCircuit className="w-4 h-4 text-[hsl(var(--primary))]" />
-                  </div>
+                  <BrainCircuit size={16} strokeWidth={1.5} className="text-[#7C3AED]" aria-hidden="true" />
                   <div>
-                    <p className="text-sm font-medium text-foreground">AI Insights</p>
-                    <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">Powered by Gemini · Free forever</p>
+                    <p className="text-[14px] font-medium text-[#0F0E17]">AI Insights</p>
+                    <p className="text-[12px] text-[#8B89A0]">Powered by Gemini · Free forever</p>
                   </div>
                 </div>
                 <Switch
                   checked={state.aiEnabled}
                   onCheckedChange={(checked) => setState({ ...state, aiEnabled: checked })}
-                  className="data-[state=checked]:bg-[hsl(var(--primary))]"
+                  className="data-[state=checked]:bg-[#7C3AED]"
                 />
               </div>
 
               {/* Month view */}
-              <div className="rounded-xl bg-[hsl(var(--muted))] border-[hsl(var(--border))] px-4 py-4 space-y-3">
-                <Label className="text-sm font-medium text-muted-foreground">Default Month View</Label>
+              <div className="rounded-[10px] px-4 py-3.5 space-y-3" style={{ background: "#F8F7FF" }}>
+                <label className="block text-[12px] font-medium text-[#4B4963]">Default Month View</label>
                 <Select value={state.monthView} onValueChange={(v) => setState({ ...state, monthView: v as MonthView })}>
-                  <SelectTrigger className="bg-[hsl(var(--muted))] border-[hsl(var(--border))] h-10">
+                  <SelectTrigger className="h-10">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-card border-[hsl(var(--border))]">
+                  <SelectContent>
                     <SelectItem value="current">Current month</SelectItem>
                     <SelectItem value="last">Last month</SelectItem>
                   </SelectContent>
@@ -290,14 +282,12 @@ export default function SettingsPage() {
           </motion.div>
 
           {/* Danger zone */}
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-[var(--expense-bg)] flex items-center justify-center">
-                <AlertOctagon className="w-5 h-5 text-[hsl(var(--destructive))]" />
-              </div>
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
+            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(220,38,38,0.12)]">
+              <AlertOctagon size={15} strokeWidth={1.5} className="text-[#DC2626]" aria-hidden="true" />
               <div>
-                <h2 className="font-jakarta font-semibold text-base text-[hsl(var(--destructive))]">Danger Zone</h2>
-                <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">Export or permanently delete your data</p>
+                <h2 className="text-[15px] font-medium text-[#DC2626]">Danger Zone</h2>
+                <p className="text-[12px] text-[#8B89A0] mt-0.5">Export or permanently delete your data</p>
               </div>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -308,7 +298,6 @@ export default function SettingsPage() {
               <DeleteData />
             </div>
           </motion.div>
-        </div>
       </div>
     </ErrorBoundary>
   )
