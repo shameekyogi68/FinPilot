@@ -15,9 +15,10 @@ type ChatMessageProps = {
   message: ChatMessageItem
   isUser: boolean
   isLatest?: boolean
+  hideAvatar?: boolean
 }
 
-export function ChatMessage({ message, isUser }: ChatMessageProps) {
+export function ChatMessage({ message, isUser, hideAvatar = false }: ChatMessageProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -37,28 +38,32 @@ export function ChatMessage({ message, isUser }: ChatMessageProps) {
       initial={{ opacity: 0, y: 12, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 28 }}
-      className={`group flex items-end gap-2.5 ${isUser ? "flex-row-reverse" : "flex-row"}`}
+      className={`group flex items-end gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}
     >
       {/* Avatar */}
-      <div
-        className={`w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 mb-0.5 ${
-          isUser
-            ? "bg-[hsl(var(--muted))] border border-[hsl(var(--border))]"
-            : "bg-[hsl(var(--muted))]"
-        }`}
-      >
-        {isUser ? (
-          <User className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
-        ) : (
-          <BrainCircuit className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
-        )}
-      </div>
+      {!hideAvatar ? (
+        <div
+          className={`w-8 h-8 rounded-[10px] flex items-center justify-center flex-shrink-0 shadow-sm ${
+            isUser
+              ? "bg-gradient-to-br from-gray-100 to-gray-200"
+              : "bg-gradient-to-br from-purple-50 to-purple-100"
+          }`}
+        >
+          {isUser ? (
+            <User className="w-4 h-4 text-[#4B4963]" />
+          ) : (
+            <BrainCircuit className="w-4 h-4 text-[#7C3AED]" />
+          )}
+        </div>
+      ) : (
+        <div className="w-8 h-8 flex-shrink-0" />
+      )}
 
       {/* Bubble */}
-      <div className={`flex flex-col gap-1 max-w-[78%] ${isUser ? "items-end" : "items-start"}`}>
+      <div className={`flex flex-col gap-1 max-w-[80%] ${isUser ? "items-end" : "items-start"}`}>
         <div
-          className={`px-4 py-3 text-sm leading-relaxed ${
-            isUser ? "bg-[hsl(var(--muted))] text-foreground rounded-br-xl" : "bg-[hsl(var(--muted))] text-foreground rounded-bl-xl border-[hsl(var(--border))]"
+          className={`px-5 py-3.5 text-[13.5px] leading-relaxed font-medium ${
+            isUser ? "chat-bubble-user" : "chat-bubble-assistant text-foreground"
           }`}
         >
           {message.content}

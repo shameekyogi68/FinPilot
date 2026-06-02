@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>FinPilot — World-Class Premium Mockup</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..700;1,14..32,100..700&display=swap">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons JS CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50:  '#F5F3FF',
+              100: '#EDE9FE',
+              200: '#DDD6FE',
+              300: '#C4B5FD',
+              400: '#A78BFA',
+              500: '#8B5CF6',
+              600: '#7C3AED',
+              700: '#6D28D9',
+              800: '#5B21B6',
+              900: '#4C1D95',
+            },
+            surface: {
+              DEFAULT: '#FFFFFF',
+              subtle:  '#F8F7FF',
+              raised:  '#FFFFFF',
+              overlay: 'rgba(248,247,255,0.85)',
+            },
+            gain:  { DEFAULT:'#059669', subtle:'#ECFDF5', text:'#065F46' },
+            loss:  { DEFAULT:'#DC2626', subtle:'#FEF2F2', text:'#991B1B' },
+            warn:  { DEFAULT:'#D97706', subtle:'#FFFBEB', text:'#92400E' },
+            ink: {
+              primary:   '#0F0E17',
+              secondary: '#4B4963',
+              tertiary:  '#8B89A0',
+              disabled:  '#C4C2D4',
+            },
+            edge: {
+              subtle: 'rgba(0,0,0,0.06)',
+              base:   'rgba(0,0,0,0.10)',
+              strong: 'rgba(0,0,0,0.18)',
+            },
+          },
+          boxShadow: {
+            card:     '0 1px 2px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.06)',
+            elevated: '0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)',
+            focus:    '0 0 0 3px rgba(124,58,237,0.18)',
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Inter font axis tweaks and tabular numbers */
+    html {
+      font-family: "Inter", system-ui, sans-serif;
+      font-feature-settings: 'cv01','ss01','ss03';
+      color-scheme: light;
+      scroll-behavior: smooth;
+    }
+    body {
+      background-color: #F8F7FF;
+      color: #0F0E17;
+      -webkit-font-smoothing: antialiased;
+      letter-spacing: -0.01em;
+    }
+
+    /* Premium Page Background with subtle gradient mesh */
+    .page-bg {
+      background-color: #F8F7FF;
+      background-image:
+        radial-gradient(ellipse at 15% 10%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 30%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+      background-size: 100% 100%;
+      background-attachment: fixed;
+    }
+
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Transitions & Focus visible */
+    button, a, input, select, textarea, .nav-item {
+      transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    button:focus-visible, a:focus-visible, input:focus, select:focus, textarea:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.18) !important;
+    }
+
+    /* Premium card standard styles */
+    .fp-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 24px -8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.02);
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .fp-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.12), transparent 50%, rgba(139,92,246,0.08));
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 280ms ease;
+    }
+    .fp-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Stat card styling */
+    .stat-card {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.02);
+      padding: 20px 24px;
+      transition: all 280ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #A78BFA, #7C3AED, #A78BFA);
+      background-size: 200% 100%;
+      opacity: 0;
+      transition: opacity 280ms ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 4px 12px rgba(124, 58, 237, 0.06),
+        0 8px 24px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgba(124, 58, 237, 0.08);
+    }
+    .stat-card:hover::after {
+      opacity: 1;
+      animation: gradient-shift 3s ease infinite;
+    }
+
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Left Sidebar Pinned Layout */
+    .fp-sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 220px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+      border-right: 1px solid rgba(0,0,0,0.06);
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Nav Item active state */
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #4B4963;
+      position: relative;
+    }
+    .nav-item:hover {
+      background-color: rgba(255,255,255,0.8);
+      color: #0F0E17;
+      transform: translateX(3px);
+    }
+    .nav-item.active {
+      background-color: #F5F3FF;
+      color: #7C3AED;
+      border-left: 2px solid #7c3aed;
+      padding-left: 10px;
+    }
+
+    /* Bottom tab bar for Mobile */
+    .fp-bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 60px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(0,0,0,0.06);
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      box-shadow: 0 -4px 24px rgba(124, 58, 237, 0.06);
+    }
+    .mobile-tab.active {
+      color: #7C3AED;
+      background-color: rgba(124, 58, 237, 0.08);
+      border-radius: 10px;
+    }
+
+    /* Metric gradient text */
+    .text-gradient {
+      background: linear-gradient(135deg, #8B5CF6, #6D28D9, #A78BFA);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(124, 58, 237, 0.15);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(124, 58, 237, 0.4); }
+
+    /* Page transition keyframes */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .page-section {
+      display: none;
+      animation: fadeInUp 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    }
+    .page-section.active {
+      display: block;
+    }
+
+    /* Typing Dots */
+    .typing-dot {
+      width: 6px; height: 6px;
+      background-color: #7C3AED;
+      border-radius: 50%;
+      animation: typingBounce 1.2s infinite ease-in-out;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: scale(1); opacity: 0.5; }
+      30% { transform: scale(1.3); opacity: 1; }
+    }
+
+    /* Chip style */
+    .fp-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body class="page-bg min-h-screen pb-20 lg:pb-0">
+
+  <!-- ─── Desktop Left Sidebar Pinned ─── -->
+  <aside class="fp-sidebar hidden lg:flex">
+    <!-- Logo -->
+    <div class="h-14 flex items-center px-5 flex-shrink-0">
+      <span class="flex items-center gap-2 text-[18px] font-semibold text-[#7C3AED] tracking-tight select-none">
+        <span class="inline-block w-[9px] h-[9px] rounded-full flex-shrink-0 bg-gradient-to-br from-[#A78BFA] to-[#6D28D9] shadow-[0_0_8px_rgba(124,58,237,0.35)]"></span>
+        FinPilot
+      </span>
+    </div>
+
+    <!-- Navigation links -->
+    <nav class="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
+      <div onclick="switchPage('dashboard')" class="nav-item active" data-page="dashboard">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+        <span>Dashboard</span>
+      </div>
+      <div onclick="switchPage('transactions')" class="nav-item" data-page="transactions">
+        <i data-lucide="receipt" class="w-4 h-4"></i>
+        <span>Transactions</span>
+      </div>
+      <div onclick="switchPage('budgets')" class="nav-item" data-page="budgets">
+        <i data-lucide="wallet" class="w-4 h-4"></i>
+        <span>Budgets</span>
+      </div>
+      <div onclick="switchPage('goals')" class="nav-item" data-page="goals">
+        <i data-lucide="target" class="w-4 h-4"></i>
+        <span>Goals</span>
+      </div>
+      <div onclick="switchPage('analytics')" class="nav-item" data-page="analytics">
+        <i data-lucide="pie-chart" class="w-4 h-4"></i>
+        <span>Analytics</span>
+      </div>
+      <div onclick="switchPage('ai-advisor')" class="nav-item" data-page="ai-advisor">
+        <i data-lucide="brain-circuit" class="w-4 h-4"></i>
+        <span>AI Advisor</span>
+      </div>
+    </nav>
+
+    <!-- Bottom pinned Settings & Account -->
+    <div class="px-3 pb-4 space-y-0.5 pt-3 border-t border-dashed border-gray-100">
+      <div onclick="switchPage('settings')" class="nav-item" data-page="settings">
+        <i data-lucide="settings" class="w-4 h-4"></i>
+        <span>Settings</span>
+      </div>
+      <div class="flex items-center gap-3 px-3 py-2 mt-1">
+        <div class="relative w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-[#EDE9FE] to-[#DDD6FE] shadow-[0_0_0_2px_rgba(124,58,237,0.12)]">
+          <span id="user-initials" class="text-[11px] font-semibold text-[#6D28D9] leading-none select-none">SY</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p id="user-display-name" class="text-[13px] font-medium text-[#0F0E17] truncate leading-tight">Shameek Yogi</p>
+          <p class="text-[11px] text-[#8B89A0] leading-tight">Personal account</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── Mobile Bottom Tab Bar ─── -->
+  <nav class="fp-bottom-nav lg:hidden">
+    <button onclick="switchPage('dashboard')" class="mobile-tab w-10 h-10 flex items-center justify-center active" data-mobile-page="dashboard" aria-label="Dashboard">
+      <i data-lucide="layout-dashboard" class="w-[20px] h-[20px]"></i>
+    </button>
+    <button onclick="switchPage('transactions')" class="mobile-tab w-10 h-10 flex items-center justify-center" data-mobile-page="transactions" aria-label="Transactions">
+      <i data-lucide="receipt" class="w-[20px] h-[20px]"></i>
+    </button>
+    <button onclick="switchPage('budgets')" class="mobile-tab w-10 h-10 flex items-center justify-center" data-mobile-page="budgets" aria-label="Budgets">
+      <i data-lucide="wallet" class="w-[20px] h-[20px]"></i>
+    </button>
+    <button onclick="switchPage('goals')" class="mobile-tab w-10 h-10 flex items-center justify-center" data-mobile-page="goals" aria-label="Goals">
+      <i data-lucide="target" class="w-[20px] h-[20px]"></i>
+    </button>
+    <button onclick="switchPage('analytics')" class="mobile-tab w-10 h-10 flex items-center justify-center" data-mobile-page="analytics" aria-label="Analytics">
+      <i data-lucide="pie-chart" class="w-[20px] h-[20px]"></i>
+    </button>
+    <button onclick="switchPage('ai-advisor')" class="mobile-tab w-10 h-10 flex items-center justify-center" data-mobile-page="ai-advisor" aria-label="AI Advisor">
+      <i data-lucide="brain-circuit" class="w-[20px] h-[20px]"></i>
+    </button>
+    <button onclick="switchPage('settings')" class="mobile-tab w-10 h-10 flex items-center justify-center" data-mobile-page="settings" aria-label="Settings">
+      <i data-lucide="settings" class="w-[20px] h-[20px]"></i>
+    </button>
+  </nav>
+
+  <!-- ─── Main Content Container ─── -->
+  <main class="lg:ml-[220px]">
+    <div class="lg:px-10 lg:py-8 px-4 py-6 max-w-[1280px]">
+
+      <!-- =======================================
+           1. DASHBOARD PAGE
+           ======================================= -->
+      <section id="page-dashboard" class="page-section active space-y-6">
+        <!-- Top Bar -->
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h1 class="text-[24px] font-semibold text-[#0F0E17] leading-tight">
+              Good morning, <span id="dash-greeting-name" class="text-gradient">Shameek</span>
+            </h1>
+            <p class="text-[14px] text-[#8B89A0] mt-1 font-sans">
+              <span id="dash-date">June 2026</span> · <span id="dash-networth" class="tabular-nums font-medium text-ink-primary">₹7,85,000</span> net worth
+            </p>
+          </div>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <button onclick="simulateRefresh()" class="w-9 h-9 rounded-[10px] border border-gray-200 bg-white/70 flex items-center justify-center text-[#8B89A0] hover:text-[#0F0E17] hover:border-gray-300 backdrop-blur-md">
+              <i id="refresh-icon" data-lucide="refresh-cw" class="w-4 h-4"></i>
+            </button>
+            <div class="flex items-center gap-1.5 px-3 h-9 rounded-[10px] border border-gray-200 bg-white/70 text-[13px] text-[#4B4963] font-medium backdrop-blur-md">
+              <i data-lucide="calendar-days" class="w-3.5 h-3.5 text-[#8B89A0]"></i>
+              <span id="today-date-str">02 Jun 2026</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2x2 Grid Stats -->
+        <div class="grid gap-4 grid-cols-2 xl:grid-cols-4">
+          <!-- Income Card -->
+          <div class="stat-card flex flex-col gap-3" style="border-left: 3px solid #059669;">
+            <div class="flex items-center gap-2">
+              <i data-lucide="trending-up" class="w-4 h-4 text-[#8B89A0]"></i>
+              <span class="text-[11px] font-semibold tracking-wider text-[#8B89A0] uppercase">Monthly Income</span>
+            </div>
+            <div class="text-[22px] font-semibold tracking-tight text-[#0F0E17] tabular-nums">
+              <span id="stat-income">₹1,25,000</span>
+            </div>
+            <p class="text-[12px] text-[#8B89A0] leading-tight">Total received this month</p>
+          </div>
+
+          <!-- Expense Card -->
+          <div class="stat-card flex flex-col gap-3" style="border-left: 3px solid #DC2626;">
+            <div class="flex items-center gap-2">
+              <i data-lucide="trending-down" class="w-4 h-4 text-[#8B89A0]"></i>
+              <span class="text-[11px] font-semibold tracking-wider text-[#8B89A0] uppercase">Monthly Expenses</span>
+            </div>
+            <div class="text-[22px] font-semibold tracking-tight text-[#0F0E17] tabular-nums">
+              <span id="stat-expense">₹45,000</span>
+            </div>
+            <p class="text-[12px] text-[#8B89A0] leading-tight">Total spent this month</p>
+          </div>
+
+          <!-- Net Card -->
+          <div class="stat-card flex flex-col gap-3" style="border-left: 3px solid #7C3AED;">
+            <div class="flex items-center gap-2 font-sans">
+              <i data-lucide="wallet" class="w-4 h-4 text-[#8B89A0]"></i>
+              <span class="text-[11px] font-semibold tracking-wider text-[#8B89A0] uppercase flex-1">Net Balance</span>
+              <span class="fp-chip text-[9px] bg-emerald-50 text-emerald-800">Positive</span>
+            </div>
+            <div class="text-[22px] font-semibold tracking-tight text-[#0F0E17] tabular-nums">
+              <span id="stat-net">₹80,000</span>
+            </div>
+            <p class="text-[12px] text-[#8B89A0] leading-tight">Income minus expenses</p>
+          </div>
+
+          <!-- Savings Rate Card -->
+          <div class="stat-card flex flex-col gap-3" style="border-left: 3px solid #D97706;">
+            <div class="flex items-center gap-2">
+              <i data-lucide="piggy-bank" class="w-4 h-4 text-[#8B89A0]"></i>
+              <span class="text-[11px] font-semibold tracking-wider text-[#8B89A0] uppercase flex-1">Savings Rate</span>
+              <span class="fp-chip text-[9px] bg-emerald-50 text-emerald-800">Healthy</span>
+            </div>
+            <div class="text-[22px] font-semibold tracking-tight text-[#0F0E17] tabular-nums">
+              <span id="stat-savings-rate">64.0%</span>
+            </div>
+            <p class="text-[12px] text-[#8B89A0] leading-tight">Share of income saved</p>
+          </div>
+        </div>
+
+        <!-- AI Insights Card -->
+        <div class="fp-card p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4 text-[#7C3AED]"></i>
+              <h2 class="text-[15px] font-semibold text-[#0F0E17]">AI Insights</h2>
+              <span class="fp-chip text-[10px] bg-purple-50 text-purple-700">92% confidence</span>
+            </div>
+            <button onclick="simulateRefresh()" class="flex items-center gap-1 h-8 px-3 rounded-[8px] border border-gray-150 bg-white/70 text-[11px] text-[#4B4963] font-medium hover:border-gray-250">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              Refresh
+            </button>
+          </div>
+
+          <!-- Insights list -->
+          <div class="space-y-3">
+            <!-- Positive -->
+            <div class="rounded-[10px] p-4 border-l-[3px] border-[#059669]" style="background: rgba(5,150,105,0.06)">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-gain">Positive</span>
+                <button onclick="switchPage('analytics')" class="text-[10px] text-gray-500 hover:text-black">View Details</button>
+              </div>
+              <p class="text-[13.5px] leading-relaxed text-[#0F0E17]">Your savings rate is 64% this month, which is 14% higher than your set baseline. Outstanding discipline, Shameek!</p>
+            </div>
+            <!-- Warning -->
+            <div class="rounded-[10px] p-4 border-l-[3px] border-[#D97706]" style="background: rgba(217,119,6,0.06)">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-warn">Warning</span>
+                <button onclick="switchPage('budgets')" class="text-[10px] text-gray-500 hover:text-black">Adjust Budget</button>
+              </div>
+              <p class="text-[13.5px] leading-relaxed text-[#0F0E17]">Dining out is at 91% of your monthly limit (₹4,550 spent of ₹5,000). Consider cooking at home for the rest of the week.</p>
+            </div>
+            <!-- Tip -->
+            <div class="rounded-[10px] p-4 border-l-[3px] border-[#7C3AED]" style="background: rgba(124,58,237,0.06)">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-brand-600">Tip</span>
+                <button onclick="switchPage('ai-advisor')" class="text-[10px] text-gray-500 hover:text-black">Ask Advisor</button>
+              </div>
+              <p class="text-[13.5px] leading-relaxed text-[#0F0E17]">You have ₹80,000 idle cash in savings. Moving ₹25,000 to your mutual fund SIP will increase projected annual returns by ₹3,200.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 40/60 Split Category + Transactions -->
+        <div class="grid gap-5 md:grid-cols-[40%_60%]">
+          <!-- Expense by Category Mock -->
+          <div class="fp-card p-6 flex flex-col justify-between">
+            <div class="flex items-center gap-2 mb-4 pb-4 border-b border-gray-100">
+              <i data-lucide="bar-chart-3" class="w-4 h-4 text-[#8B89A0]"></i>
+              <h2 class="text-[15px] font-semibold text-[#0F0E17]">Expenses by Category</h2>
+            </div>
+            
+            <div class="flex-1 flex flex-col justify-center space-y-4">
+              <!-- Horizontal progress rows -->
+              <div class="space-y-3.5">
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[12px] font-medium">
+                    <span class="capitalize text-gray-700">Food &amp; Dining</span>
+                    <span class="tabular-nums">₹18,500</span>
+                  </div>
+                  <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-brand-600 rounded-full" style="width: 41%;"></div>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[12px] font-medium">
+                    <span class="capitalize text-gray-700">Shopping</span>
+                    <span class="tabular-nums">₹12,000</span>
+                  </div>
+                  <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-[#059669] rounded-full" style="width: 27%;"></div>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[12px] font-medium">
+                    <span class="capitalize text-gray-700">Bills &amp; Subscriptions</span>
+                    <span class="tabular-nums">₹9,500</span>
+                  </div>
+                  <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-[#D97706] rounded-full" style="width: 21%;"></div>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[12px] font-medium">
+                    <span class="capitalize text-gray-700">Transport</span>
+                    <span class="tabular-nums">₹5,000</span>
+                  </div>
+                  <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-[#06B6D4] rounded-full" style="width: 11%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Transactions -->
+          <div class="fp-card p-6 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
+              <div class="flex items-center gap-2">
+                <i data-lucide="receipt" class="w-4 h-4 text-[#8B89A0]"></i>
+                <h2 class="text-[15px] font-semibold text-[#0F0E17]">Recent Transactions</h2>
+              </div>
+              <button onclick="switchPage('transactions')" class="text-[12px] text-brand-600 font-medium hover:underline">View All</button>
+            </div>
+
+            <!-- List -->
+            <div id="dashboard-tx-list" class="space-y-3.5">
+              <!-- Dynamically populated via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =======================================
+           2. TRANSACTIONS PAGE
+           ======================================= -->
+      <section id="page-transactions" class="page-section space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-[22px] font-semibold text-[#0F0E17] leading-tight">Record Transaction</h1>
+            <p class="text-[14px] text-[#8B89A0] mt-0.5">Add to your wealth ledger</p>
+          </div>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-[45%_55%]">
+          <!-- Left: Add Form -->
+          <div class="fp-card p-5 space-y-4">
+            <!-- Toggle Group -->
+            <div class="flex p-1 rounded-full border border-gray-200 bg-gray-50" role="group">
+              <button type="button" onclick="setTxType('expense')" id="btn-toggle-expense" class="flex-1 flex items-center justify-center gap-2 h-9 rounded-full text-[13.5px] font-medium bg-white shadow-sm text-ink-primary">
+                <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
+                Expense
+              </button>
+              <button type="button" onclick="setTxType('income')" id="btn-toggle-income" class="flex-1 flex items-center justify-center gap-2 h-9 rounded-full text-[13.5px] font-medium text-[#8B89A0]">
+                <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+                Income
+              </button>
+            </div>
+
+            <form id="tx-form" onsubmit="handleAddTx(event)" class="space-y-4">
+              <!-- Amount -->
+              <div>
+                <label for="form-amount" class="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary mb-1.5">Amount</label>
+                <div class="flex rounded-[10px] border border-gray-200 overflow-hidden focus-within:border-brand-600 focus-within:ring-3 focus-within:ring-brand-100 transition-all">
+                  <div class="w-12 flex items-center justify-center text-[18px] font-medium text-gray-500 border-r border-gray-100 bg-gray-50">₹</div>
+                  <input id="form-amount" type="number" required placeholder="0" class="flex-1 h-[52px] px-4 text-[22px] font-semibold text-[#0F0E17] tabular-nums bg-transparent outline-none">
+                </div>
+              </div>
+
+              <!-- Date + Category Grid -->
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label for="form-date" class="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary mb-1.5">Date</label>
+                  <input id="form-date" type="date" required class="w-full h-11 px-3.5 rounded-[10px] border border-gray-200 bg-white/70 text-[14px] outline-none">
+                </div>
+
+                <div>
+                  <label for="form-category" class="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary mb-1.5">Category</label>
+                  <select id="form-category" required class="w-full h-11 px-3.5 rounded-[10px] border border-gray-200 bg-white/70 text-[14px] outline-none">
+                    <option value="food">🍽️ Food</option>
+                    <option value="shopping">🛍️ Shopping</option>
+                    <option value="bills">🧾 Bills</option>
+                    <option value="transport">🚗 Transport</option>
+                    <option value="entertainment">🎬 Entertainment</option>
+                    <option value="rent">🏠 Rent</option>
+                    <option value="salary">💼 Salary</option>
+                    <option value="freelance">💻 Freelance</option>
+                    <option value="miscellaneous">📦 Miscellaneous</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Note -->
+              <div>
+                <label for="form-note" class="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary mb-1.5">Note</label>
+                <input id="form-note" type="text" placeholder="e.g. Lunch at Haldiram, Uber to office..." class="w-full h-11 px-3.5 rounded-[10px] border border-gray-200 bg-white/70 text-[14px] outline-none">
+              </div>
+
+              <button type="submit" class="w-full h-12 rounded-[10px] bg-brand-600 text-white text-[14.5px] font-semibold hover:bg-brand-700 active:scale-[0.99] flex items-center justify-center gap-2">
+                Record Entry
+              </button>
+            </form>
+          </div>
+
+          <!-- Right: List History -->
+          <div class="fp-card p-6 flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="font-semibold text-[15px] text-ink-primary">Transaction History</h2>
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input id="tx-search" oninput="searchTransactions()" type="text" placeholder="Search entries..." class="h-9 w-[180px] pl-9 pr-3 rounded-[8px] border border-gray-200 bg-gray-50/70 text-xs outline-none">
+              </div>
+            </div>
+
+            <!-- List Wrapper -->
+            <div id="tx-history-list" class="flex-1 space-y-4 max-h-[380px] overflow-y-auto pr-1">
+              <!-- Populated dynamically via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =======================================
+           3. BUDGETS PAGE
+           ======================================= -->
+      <section id="page-budgets" class="page-section space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-[22px] font-semibold text-[#0F0E17] leading-tight">Budgets</h1>
+            <p class="text-[14px] text-[#8B89A0] mt-0.5">Control monthly outflow categories</p>
+          </div>
+          <button onclick="openBudgetModal()" class="flex items-center gap-1.5 h-9 px-3 rounded-[10px] border border-brand-200 bg-white text-[13px] font-medium text-brand-600 hover:bg-brand-50">
+            <i data-lucide="plus" class="w-4 h-4"></i> Add Limit
+          </button>
+        </div>
+
+        <!-- Budget Summary Strips -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="fp-card p-5">
+            <div class="flex items-center gap-2 mb-2 text-gray-500">
+              <i data-lucide="trending-up" class="w-4 h-4"></i>
+              <span class="text-[11px] font-semibold tracking-wider uppercase">Actual Income</span>
+            </div>
+            <p class="text-[20px] font-bold text-emerald-700 tabular-nums">₹1,25,000</p>
+          </div>
+          <div class="fp-card p-5">
+            <div class="flex items-center gap-2 mb-2 text-gray-500">
+              <i data-lucide="wallet" class="w-4 h-4"></i>
+              <span class="text-[11px] font-semibold tracking-wider uppercase">Total Budgeted</span>
+            </div>
+            <p class="text-[20px] font-bold text-[#7C3AED] tabular-nums" id="budget-summary-total">₹35,000</p>
+          </div>
+          <div class="fp-card p-5">
+            <div class="flex items-center gap-2 mb-2 text-gray-500">
+              <i data-lucide="check-circle" class="w-4 h-4"></i>
+              <span class="text-[11px] font-semibold tracking-wider uppercase">Income Available</span>
+            </div>
+            <p class="text-[20px] font-bold text-[#4B4963] tabular-nums" id="budget-summary-avail">₹90,000</p>
+          </div>
+        </div>
+
+        <!-- Budget Progress Cards -->
+        <div id="budget-card-container" class="space-y-3.5">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Modal -->
+        <div id="budget-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm hidden">
+          <div class="bg-white rounded-[20px] border border-gray-100 shadow-elevated p-6 w-full max-w-md">
+            <h3 class="text-base font-semibold text-[#0F0E17] mb-1">Add Budget Limit</h3>
+            <p class="text-xs text-gray-500 mb-4">Limit monthly spending for a category.</p>
+            <form onsubmit="handleCreateBudget(event)" class="space-y-4">
+              <div>
+                <label for="bm-category" class="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary mb-1.5">Category</label>
+                <select id="bm-category" required class="w-full h-11 px-3.5 rounded-[10px] border border-gray-200 text-[14px] outline-none bg-transparent">
+                  <option value="food">🍽️ Food</option>
+                  <option value="shopping">🛍️ Shopping</option>
+                  <option value="bills">🧾 Bills</option>
+                  <option value="transport">🚗 Transport</option>
+                  <option value="entertainment">🎬 Entertainment</option>
+                  <option value="rent">🏠 Rent</option>
+                </select>
+              </div>
+              <div>
+                <label for="bm-limit" class="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary mb-1.5">Monthly Limit (₹)</label>
+                <input id="bm-limit" type="number" required placeholder="5000" class="w-full h-11 px-3.5 rounded-[10px] border border-gray-200 text-[14px] outline-none">
+              </div>
+              <div class="flex gap-2 justify-end pt-2">
+                <button type="button" onclick="closeBudgetModal()" class="h-10 px-4 rounded-[10px] bg-gray-100 hover:bg-gray-250 text-xs font-semibold">Cancel</button>
+                <button type="submit" class="h-10 px-4 rounded-[10px] bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold">Create Limit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- =======================================
+           4. GOALS PAGE
+           ======================================= -->
+      <section id="page-goals" class="page-section space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-[22px] font-semibold text-[#0F0E17] leading-tight">Financial Goals</h1>
+            <p class="text-[14px] text-[#8B89A0] mt-0.5">Save toward targets and milestones</p>
+          </div>
+          <button onclick="openGoalModal()" class="flex items-center gap-1.5 h-9 px-3 rounded-[10px] border border-brand-200 bg-white text-[13px] font-medium text-brand-600 hover:bg-brand-50">
+            <i data-lucide="plus" class="w-4 h-4"></i> New Goal
+          </button>
+        </div>
+
+        <!-- Goals Cards Grid -->
+        <div id="goals-grid-container" class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Add Funds Modal -->
+        <div id="funds-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm hidden">
+          <div class="bg-white rounded-[20px] border border-gray-100 shadow-elevated p-6 w-full max-w-md">
+            <h3 class="text-base font-semibold text-[#0F0E17] mb-1">Add Funds to Goal</h3>
+            <p class="text-xs text-gray-500 mb-4">Invest saved cash into your goal bucket.</p>
+            <form onsubmit="handleSaveFunds(event)" class="space-y-4">
+              <input type="hidden" id="fm-goal-id">
+              <div>
+                <label for="fm-amount" class="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary mb-1.5">Amount (₹)</label>
+                <input id="fm-amount" type="number" required placeholder="5000" class="w-full h-11 px-3.5 rounded-[10px] border border-gray-200 text-[14px] outline-none">
+              </div>
+              <div class="flex gap-2 justify-end pt-2">
+                <button type="button" onclick="closeFundsModal()" class="h-10 px-4 rounded-[10px] bg-gray-100 text-xs font-semibold">Cancel</button>
+                <button type="submit" class="h-10 px-4 rounded-[10px] bg-brand-600 text-white text-xs font-semibold">Add Funds</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Create Goal Modal -->
+        <div id="goal-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm hidden">
+          <div class="bg-white rounded-[20px] border border-gray-100 shadow-elevated p-6 w-full max-w-md">
+            <h3 class="text-base font-semibold text-[#0F0E17] mb-1">Create New Goal</h3>
+            <p class="text-xs text-gray-500 mb-4">Define a milestone and target date.</p>
+            <form onsubmit="handleCreateGoal(event)" class="space-y-4">
+              <div>
+                <label for="gm-name" class="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary mb-1.5">Goal Name</label>
+                <input id="gm-name" type="text" required placeholder="e.g. Emergency Fund, Laptop..." class="w-full h-11 px-3.5 rounded-[10px] border border-gray-200 text-[14px] outline-none">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="gm-target" class="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary mb-1.5">Target (₹)</label>
+                  <input id="gm-target" type="number" required placeholder="50000" class="w-full h-11 px-3.5 rounded-[10px] border border-gray-200 text-[14px] outline-none">
+                </div>
+                <div>
+                  <label for="gm-saved" class="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary mb-1.5">Already Saved (₹)</label>
+                  <input id="gm-saved" type="number" placeholder="0" class="w-full h-11 px-3.5 rounded-[10px] border border-gray-200 text-[14px] outline-none">
+                </div>
+              </div>
+              <div>
+                <label for="gm-date" class="block text-[11px] font-semibold uppercase tracking-wider text-ink-secondary mb-1.5">Target Date</label>
+                <input id="gm-date" type="date" class="w-full h-11 px-3.5 rounded-[10px] border border-gray-200 text-[14px] outline-none">
+              </div>
+              <div class="flex gap-2 justify-end pt-2">
+                <button type="button" onclick="closeGoalModal()" class="h-10 px-4 rounded-[10px] bg-gray-100 text-xs font-semibold">Cancel</button>
+                <button type="submit" class="h-10 px-4 rounded-[10px] bg-brand-600 text-white text-xs font-semibold">Create Goal</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- =======================================
+           5. SPENDING ANALYTICS PAGE
+           ======================================= -->
+      <section id="page-analytics" class="page-section space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 class="text-[22px] font-semibold text-[#0F0E17] leading-tight">Spending Analytics</h1>
+            <p class="text-[14px] text-[#8B89A0] mt-0.5">Spending trends and contribution matrices</p>
+          </div>
+        </div>
+
+        <div class="grid gap-5 lg:grid-cols-2">
+          <!-- Summary Metrics Cards 2x2 -->
+          <div class="fp-card p-5 space-y-4">
+            <div class="flex items-center gap-2 mb-4 pb-4 border-b border-gray-100">
+              <i data-lucide="trending-up" class="w-4 h-4 text-brand-600"></i>
+              <h2 class="text-[15px] font-semibold text-[#0F0E17]">Summary Indicators</h2>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="stat-card flex flex-col gap-2" style="border-left: 3px solid #059669;">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="trending-up" class="w-3.5 h-3.5 text-[#8B89A0]"></i>
+                  <span class="label-xs text-[#8B89A0]">Income</span>
+                </div>
+                <p class="metric-value text-[#0F0E17] tabular-nums">₹1,25,000</p>
+                <p class="text-[11px] text-[#8B89A0] leading-tight">Total incoming money</p>
+              </div>
+
+              <div class="stat-card flex flex-col gap-2" style="border-left: 3px solid #DC2626;">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-[#8B89A0]"></i>
+                  <span class="label-xs text-[#8B89A0]">Expenses</span>
+                </div>
+                <p class="metric-value text-[#0F0E17] tabular-nums">₹45,000</p>
+                <p class="text-[11px] text-[#8B89A0] leading-tight">Total outgoing money</p>
+              </div>
+
+              <div class="stat-card flex flex-col gap-2" style="border-left: 3px solid #7C3AED;">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="wallet" class="w-3.5 h-3.5 text-[#8B89A0]"></i>
+                  <span class="label-xs text-[#8B89A0]">Net Balance</span>
+                </div>
+                <p class="metric-value text-[#0F0E17] tabular-nums">₹80,000</p>
+                <p class="text-[11px] text-[#8B89A0] leading-tight">Total savings/deficit</p>
+              </div>
+
+              <div class="stat-card flex flex-col gap-2" style="border-left: 3px solid #D97706;">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-[#8B89A0]"></i>
+                  <span class="label-xs text-[#8B89A0]">Savings Rate</span>
+                </div>
+                <p class="metric-value text-[#0F0E17] tabular-nums">64.0%</p>
+                <p class="text-[11px] text-[#8B89A0] leading-tight">Percentage of income saved</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Breakdown Progress list -->
+          <div class="fp-card p-5">
+            <div class="flex items-center gap-2 mb-4 pb-4 border-b border-gray-100">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-brand-600"></i>
+              <h2 class="text-[15px] font-semibold text-[#0F0E17]">Category Breakdown</h2>
+            </div>
+            <div class="space-y-4">
+              <!-- Bar rows -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-[12px] font-semibold text-[#4B4963]">
+                  <span class="capitalize">Food &amp; Dining</span>
+                  <span class="tabular-nums">₹18,500 (41%)</span>
+                </div>
+                <div class="h-2 rounded-full overflow-hidden bg-gray-100">
+                  <div class="h-full rounded-full bg-brand-600" style="width: 41%;"></div>
+                </div>
+              </div>
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-[12px] font-semibold text-[#4B4963]">
+                  <span class="capitalize">Shopping</span>
+                  <span class="tabular-nums">₹12,000 (27%)</span>
+                </div>
+                <div class="h-2 rounded-full overflow-hidden bg-gray-100">
+                  <div class="h-full rounded-full bg-[#059669]" style="width: 27%;"></div>
+                </div>
+              </div>
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-[12px] font-semibold text-[#4B4963]">
+                  <span class="capitalize">Bills</span>
+                  <span class="tabular-nums">₹9,500 (21%)</span>
+                </div>
+                <div class="h-2 rounded-full overflow-hidden bg-gray-100">
+                  <div class="h-full rounded-full bg-[#D97706]" style="width: 21%;"></div>
+                </div>
+              </div>
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-[12px] font-semibold text-[#4B4963]">
+                  <span class="capitalize">Transport</span>
+                  <span class="tabular-nums">₹5,000 (11%)</span>
+                </div>
+                <div class="h-2 rounded-full overflow-hidden bg-gray-100">
+                  <div class="h-full rounded-full bg-[#06B6D4]" style="width: 11%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6-Month Income vs Expense Trend Area Chart -->
+        <div class="fp-card p-5 space-y-4">
+          <div class="flex items-center gap-2 mb-2 pb-4 border-b border-gray-100">
+            <i data-lucide="trending-up" class="w-4 h-4 text-brand-600"></i>
+            <h2 class="text-[15px] font-semibold text-[#0F0E17]">6-Month Trend Overview</h2>
+          </div>
+          <!-- Custom SVG Area Chart Mockup -->
+          <div class="h-64 relative bg-[#F8F7FF] rounded-xl overflow-hidden border border-gray-100 flex items-end">
+            <!-- Reference Ticks/Lines -->
+            <div class="absolute inset-x-0 top-1/4 border-t border-dashed border-gray-200"></div>
+            <div class="absolute inset-x-0 top-2/4 border-t border-dashed border-gray-200"></div>
+            <div class="absolute inset-x-0 top-3/4 border-t border-dashed border-gray-200"></div>
+            
+            <svg class="w-full h-full" viewBox="0 0 600 200" preserveAspectRatio="none">
+              <!-- Gradient fill for Income -->
+              <defs>
+                <linearGradient id="income-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.15" />
+                  <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.01" />
+                </linearGradient>
+              </defs>
+              <!-- Income Area Fill path -->
+              <path d="M 0,200 L 0,140 Q 60,110 120,130 Q 180,150 240,110 Q 300,70 360,90 Q 420,110 480,75 Q 540,40 600,60 L 600,200 Z" fill="url(#income-grad)"></path>
+              <!-- Income Stroke Line -->
+              <path d="M 0,140 Q 60,110 120,130 Q 180,150 240,110 Q 300,70 360,90 Q 420,110 480,75 Q 540,40 600,60" fill="none" stroke="#7C3AED" stroke-width="2.5"></path>
+              
+              <!-- Expense Dashed Line -->
+              <path d="M 0,180 Q 60,170 120,165 Q 180,170 240,150 Q 300,140 360,135 Q 420,140 480,110 Q 540,120 600,105" fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="4 2"></path>
+            </svg>
+            <div class="absolute bottom-2 left-4 text-[10px] text-gray-500 font-semibold uppercase">Dec</div>
+            <div class="absolute bottom-2 left-[20%] text-[10px] text-gray-500 font-semibold uppercase">Jan</div>
+            <div class="absolute bottom-2 left-[40%] text-[10px] text-gray-500 font-semibold uppercase">Feb</div>
+            <div class="absolute bottom-2 left-[60%] text-[10px] text-gray-500 font-semibold uppercase">Mar</div>
+            <div class="absolute bottom-2 left-[80%] text-[10px] text-gray-500 font-semibold uppercase">Apr</div>
+            <div class="absolute bottom-2 right-4 text-[10px] text-gray-500 font-semibold uppercase">May</div>
+          </div>
+        </div>
+
+        <!-- Contribution Heatmap Matrix -->
+        <div class="fp-card p-5 space-y-4">
+          <div class="flex items-center gap-2 mb-4 pb-4 border-b border-gray-100">
+            <i data-lucide="calendar" class="w-4 h-4 text-brand-600"></i>
+            <h2 class="text-[15px] font-semibold text-[#0F0E17]">Daily Spending Heatmap</h2>
+          </div>
+          
+          <div class="flex flex-col items-start gap-4">
+            <div class="relative w-fit">
+              <!-- S M T W T F S Headers -->
+              <div class="grid grid-cols-7 gap-1.5 text-[10px] font-semibold tracking-wider uppercase text-gray-500 mb-2 text-center">
+                <div class="w-[28px] h-[28px] flex items-center justify-center">S</div>
+                <div class="w-[28px] h-[28px] flex items-center justify-center">M</div>
+                <div class="w-[28px] h-[28px] flex items-center justify-center">T</div>
+                <div class="w-[28px] h-[28px] flex items-center justify-center">W</div>
+                <div class="w-[28px] h-[28px] flex items-center justify-center">T</div>
+                <div class="w-[28px] h-[28px] flex items-center justify-center">F</div>
+                <div class="w-[28px] h-[28px] flex items-center justify-center">S</div>
+              </div>
+              
+              <!-- 5x7 Cells -->
+              <div class="grid grid-cols-7 gap-1.5 relative" id="heatmap-grid-container">
+                <!-- Javascript will load the cells and register hover events -->
+              </div>
+            </div>
+
+            <!-- Heatmap Legend -->
+            <div class="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+              <span>Less</span>
+              <div class="w-5 h-5 rounded-sm bg-gray-100 border border-gray-200"></div>
+              <div class="w-5 h-5 rounded-sm bg-[#EDE9FE]"></div>
+              <div class="w-5 h-5 rounded-sm bg-[#DDD6FE]"></div>
+              <div class="w-5 h-5 rounded-sm bg-[#A78BFA]"></div>
+              <div class="w-5 h-5 rounded-sm bg-[#7C3AED]"></div>
+              <div class="w-5 h-5 rounded-sm bg-[#6D28D9]"></div>
+              <span>More</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =======================================
+           6. AI ADVISOR CHAT PAGE
+           ======================================= -->
+      <section id="page-ai-advisor" class="page-section space-y-6">
+        <div class="flex flex-col h-[calc(100vh-10rem)] max-w-4xl mx-auto">
+          <!-- Chat Header -->
+          <div class="bg-card border border-gray-100 shadow-card rounded-2xl px-5 py-4 mb-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="relative">
+                <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+                  <i data-lucide="brain-circuit" class="w-5 h-5 text-brand-600"></i>
+                </div>
+                <span class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white"></span>
+              </div>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <h1 class="font-semibold text-base leading-tight text-ink-primary">FinPilot AI Advisor</h1>
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-600"></i>
+                </div>
+                <p class="text-[10px] font-semibold tracking-wider uppercase text-gain">● Online · Free forever</p>
+              </div>
+            </div>
+            <button onclick="clearChat()" class="flex items-center gap-1 h-8 px-3 rounded-[8px] border border-gray-150 text-[10px] font-semibold text-gray-500 uppercase hover:text-red-600 hover:border-red-150">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              Clear
+            </button>
+          </div>
+
+          <!-- Chat messages area -->
+          <div id="ai-chat-body" class="flex-1 overflow-y-auto bg-white border border-gray-100 shadow-card rounded-2xl p-4 sm:p-6 space-y-4">
+            <!-- Messages rendered dynamically -->
+          </div>
+
+          <!-- Input bar and suggestion chips -->
+          <div class="bg-card border border-gray-100 shadow-card rounded-2xl p-4 mt-4 space-y-3">
+            <!-- Chips -->
+            <div class="flex gap-2 overflow-x-auto whitespace-nowrap pb-1">
+              <button onclick="sendSuggestion('Where am I overspending?')" class="text-[10px] font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full border border-gray-150 bg-gray-50 hover:bg-brand-50 hover:border-brand-300">
+                Where am I overspending?
+              </button>
+              <button onclick="sendSuggestion('Give me a monthly summary')" class="text-[10px] font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full border border-gray-150 bg-gray-50 hover:bg-brand-50 hover:border-brand-300">
+                Give me a monthly summary
+              </button>
+              <button onclick="sendSuggestion('Explain SIP vs FD for me')" class="text-[10px] font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full border border-gray-150 bg-gray-50 hover:bg-brand-50 hover:border-brand-300">
+                Explain SIP vs FD
+              </button>
+            </div>
+
+            <!-- Send form -->
+            <div class="flex gap-2 items-end">
+              <div class="flex-1 flex items-start gap-2 bg-gray-50 rounded-xl px-3 py-2.5 relative border border-gray-150">
+                <i data-lucide="user" class="w-4 h-4 mt-1 text-[#8B89A0]"></i>
+                <textarea id="ai-input" placeholder="Ask about mutual funds, salary savings, budgets..." rows="1" class="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400 min-w-0 resize-none max-h-[120px] text-[#0F0E17]"></textarea>
+              </div>
+              <button onclick="handleSendMsg()" class="rounded-xl px-4 h-11 bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center">
+                <i data-lucide="send" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =======================================
+           7. SETTINGS PAGE
+           ======================================= -->
+      <section id="page-settings" class="page-section space-y-6 max-w-3xl">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-[15px] font-bold text-brand-700 bg-brand-50" id="settings-avatar-initials">SY</div>
+            <div>
+              <h1 class="text-[22px] font-semibold text-[#0F0E17] leading-tight">Account Settings</h1>
+              <p class="text-[13px] text-[#8B89A0] mt-0.5">Edit dashboard preferences</p>
+            </div>
+          </div>
+          <button onclick="saveSettings()" class="flex items-center gap-1.5 h-10 px-4 rounded-[10px] bg-brand-600 text-white text-[13px] font-semibold hover:bg-brand-700">
+            <i data-lucide="save" class="w-4 h-4"></i> Save Settings
+          </button>
+        </div>
+
+        <!-- Settings Cards -->
+        <div class="space-y-4">
+          <!-- Profile Card -->
+          <div class="fp-card p-5">
+            <div class="flex items-center gap-2 mb-5 pb-4 border-b border-gray-100">
+              <i data-lucide="user" class="w-4.5 h-4.5 text-[#8B89A0]"></i>
+              <div>
+                <h2 class="text-[14.5px] font-semibold text-ink-primary">Profile</h2>
+                <p class="text-[11.5px] text-[#8B89A0] mt-0.5">Your display credentials</p>
+              </div>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="space-y-1.5">
+                <label for="settings-name-input" class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500">Display Name</label>
+                <input id="settings-name-input" type="text" value="Shameek Yogi" class="w-full h-11 px-3.5 rounded-[10px] border border-gray-200 bg-transparent text-[14px] outline-none focus:border-brand-600">
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500">Email Address</label>
+                <input type="email" disabled value="shameek@example.com" class="w-full h-11 px-3.5 rounded-[10px] border border-gray-150 bg-gray-50 text-[14px] text-gray-400 outline-none cursor-not-allowed">
+              </div>
+            </div>
+          </div>
+
+          <!-- Preferences Card -->
+          <div class="fp-card p-5">
+            <div class="flex items-center gap-2 mb-5 pb-4 border-b border-gray-100">
+              <i data-lucide="sliders-horizontal" class="w-4.5 h-4.5 text-[#8B89A0]"></i>
+              <div>
+                <h2 class="text-[14.5px] font-semibold text-ink-primary">Preferences</h2>
+                <p class="text-[11.5px] text-[#8B89A0] mt-0.5">Manage advisor features</p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <!-- AI insights toggle -->
+              <div class="flex items-center justify-between rounded-xl px-4 py-3 bg-gray-50 border border-gray-100">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="brain-circuit" class="w-5 h-5 text-brand-600"></i>
+                  <div>
+                    <p class="text-[13px] font-semibold text-ink-primary">AI Advisor Insights</p>
+                    <p class="text-[11px] text-[#8B89A0]">Inject wealth recommendations into dashboard</p>
+                  </div>
+                </div>
+                <!-- Toggle switch -->
+                <button onclick="toggleSwitch('ai-switch')" id="ai-switch" class="w-11 h-6 rounded-full bg-brand-600 relative transition-colors duration-200">
+                  <span class="w-5 h-5 rounded-full bg-white absolute top-0.5 left-5.5 transition-all duration-200 shadow-sm" style="left: 22px;"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Danger Zone Card -->
+          <div class="fp-card p-5 border border-red-200" style="background: rgba(254,242,242,0.4);">
+            <div class="flex items-center gap-2 mb-5 pb-4 border-b border-red-100">
+              <i data-lucide="alert-octagon" class="w-4.5 h-4.5 text-red-600"></i>
+              <div>
+                <h2 class="text-[14.5px] font-semibold text-red-700">Danger Zone</h2>
+                <p class="text-[11.5px] text-red-600/70 mt-0.5">Danger options for deleting data</p>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="alert('Mockup Data Exported!')" class="h-10 px-4 rounded-[10px] border border-gray-200 hover:bg-white text-xs font-semibold text-ink-secondary">Export Backup</button>
+              <button onclick="resetMockData()" class="h-10 px-4 rounded-[10px] bg-red-600 hover:bg-red-700 text-white text-xs font-semibold">Delete All Data</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ─── Standalone Script for Interactivity ─── -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // ─── Initial Mock Data State ───
+    let defaultTransactions = [
+      { id: 1, amount: 450, category: 'food', type: 'expense', date: '2026-06-02', note: 'Swiggy Dinner' },
+      { id: 2, amount: 1200, category: 'shopping', type: 'expense', date: '2026-06-02', note: 'Zara Shirt' },
+      { id: 3, amount: 8000, category: 'rent', type: 'expense', date: '2026-06-01', note: 'Monthly Maintenance' },
+      { id: 4, amount: 125000, category: 'salary', type: 'income', date: '2026-06-01', note: 'FinTech Corp Salary' },
+      { id: 5, amount: 3500, category: 'bills', type: 'expense', date: '2026-05-30', note: 'Broadband Internet' },
+      { id: 6, amount: 800, category: 'transport', type: 'expense', date: '2026-05-29', note: 'Uber Ride' },
+    ];
+
+    let defaultBudgets = [
+      { id: 'b1', category: 'food', limit: 12000, spent: 450 },
+      { id: 'b2', category: 'shopping', limit: 15000, spent: 1200 },
+      { id: 'b3', category: 'transport', limit: 5000, spent: 800 },
+      { id: 'b4', category: 'rent', limit: 10000, spent: 8000 },
+      { id: 'b5', category: 'bills', limit: 10000, spent: 3500 },
+    ];
+
+    let defaultGoals = [
+      { id: 'g1', name: 'Emergency SIP', target: 150000, current: 75000, deadline: '2026-12-31' },
+      { id: 'g2', name: 'MacBook Pro M4', target: 200000, current: 120000, deadline: '2026-09-30' },
+      { id: 'g3', name: 'Europe Holiday', target: 300000, current: 60000, deadline: '2027-05-15' },
+    ];
+
+    // Local Storage check or load defaults
+    let transactions = JSON.parse(localStorage.getItem('fp_mock_tx')) || defaultTransactions;
+    let budgets = JSON.parse(localStorage.getItem('fp_mock_budgets')) || defaultBudgets;
+    let goals = JSON.parse(localStorage.getItem('fp_mock_goals')) || defaultGoals;
+    let activeTxType = 'expense';
+
+    // ─── Routing Functions ───
+    function switchPage(pageId) {
+      // Hide all pages
+      document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      // Show targeted
+      const targetSection = document.getElementById(`page-${pageId}`);
+      if (targetSection) targetSection.classList.add('active');
+
+      // Update sidebar active classes
+      document.querySelectorAll('.nav-item').forEach(item => {
+        if (item.getAttribute('data-page') === pageId) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+
+      // Update mobile bottom nav active classes
+      document.querySelectorAll('.mobile-tab').forEach(tab => {
+        if (tab.getAttribute('data-mobile-page') === pageId) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
+      // Scroll window to top
+      window.scrollTo(0, 0);
+
+      // Re-trigger layout-dependent updates
+      if (pageId === 'dashboard') renderDashboard();
+      if (pageId === 'transactions') renderTransactions();
+      if (pageId === 'budgets') renderBudgets();
+      if (pageId === 'goals') renderGoals();
+      if (pageId === 'analytics') renderAnalytics();
+      if (pageId === 'ai-advisor') setupChat();
+    }
+
+    // ─── Rendering Helpers ───
+    const categoryEmojis = {
+      food: "🍽️", transport: "🚗", shopping: "🛍️", bills: "🧾",
+      subscriptions: "📱", entertainment: "🎬", rent: "🏠",
+      salary: "💼", freelance: "💻", business: "🏢", miscellaneous: "📦",
+    };
+
+    function formatCurrency(amount) {
+      return '₹' + amount.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    }
+
+    function getProgressColor(pct) {
+      if (pct >= 100) return '#DC2626'; // loss
+      if (pct >= 75) return '#D97706'; // warning
+      return '#7C3AED'; // brand primary
+    }
+
+    // ─── Dashboard Render logic ───
+    function renderDashboard() {
+      // Recalculate stats
+      let incomeSum = 0;
+      let expenseSum = 0;
+      transactions.forEach(t => {
+        // filter for current month mockup: 2026-06
+        if (t.date.startsWith('2026-06')) {
+          if (t.type === 'income') incomeSum += t.amount;
+          else expenseSum += t.amount;
+        }
+      });
+
+      const net = incomeSum - expenseSum;
+      const rate = incomeSum > 0 ? ((net / incomeSum) * 100).toFixed(1) : '0.0';
+
+      document.getElementById('stat-income').textContent = formatCurrency(incomeSum);
+      document.getElementById('stat-expense').textContent = formatCurrency(expenseSum);
+      document.getElementById('stat-net').textContent = formatCurrency(net);
+      document.getElementById('stat-savings-rate').textContent = `${rate}%`;
+
+      // Render recent list
+      const container = document.getElementById('dashboard-tx-list');
+      container.innerHTML = '';
+      
+      const recent = transactions.slice(0, 4);
+      recent.forEach(t => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-3 py-2 border-b border-gray-50 last:border-0';
+        const isIncome = t.type === 'income';
+        const emoji = categoryEmojis[t.category] || '💳';
+        row.innerHTML = `
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center text-sm ${isIncome ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}">
+            ${emoji}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-[#0F0E17] capitalize truncate">${t.category}</p>
+            ${t.note ? `<p class="text-xs text-gray-400 truncate">${t.note}</p>` : ''}
+          </div>
+          <p class="text-sm font-semibold tabular-nums ${isIncome ? 'text-emerald-700' : 'text-red-600'}">
+            ${isIncome ? '+' : '-'}${formatCurrency(t.amount)}
+          </p>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    // ─── Transactions Page Render and actions ───
+    function setTxType(type) {
+      activeTxType = type;
+      const btnExpense = document.getElementById('btn-toggle-expense');
+      const btnIncome = document.getElementById('btn-toggle-income');
+      
+      if (type === 'expense') {
+        btnExpense.className = 'flex-1 flex items-center justify-center gap-2 h-9 rounded-full text-[13.5px] font-medium bg-white shadow-sm text-ink-primary';
+        btnIncome.className = 'flex-1 flex items-center justify-center gap-2 h-9 rounded-full text-[13.5px] font-medium text-[#8B89A0]';
+      } else {
+        btnIncome.className = 'flex-1 flex items-center justify-center gap-2 h-9 rounded-full text-[13.5px] font-medium bg-white shadow-sm text-ink-primary';
+        btnExpense.className = 'flex-1 flex items-center justify-center gap-2 h-9 rounded-full text-[13.5px] font-medium text-[#8B89A0]';
+      }
+    }
+
+    function renderTransactions(filterQuery = '') {
+      const container = document.getElementById('tx-history-list');
+      container.innerHTML = '';
+
+      let list = transactions;
+      if (filterQuery) {
+        list = list.filter(t => 
+          t.category.toLowerCase().includes(filterQuery.toLowerCase()) ||
+          (t.note && t.note.toLowerCase().includes(filterQuery.toLowerCase()))
+        );
+      }
+
+      list.forEach(t => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-3 py-2 border-b border-gray-100 last:border-0';
+        const isIncome = t.type === 'income';
+        const emoji = categoryEmojis[t.category] || '💳';
+        row.innerHTML = `
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center text-sm ${isIncome ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}">
+            ${emoji}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="text-sm font-semibold text-[#0F0E17] capitalize">${t.category}</span>
+              <span class="text-[9px] font-semibold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-md">${t.date}</span>
+            </div>
+            ${t.note ? `<p class="text-xs text-gray-400 truncate">${t.note}</p>` : ''}
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-semibold tabular-nums ${isIncome ? 'text-emerald-700' : 'text-red-700'}">
+              ${isIncome ? '+' : '-'}${formatCurrency(t.amount)}
+            </span>
+            <button onclick="deleteTransaction(${t.id})" class="text-gray-400 hover:text-red-600 p-1">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+      lucide.createIcons();
+    }
+
+    function handleAddTx(e) {
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById('form-amount').value);
+      const date = document.getElementById('form-date').value;
+      const category = document.getElementById('form-category').value;
+      const note = document.getElementById('form-note').value;
+
+      if (!amount || !date || !category) return;
+
+      const newTx = {
+        id: Date.now(),
+        amount,
+        category,
+        type: activeTxType,
+        date,
+        note
+      };
+
+      transactions.unshift(newTx);
+      
+      // Update matching budget spent
+      let bud = budgets.find(b => b.category === category);
+      if (bud && activeTxType === 'expense') {
+        bud.spent += amount;
+      }
+
+      saveState();
+      
+      // Reset form
+      document.getElementById('form-amount').value = '';
+      document.getElementById('form-note').value = '';
+
+      // Re-render and notify
+      renderTransactions();
+      renderDashboard();
+      
+      // Custom temporary toast mockup
+      alert(`Transaction logged: ${activeTxType === 'income' ? '+' : '-'}${formatCurrency(amount)} in ${category}!`);
+    }
+
+    function deleteTransaction(id) {
+      const tx = transactions.find(t => t.id === id);
+      if (!tx) return;
+      
+      // Deduct budget spent if expense
+      if (tx.type === 'expense') {
+        let bud = budgets.find(b => b.category === tx.category);
+        if (bud) bud.spent = Math.max(0, bud.spent - tx.amount);
+      }
+
+      transactions = transactions.filter(t => t.id !== id);
+      saveState();
+      renderTransactions();
+      renderDashboard();
+    }
+
+    function searchTransactions() {
+      const q = document.getElementById('tx-search').value;
+      renderTransactions(q);
+    }
+
+    // ─── Budgets Render & action ───
+    function openBudgetModal() { document.getElementById('budget-modal').classList.remove('hidden'); }
+    function closeBudgetModal() { document.getElementById('budget-modal').classList.add('hidden'); }
+
+    function handleCreateBudget(e) {
+      e.preventDefault();
+      const category = document.getElementById('bm-category').value;
+      const limit = parseFloat(document.getElementById('bm-limit').value);
+
+      if (!category || !limit) return;
+
+      // check if exists
+      const existing = budgets.find(b => b.category === category);
+      if (existing) {
+        existing.limit = limit;
+      } else {
+        budgets.push({
+          id: Date.now(),
+          category,
+          limit,
+          spent: 0
+        });
+      }
+
+      saveState();
+      closeBudgetModal();
+      renderBudgets();
+    }
+
+    function renderBudgets() {
+      let totalBudgeted = 0;
+      let totalSpent = 0;
+      
+      budgets.forEach(b => {
+        totalBudgeted += b.limit;
+        totalSpent += b.spent;
+      });
+
+      document.getElementById('budget-summary-total').textContent = formatCurrency(totalBudgeted);
+      document.getElementById('budget-summary-avail').textContent = formatCurrency(125000 - totalBudgeted);
+
+      const container = document.getElementById('budget-card-container');
+      container.innerHTML = '';
+
+      budgets.forEach(b => {
+        const pct = b.limit > 0 ? Math.min(100, Math.round((b.spent / b.limit) * 100)) : 0;
+        const color = getProgressColor(pct);
+        const emoji = categoryEmojis[b.category] || '💳';
+        const card = document.createElement('div');
+        card.className = 'fp-card p-5 flex flex-col gap-3';
+        card.innerHTML = `
+          <div class="flex items-center">
+            <span class="text-base mr-2">${emoji}</span>
+            <span class="text-[14px] font-semibold text-[#0F0E17] capitalize flex-1">${b.category}</span>
+            <span class="fp-chip text-[10px]" style="background-color: ${color}20; color: ${color};">
+              ${formatCurrency(b.spent)} / ${formatCurrency(b.limit)}
+            </span>
+          </div>
+          <!-- Progress bar -->
+          <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-500" style="width: ${pct}%; background-color: ${color};"></div>
+          </div>
+          <div class="flex justify-between text-[11px] text-gray-500 font-medium">
+            <span>${pct}% Spent</span>
+            <span class="tabular-nums">${b.spent > b.limit ? 'Over by ' + formatCurrency(b.spent - b.limit) : formatCurrency(b.limit - b.spent) + ' remaining'}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // ─── Goals Render & action ───
+    function openGoalModal() { document.getElementById('goal-modal').classList.remove('hidden'); }
+    function closeGoalModal() { document.getElementById('goal-modal').classList.add('hidden'); }
+    function openFundsModal(goalId) {
+      document.getElementById('fm-goal-id').value = goalId;
+      document.getElementById('funds-modal').classList.remove('hidden');
+    }
+    function closeFundsModal() { document.getElementById('funds-modal').classList.add('hidden'); }
+
+    function handleCreateGoal(e) {
+      e.preventDefault();
+      const name = document.getElementById('gm-name').value;
+      const target = parseFloat(document.getElementById('gm-target').value);
+      const saved = parseFloat(document.getElementById('gm-saved').value) || 0;
+      const deadline = document.getElementById('gm-date').value || null;
+
+      if (!name || !target) return;
+
+      goals.push({
+        id: 'g_' + Date.now(),
+        name,
+        target,
+        current: saved,
+        deadline
+      });
+
+      saveState();
+      closeGoalModal();
+      renderGoals();
+      // Reset
+      document.getElementById('gm-name').value = '';
+      document.getElementById('gm-target').value = '';
+      document.getElementById('gm-saved').value = '';
+      document.getElementById('gm-date').value = '';
+    }
+
+    function handleSaveFunds(e) {
+      e.preventDefault();
+      const goalId = document.getElementById('fm-goal-id').value;
+      const amount = parseFloat(document.getElementById('fm-amount').value);
+
+      if (!goalId || !amount) return;
+
+      let goal = goals.find(g => g.id === goalId);
+      if (goal) {
+        goal.current = Math.min(goal.target, goal.current + amount);
+        saveState();
+        closeFundsModal();
+        renderGoals();
+        document.getElementById('fm-amount').value = '';
+        alert(`Successfully added ${formatCurrency(amount)} to ${goal.name}!`);
+      }
+    }
+
+    function renderGoals() {
+      const container = document.getElementById('goals-grid-container');
+      container.innerHTML = '';
+
+      goals.forEach((g, idx) => {
+        const pct = g.target > 0 ? Math.min(100, Math.round((g.current / g.target) * 100)) : 0;
+        const r = 42;
+        const circ = 2 * Math.PI * r;
+        const strokeOffset = circ * (1 - pct / 100);
+
+        const card = document.createElement('div');
+        card.className = 'fp-card p-5 relative flex flex-col justify-between h-48';
+        card.innerHTML = `
+          <div class="flex gap-4">
+            <!-- SVG radial ring -->
+            <div class="relative w-20 h-20 flex-shrink-0">
+              <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="${r}" fill="none" stroke="rgba(124,58,237,0.06)" stroke-width="8" />
+                <circle cx="50" cy="50" r="${r}" fill="none" stroke="#7C3AED" stroke-width="8" 
+                        stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${strokeOffset}" 
+                        style="transition: stroke-dashoffset 0.8s ease;" />
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-sm font-bold text-ink-primary leading-none">${pct}%</span>
+                <span class="text-[8px] text-gray-400 uppercase tracking-wider">done</span>
+              </div>
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold text-sm leading-tight text-ink-primary truncate">${g.name}</h3>
+              <p class="text-xs font-semibold text-gray-500 mt-1 tabular-nums">
+                ${formatCurrency(g.current)} <span class="text-gray-400 font-normal">/ ${formatCurrency(g.target)}</span>
+              </p>
+              ${g.deadline ? `<p class="text-[9px] text-[#D97706] font-semibold uppercase tracking-wider mt-2">Target: ${g.deadline}</p>` : ''}
+            </div>
+          </div>
+
+          <div class="border-t border-gray-100 pt-3">
+            <button onclick="openFundsModal('${g.id}')" class="w-full h-8 rounded-[8px] border border-gray-200 bg-gray-50 hover:bg-gray-100 text-[10px] font-bold uppercase tracking-wider">
+              + Add Funds
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // ─── Spending Analytics heat grid Render ───
+    function renderAnalytics() {
+      // Load Heatmap Cells
+      const container = document.getElementById('heatmap-grid-container');
+      container.innerHTML = '';
+
+      // Day offsets (mock June 2026 starting Monday)
+      // June 1, 2026 is a Monday. Sunday is index 0. Offset is 1 empty box.
+      const offset = 1;
+      for (let i = 0; i < offset; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'w-[28px] h-[28px]';
+        container.appendChild(empty);
+      }
+
+      // Generate 30 days
+      const mockDaily = [
+        { day: 1, amount: 1200 }, { day: 2, amount: 1650 }, { day: 3, amount: 0 },
+        { day: 4, amount: 8500 }, { day: 5, amount: 450 }, { day: 6, amount: 0 },
+        { day: 7, amount: 3200 }, { day: 8, amount: 950 }, { day: 9, amount: 1100 },
+        { day: 10, amount: 200 }, { day: 11, amount: 12000 }, { day: 12, amount: 0 },
+        { day: 13, amount: 4500 }, { day: 14, amount: 800 }, { day: 15, amount: 3500 },
+        { day: 16, amount: 0 }, { day: 17, amount: 1500 }, { day: 18, amount: 900 },
+        { day: 19, amount: 450 }, { day: 20, amount: 0 }, { day: 21, amount: 2500 },
+        { day: 22, amount: 3100 }, { day: 23, amount: 5000 }, { day: 24, amount: 0 },
+        { day: 25, amount: 1200 }, { day: 26, amount: 900 }, { day: 27, amount: 450 },
+        { day: 28, amount: 200 }, { day: 29, amount: 1500 }, { day: 30, amount: 800 }
+      ];
+
+      const maxDailySpend = 12000; // Peak limit day 11
+
+      mockDaily.forEach((d) => {
+        const cell = document.createElement('div');
+        cell.className = 'w-[28px] h-[28px] flex items-center justify-center rounded-[6px] text-[10px] font-semibold cursor-default hover:scale-115 hover:shadow-sm transition-all';
+        cell.style.backgroundColor = getHeatmapColor(d.amount, maxDailySpend);
+        cell.innerHTML = `<span class="opacity-75">${d.day}</span>`;
+        cell.title = `June ${d.day}: ${d.amount > 0 ? formatCurrency(d.amount) : 'No spending'}`;
+        container.appendChild(cell);
+      });
+    }
+
+    // ─── AI Advisor chat interaction ───
+    let initialAIWelcome = false;
+    function setupChat() {
+      if (initialAIWelcome) return;
+      const body = document.getElementById('ai-chat-body');
+      body.innerHTML = '';
+      
+      appendMsg('assistant', "Namaste! I'm FinPilot, your elite personal wealth advisor. I have full context of your transactions, budgets, and financial goals. Ask me anything about your savings, mutual funds, tax filing, or investment plans.");
+      initialAIWelcome = true;
+    }
+
+    function appendMsg(role, text) {
+      const body = document.getElementById('ai-chat-body');
+      const isUser = role === 'user';
+      const bubble = document.createElement('div');
+      bubble.className = `flex gap-3 max-w-[80%] ${isUser ? 'ml-auto flex-row-reverse' : ''}`;
+      
+      const avatar = isUser ? `
+        <div class="w-7 h-7 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="user" class="w-3.5 h-3.5 text-brand-600"></i>
+        </div>
+      ` : `
+        <div class="w-7 h-7 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="brain-circuit" class="w-3.5 h-3.5 text-brand-600"></i>
+        </div>
+      `;
+
+      bubble.innerHTML = `
+        ${avatar}
+        <div class="flex flex-col gap-1">
+          <div class="px-4 py-2.5 text-[13px] leading-relaxed rounded-xl ${isUser ? 'bg-brand-600 text-white rounded-tr-none' : 'bg-gray-50 border border-gray-100 rounded-tl-none'}">
+            ${text}
+          </div>
+        </div>
+      `;
+      body.appendChild(bubble);
+      body.scrollTop = body.scrollHeight;
+      lucide.createIcons();
+    }
+
+    function sendSuggestion(text) {
+      appendMsg('user', text);
+      triggerAIResponse(text);
+    }
+
+    function handleSendMsg() {
+      const input = document.getElementById('ai-input');
+      const val = input.value.trim();
+      if (!val) return;
+      appendMsg('user', val);
+      input.value = '';
+      triggerAIResponse(val);
+    }
+
+    function triggerAIResponse(query) {
+      // Append temporary typing indicator
+      const body = document.getElementById('ai-chat-body');
+      const typing = document.createElement('div');
+      typing.id = 'ai-typing';
+      typing.className = 'flex gap-3 items-center max-w-[80%]';
+      typing.innerHTML = `
+        <div class="w-7 h-7 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="brain-circuit" class="w-3.5 h-3.5 text-brand-600"></i>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 rounded-xl flex gap-1 items-center">
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+        </div>
+      `;
+      body.appendChild(typing);
+      body.scrollTop = body.scrollHeight;
+      lucide.createIcons();
+
+      // Mock delay
+      setTimeout(() => {
+        const typEl = document.getElementById('ai-typing');
+        if (typEl) typEl.remove();
+
+        let response = "I've analyzed your query. To optimize your personal cashflow, I recommend checking your set Budgets page and keeping your expenses below the set thresholds.";
+        const lowercaseQ = query.toLowerCase();
+        
+        if (lowercaseQ.includes('overspending') || lowercaseQ.includes('expense')) {
+          response = "Looking at your ledger, you are overspending on **Food & Dining** (₹18,500 spent). You have already crossed 91% of your threshold. I suggest limiting Swiggy/Zomato orders for the remaining month.";
+        } else if (lowercaseQ.includes('summary')) {
+          response = "Here is your June 2026 Financial Summary:<br>• **Income**: ₹1,25,000<br>• **Expenses**: ₹45,000<br>• **Net Balance**: ₹80,000<br>• **Savings Rate**: 64% (Excellent baseline!).";
+        } else if (lowercaseQ.includes('sip') || lowercaseQ.includes('invest')) {
+          response = "Since you have ₹80,000 surplus balance this month, I suggest setting up a SIP (Systematic Investment Plan) in a diversified Nifty 50 Index Fund. Over 5 years, this could yield ~12% compounded annually compared to just 3.5% in a regular Savings Account.";
+        }
+
+        appendMsg('assistant', response);
+      }, 1000);
+    }
+
+    function clearChat() {
+      initialAIWelcome = false;
+      setupChat();
+    }
+
+    // ─── Settings logic ───
+    function toggleSwitch(id) {
+      const el = document.getElementById(id);
+      const thumb = el.querySelector('span');
+      if (el.classList.contains('bg-brand-600')) {
+        el.classList.remove('bg-brand-600');
+        el.classList.add('bg-gray-200');
+        thumb.style.left = '2px';
+      } else {
+        el.classList.remove('bg-gray-200');
+        el.classList.add('bg-brand-600');
+        thumb.style.left = '22px';
+      }
+    }
+
+    function saveSettings() {
+      const name = document.getElementById('settings-name-input').value.trim();
+      if (!name) return;
+
+      localStorage.setItem('fp_mock_user_name', name);
+      
+      // Update displays
+      document.getElementById('user-display-name').textContent = name;
+      document.getElementById('dash-greeting-name').textContent = name;
+      const initials = name.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+      document.getElementById('user-initials').textContent = initials;
+      document.getElementById('settings-avatar-initials').textContent = initials;
+
+      alert('Settings saved successfully!');
+    }
+
+    function resetMockData() {
+      if (confirm('Are you sure you want to reset all mockup data back to default?')) {
+        localStorage.clear();
+        transactions = defaultTransactions;
+        budgets = defaultBudgets;
+        goals = defaultGoals;
+        
+        document.getElementById('settings-name-input').value = 'Shameek Yogi';
+        saveSettings();
+        
+        switchPage('dashboard');
+      }
+    }
+
+    // ─── State Persistence ───
+    function saveState() {
+      localStorage.setItem('fp_mock_tx', JSON.stringify(transactions));
+      localStorage.setItem('fp_mock_budgets', JSON.stringify(budgets));
+      localStorage.setItem('fp_mock_goals', JSON.stringify(goals));
+    }
+
+    // ─── Page Init ───
+    window.addEventListener('DOMContentLoaded', () => {
+      // Set date inputs
+      const todayDate = new Date();
+      document.getElementById('form-date').value = todayDate.toISOString().split('T')[0];
+      
+      const options = { month: 'long', year: 'numeric' };
+      document.getElementById('dash-date').textContent = todayDate.toLocaleDateString('en-IN', options);
+      document.getElementById('today-date-str').textContent = todayDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric'});
+
+      // Load name if stored
+      const storedName = localStorage.getItem('fp_mock_user_name');
+      if (storedName) {
+        document.getElementById('settings-name-input').value = storedName;
+        document.getElementById('user-display-name').textContent = storedName;
+        document.getElementById('dash-greeting-name').textContent = storedName;
+        const initials = storedName.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+        document.getElementById('user-initials').textContent = initials;
+        document.getElementById('settings-avatar-initials').textContent = initials;
+      }
+
+      // Initial Render
+      renderDashboard();
+    });
+
+    // ─── Simulate Refresh ───
+    function simulateRefresh() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        renderDashboard();
+      }, 800);
+    }
+  </script>
+</body>
+</html>

@@ -50,8 +50,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "rgba(255,255,255,0.05)" },
-    { media: "(prefers-color-scheme: dark)",  color: "rgba(255,255,255,0.05)" },
+    { media: "(prefers-color-scheme: light)", color: "#F8F7FF" },
+    { media: "(prefers-color-scheme: dark)",  color: "#F8F7FF" },
   ],
   viewportFit: "cover",
 };
@@ -72,12 +72,12 @@ export default function RootLayout({
       </head>
       <body
         className="min-h-full antialiased page-bg"
-        style={{ color: "#fafafa" }}
+        style={{ color: "#0F0E17" }}
       >
         {/* Desktop: content shifted by sidebar; Mobile: content + bottom nav */}
         <Navigation />
         <main
-          className="lg:ml-[220px] pb-20 lg:pb-0"
+          className="lg:ml-[240px] pb-20 lg:pb-0"
           style={{ minHeight: "100vh" }}
         >
           <div className="lg:px-10 lg:py-8 px-4 py-6 max-w-[1280px]">

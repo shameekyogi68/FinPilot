@@ -1,6 +1,5 @@
 "use client"
 
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell } from "recharts"
 import { useProfile } from "@/hooks/useProfile"
 import { formatCurrency } from "@/lib/utils/currency"
 import { motion } from "framer-motion"
@@ -17,7 +16,6 @@ type ExpenseChartProps = {
   error: string | null
 }
 
-// Spec colors — no plain blue
 const CHART_COLORS = [
   "#7C3AED", // brand-600
   "#059669", // gain
@@ -29,31 +27,6 @@ const CHART_COLORS = [
   "#64748B", // slate
 ]
 
-interface CustomTooltipProps {
-  active?: boolean
-  payload?: Array<{ name: string; value: number; payload: ExpenseCategorySlice }>
-}
-
-function CustomTooltip({ active, payload }: CustomTooltipProps) {
-  const { profile } = useProfile()
-  const currency = profile?.currency ?? "INR"
-
-  if (!active || !payload?.length) return null
-  const item = payload[0]
-
-  return (
-    <div
-      className="bg-[rgba(20,20,25,0.6)] rounded-[10px] px-4 py-3 min-w-[140px]"
-      style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.06)" }}
-    >
-      <p className="label-xs text-[#a1a1aa] mb-1">{item.name}</p>
-      <p className="text-[14px] font-medium text-[#fafafa] tabular-nums">
-        {formatCurrency(item.value, currency)}
-      </p>
-    </div>
-  )
-}
-
 export function ExpenseChart({ data, loading, error }: ExpenseChartProps) {
   const { profile } = useProfile()
   const currency = profile?.currency ?? "INR"
@@ -61,7 +34,12 @@ export function ExpenseChart({ data, loading, error }: ExpenseChartProps) {
   if (error) {
     return (
       <div className="fp-card p-6">
-        <h2 className="text-[15px] font-medium text-[#fafafa] mb-4">Expenses by Category</h2>
+        <div className="section-header !mb-5">
+          <div className="section-header-icon">
+            <BarChart3 size={16} strokeWidth={1.5} />
+          </div>
+          <h2 className="text-[15px] font-bold text-[#0F0E17]">Expenses by Category</h2>
+        </div>
         <div className="text-[13px] text-[#ef4444]">{error}</div>
       </div>
     )
@@ -74,40 +52,47 @@ export function ExpenseChart({ data, loading, error }: ExpenseChartProps) {
       initial={{ opacity: 0, y: 12, scale: 0.99 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: 0.1, duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-      className="fp-card p-6 h-full flex flex-col"
+      className="fp-card p-6 h-full flex flex-col justify-between"
     >
-      {/* Header */}
-      <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
-        <BarChart3 size={16} strokeWidth={1.5} className="text-[#e4e4e7]" aria-hidden="true" />
-        <div className="flex-1">
-          <h2 className="text-[15px] font-medium text-[#fafafa] leading-tight">Expenses by Category</h2>
-          {!loading && data && data.length > 0 && (
-            <p className="text-[12px] text-[#a1a1aa] mt-0.5 tabular-nums">
-              Total: {formatCurrency(totalExpenses, currency)}
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="flex-1">
-        {loading ? (
-          <div className="space-y-3 py-2">
-            <div className="h-48 w-full rounded-[10px] bg-[rgba(255,255,255,0.05)] animate-pulse" />
-            {[80, 60, 70, 50].map((w, i) => (
-              <div key={i} className="h-2.5 rounded-full bg-[rgba(255,255,255,0.05)] animate-pulse" style={{ width: `${w}%` }} />
-            ))}
+      <div>
+        {/* Header */}
+        <div className="section-header !mb-5">
+          <div className="section-header-icon">
+            <BarChart3 size={16} strokeWidth={2} />
           </div>
-        ) : !data || data.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center py-12 text-center">
-            <div>
-              {/* Abstract SVG geometric illustration */}
+          <div className="flex-1 flex justify-between items-baseline">
+            <h2 className="text-[15px] font-bold text-[#0F0E17]">Expenses by Category</h2>
+            {!loading && data && data.length > 0 && (
+              <span className="text-[12px] text-[#8B89A0] font-semibold tabular-nums">
+                Total: {formatCurrency(totalExpenses, currency)}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div>
+          {loading ? (
+            <div className="space-y-5 py-2">
+              {[80, 60, 70, 50].map((_, i) => (
+                <div key={i} className="space-y-2 animate-pulse" style={{ animationDelay: `${i * 100}ms` }}>
+                  <div className="flex justify-between items-center">
+                    <div className="h-3 w-20 bg-[#F5F3FF] rounded-full" />
+                    <div className="h-3 w-16 bg-[#F5F3FF] rounded-full" />
+                  </div>
+                  <div className="h-2 w-full bg-[#F5F3FF] rounded-full" />
+                </div>
+              ))}
+            </div>
+          ) : !data || data.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
               <svg width="64" height="64" viewBox="0 0 64 64" fill="none" className="mx-auto mb-4" aria-hidden="true">
                 <rect x="8" y="32" width="12" height="24" rx="3" fill="#EDE9FE" />
                 <rect x="26" y="20" width="12" height="36" rx="3" fill="#DDD6FE" />
                 <rect x="44" y="12" width="12" height="44" rx="3" fill="#C4B5FD" />
-                <rect x="8" y="30" width="48" height="2" rx="1" fill="#a1a1aa" opacity="0.2" />
+                <rect x="8" y="30" width="48" height="2" rx="1" fill="#8B89A0" opacity="0.2" />
               </svg>
-              <p className="text-[14px] text-[#e4e4e7]">No expenses this month</p>
+              <p className="text-[14px] text-[#4B4963]">No expenses this month</p>
               <a
                 href="/transactions"
                 className="text-[13px] text-[#7C3AED] underline mt-1.5 inline-block hover:text-[#6D28D9] transition-colors focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 rounded-[4px]"
@@ -115,76 +100,46 @@ export function ExpenseChart({ data, loading, error }: ExpenseChartProps) {
                 Add your first transaction
               </a>
             </div>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-4">
-            <div className="h-52">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={data}
-                  layout="vertical"
-                  margin={{ top: 5, right: 32, left: 16, bottom: 5 }}
-                >
-                  <XAxis type="number" hide />
-                  <YAxis
-                    type="category"
-                    dataKey="category"
-                    width={90}
-                    tick={{
-                      fill: "#a1a1aa",
-                      fontSize: 12,
-                      fontFamily: "Inter var, Inter, system-ui, sans-serif",
-                    }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <Tooltip
-                    content={<CustomTooltip />}
-                    cursor={{ fill: "rgba(0,0,0,0.03)" }}
-                  />
-                  <Bar dataKey="amount" radius={[0, 6, 6, 0]} barSize={22}>
-                    {data.map((entry, index) => (
-                      <Cell
-                        key={entry.category}
-                        fill={CHART_COLORS[index % CHART_COLORS.length]}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Category legend rows */}
-            <div className="space-y-1 mt-1">
+          ) : (
+            <div className="space-y-5">
               {data.slice(0, 5).map((entry, index) => {
-                const pct = totalExpenses > 0 ? ((entry.amount / totalExpenses) * 100).toFixed(0) : "0"
+                const pct = totalExpenses > 0 ? Math.round((entry.amount / totalExpenses) * 100) : 0
+                const color = CHART_COLORS[index % CHART_COLORS.length]
                 return (
-                  <div key={entry.category} className="flex items-center justify-between text-[12px] py-1">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="w-2 h-2 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
-                      />
-                      <span className="text-[#e4e4e7] capitalize">{entry.category}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-[#a1a1aa] tabular-nums">{pct}%</span>
-                      <span className="font-medium text-[#fafafa] tabular-nums">
-                        {formatCurrency(entry.amount, currency)}
+                  <div key={entry.category} className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2.5">
+                        <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color }} />
+                        <span className="text-[13px] font-bold text-[#0F0E17] capitalize">{entry.category}</span>
+                      </div>
+                      <span className="text-[13px] font-bold text-[#4B4963] tabular-nums">
+                        {formatCurrency(entry.amount, currency)}{" "}
+                        <span className="text-[#B8B5C9] font-medium">({pct}%)</span>
                       </span>
+                    </div>
+                    <div className="progress-track">
+                      <div
+                        className="progress-fill"
+                        style={{
+                          width: `${pct}%`,
+                          background: `linear-gradient(90deg, ${color}88, ${color})`
+                        }}
+                      />
                     </div>
                   </div>
                 )
               })}
-              {data.length > 5 && (
-                <p className="text-[11px] text-[#a1a1aa] text-center pt-1">
-                  +{data.length - 5} more categories
-                </p>
-              )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
+
+      {/* Footer additional info */}
+      {!loading && data && data.length > 5 && (
+        <p className="text-[11px] text-[#8B89A0] text-center pt-4 border-t border-[rgba(0,0,0,0.04)] mt-4 font-medium">
+          +{data.length - 5} more categories
+        </p>
+      )}
     </motion.div>
   )
 }

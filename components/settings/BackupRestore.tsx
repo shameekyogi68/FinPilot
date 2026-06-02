@@ -75,10 +75,9 @@ export default function BackupRestore() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full justify-start gap-2">
-          <Download className="w-4 h-4" />
-          Backup & Restore Data
-        </Button>
+        <button className="flex items-center justify-center gap-2 h-10 px-5 rounded-[12px] border border-[rgba(0,0,0,0.08)] bg-white/70 hover:bg-white text-[13px] font-bold text-[#4B4963] hover:text-[#0F0E17] transition-all hover:-translate-y-0.5 active:scale-95 shadow-sm">
+          <Upload className="w-4 h-4" /> Backup & Restore
+        </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>

@@ -76,7 +76,7 @@ export function CreatableSelect({ value, onChange, options, placeholder, id, cla
       </div>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-slate-900 border border-white/15 rounded-xl shadow-xl overflow-hidden max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-white border border-[rgba(0,0,0,0.10)] rounded-[10px] shadow-[0_4px_16px_rgba(0,0,0,0.08)] overflow-hidden max-h-60 overflow-y-auto">
           {filteredOptions.length > 0 ? (
             <div className="p-1">
               {filteredOptions.map((opt) => (
@@ -84,7 +84,7 @@ export function CreatableSelect({ value, onChange, options, placeholder, id, cla
                   key={opt.value}
                   type="button"
                   onClick={() => handleSelect(opt.value)}
-                  className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-[rgba(20,20,25,0.6)]/10 transition-colors flex items-center gap-2"
+                  className="w-full text-left px-3 py-2 text-sm text-[#0F0E17] rounded-md hover:bg-slate-100 transition-colors flex items-center gap-2"
                 >
                   {opt.icon && <span>{opt.icon}</span>}
                   <span className="capitalize">{opt.label}</span>
@@ -92,9 +92,9 @@ export function CreatableSelect({ value, onChange, options, placeholder, id, cla
               ))}
             </div>
           ) : (
-            <div className="p-3 text-sm text-muted-foreground flex items-center justify-between">
+            <div className="p-3 text-sm text-[#8B89A0] flex items-center justify-between">
               <span>Create "{inputValue}"</span>
-              <span className="text-[10px] bg-[rgba(20,20,25,0.6)]/10 px-1.5 py-0.5 rounded">Enter</span>
+              <span className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-[#4B4963]">Enter</span>
             </div>
           )}
         </div>

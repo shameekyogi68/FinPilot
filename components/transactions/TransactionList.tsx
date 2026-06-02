@@ -22,7 +22,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Pencil, Trash2, Search, Filter, Utensils, Car, ShoppingBag, Clapperboard, Receipt, Smartphone, Stethoscope, BookOpen, Plane, Package, Home, Lightbulb, ShoppingCart, Shield, Pizza, Dumbbell, Briefcase, Laptop, Building2, Gift, RotateCcw, TrendingUp as TrendingUpIcon, Wallet } from "lucide-react"
 import { toast } from "sonner"
-import { transactionFormSchema, TransactionFormValues, getCategoryEmoji } from "./TransactionForm"
+import { transactionFormSchema, type TransactionFormValues } from "./TransactionForm"
 import { motion, AnimatePresence } from "framer-motion"
 
 type Transaction = {
@@ -49,6 +49,18 @@ const categoryIcons: Record<string, React.ComponentType<{ className?: string }>>
 }
 
 function getCategoryIcon(cat: string) { return categoryIcons[cat.toLowerCase()] ?? Wallet }
+
+function getCategoryColor(category: string): string {
+  const palette = [
+    "#7C3AED", "#059669", "#D97706", "#06B6D4", "#EC4899",
+    "#8B5CF6", "#10b981", "#64748B",
+  ]
+  let hash = 0
+  for (let i = 0; i < category.length; i++) {
+    hash = (hash * 31 + category.charCodeAt(i)) % palette.length
+  }
+  return palette[hash]
+}
 
 type TransactionListProps = { refreshKey?: number }
 
@@ -188,29 +200,29 @@ export function TransactionList({ refreshKey = 0 }: TransactionListProps) {
   }, [transactions])
 
   return (
-    <div className="bg-card rounded-2xl border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(255,255,255,0.06),0_4px_16px_rgba(0,0,0,0.04)] p-6">
+    <div className="fp-card p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 border-b border-[rgba(0,0,0,0.06)] pb-4">
         <div>
-          <h2 className="font-jakarta font-semibold text-base text-foreground">All Transactions</h2>
-          <span className="text-xs text-muted-foreground">{filteredTransactions.length} transactions</span>
+          <h2 className="text-[15px] font-bold text-[#0F0E17]">All Transactions</h2>
+          <span className="text-xs text-[#8B89A0] font-medium">{filteredTransactions.length} transactions</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input 
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8B89A0]" />
+            <input 
               placeholder="Search..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-9 w-[160px] sm:w-[200px] pl-10 text-sm bg-[hsl(var(--muted))] border-[hsl(var(--border))]" 
+              className="custom-input !h-9 !pl-9 w-[160px] sm:w-[200px] !text-sm" 
             />
           </div>
           <Select value={monthFilter} onValueChange={setMonthFilter}>
-            <SelectTrigger className="h-9 w-[140px] text-sm bg-[hsl(var(--muted))] border-[hsl(var(--border))]">
-              <Filter className="w-4 h-4 mr-2" />
+            <SelectTrigger className="h-9 w-[140px] text-sm bg-white/70 border-[rgba(0,0,0,0.10)] rounded-[12px]">
+              <Filter className="w-4 h-4 mr-2 text-[#8B89A0]" />
               <SelectValue placeholder="All Months" />
             </SelectTrigger>
-            <SelectContent className="bg-card border-[hsl(var(--border))]">
+            <SelectContent className="bg-white border-[rgba(0,0,0,0.08)] rounded-[14px]">
               <SelectItem value="all">All Months</SelectItem>
               {availableMonths.map(m => {
                 const date = new Date(m)
@@ -224,40 +236,40 @@ export function TransactionList({ refreshKey = 0 }: TransactionListProps) {
       {/* Totals bar */}
       {!loading && transactions.length > 0 && (
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="bg-[hsl(var(--muted))] rounded-xl px-4 py-3 text-center">
-            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-[hsl(var(--income))]">Income</p>
-            <p className="font-sora text-sm font-semibold text-[hsl(var(--income))]">+{formatCurrency(totals.income, currency)}</p>
+          <div className="bg-[rgba(5,150,105,0.04)] border border-[rgba(5,150,105,0.08)] rounded-xl px-4 py-3 text-center">
+            <p className="text-[10px] font-bold tracking-[0.1em] uppercase text-emerald-600">Income</p>
+            <p className="text-sm font-bold text-emerald-600">+{formatCurrency(totals.income, currency)}</p>
           </div>
-          <div className="bg-[hsl(var(--muted))] rounded-xl px-4 py-3 text-center">
-            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-[hsl(var(--expense))]">Expense</p>
-            <p className="font-sora text-sm font-semibold text-[hsl(var(--expense))]">-{formatCurrency(totals.expense, currency)}</p>
+          <div className="bg-[rgba(220,38,38,0.04)] border border-[rgba(220,38,38,0.08)] rounded-xl px-4 py-3 text-center">
+            <p className="text-[10px] font-bold tracking-[0.1em] uppercase text-rose-500">Expense</p>
+            <p className="text-sm font-bold text-rose-500">-{formatCurrency(totals.expense, currency)}</p>
           </div>
-          <div className="bg-[hsl(var(--muted))] rounded-xl px-4 py-3 text-center">
-            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">Net</p>
-            <p className={`font-sora text-sm font-semibold ${totals.net >= 0 ? "text-[hsl(var(--income))]" : "text-[hsl(var(--expense))]"}`}>{formatCurrency(totals.net, currency)}</p>
+          <div className="bg-[rgba(124,58,237,0.04)] border border-[rgba(124,58,237,0.08)] rounded-xl px-4 py-3 text-center">
+            <p className="text-[10px] font-bold tracking-[0.1em] uppercase text-[#7C3AED]">Net</p>
+            <p className={`text-sm font-bold ${totals.net >= 0 ? "text-emerald-600" : "text-rose-500"}`}>{formatCurrency(totals.net, currency)}</p>
           </div>
         </div>
       )}
 
       {/* List */}
       {loading ? (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3 rounded-xl bg-[hsl(var(--muted))] p-4">
-              <div className="w-10 h-10 rounded-xl bg-[hsl(var(--border))] animate-pulse" />
-              <div className="flex-1 space-y-2">
-                <div className="h-3 w-2/3 rounded bg-[hsl(var(--border))] animate-pulse" />
-                <div className="h-2 w-1/3 rounded bg-[hsl(var(--border))] animate-pulse" />
+            <div key={i} className="flex items-center gap-4 py-3 px-3 animate-pulse">
+              <div className="w-10 h-10 rounded-[12px] bg-[#F5F3FF] flex-shrink-0" />
+              <div className="flex-1 space-y-1.5">
+                <div className="h-3 w-1/3 bg-[#F5F3FF] rounded-full" />
+                <div className="h-2.5 w-1/4 bg-[#F5F3FF] rounded-full" />
               </div>
-              <div className="h-4 w-20 rounded bg-[hsl(var(--border))] animate-pulse" />
+              <div className="h-3.5 w-16 bg-[#F5F3FF] rounded-full" />
             </div>
           ))}
         </div>
       ) : transactions.length === 0 ? (
-        <div className="bg-[hsl(var(--muted))] rounded-xl border border-dashed border-[hsl(var(--border-strong))] p-8 text-center">
-          <Receipt className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-sm font-semibold text-foreground">No transactions yet</p>
-          <p className="text-xs text-muted-foreground mt-1">Add your first one using the form above</p>
+        <div className="bg-[#F8F7FF] rounded-xl border border-dashed border-[rgba(0,0,0,0.08)] p-8 text-center">
+          <Receipt className="w-12 h-12 mx-auto mb-4 text-[#8B89A0]" />
+          <p className="text-sm font-semibold text-[#0F0E17]">No transactions yet</p>
+          <p className="text-xs text-[#8B89A0] mt-1">Add your first one using the form above</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -265,9 +277,9 @@ export function TransactionList({ refreshKey = 0 }: TransactionListProps) {
             <div key={group.date}>
               {/* Date header */}
               <div className="flex items-center gap-3 mb-3">
-                <span className="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">{group.label}</span>
-                <div className="flex-1 h-px bg-[hsl(var(--border))]" />
-                <span className="text-xs text-muted-foreground font-sora">
+                <span className="text-[10px] font-bold tracking-[0.1em] uppercase text-[#8B89A0]">{group.label}</span>
+                <div className="flex-1 h-px bg-[rgba(0,0,0,0.04)]" />
+                <span className="text-xs text-[#8B89A0] font-semibold tabular-nums">
                   {formatCurrency(
                     group.transactions.reduce((s, t) => t.type === "expense" ? s - t.amount : s + t.amount, 0),
                     currency
@@ -275,11 +287,12 @@ export function TransactionList({ refreshKey = 0 }: TransactionListProps) {
                 </span>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <AnimatePresence>
                   {group.transactions.map((tx) => {
                     const isIncome = tx.type === "income"
-                    const emoji = getCategoryEmoji(tx.category)
+                    const Icon = getCategoryIcon(tx.category)
+                    const dotColor = getCategoryColor(tx.category)
                     return (
                       <motion.div
                         key={tx.id}
@@ -287,24 +300,33 @@ export function TransactionList({ refreshKey = 0 }: TransactionListProps) {
                         initial={{ opacity: 0, x: 12 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -12 }}
-                        className="flex items-center gap-3 rounded-xl px-4 py-3.5 border-b border-[hsl(var(--border))] last:border-0 transition-colors hover:bg-[hsl(var(--muted))] group"
+                        className="flex items-center gap-3 rounded-xl py-3 px-3 transition-all hover:bg-[rgba(0,0,0,0.02)] cursor-default group"
                       >
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-base flex-shrink-0 ${isIncome ? "bg-[var(--income-bg)] text-[hsl(var(--income))]" : "bg-[var(--expense-bg)] text-[hsl(var(--expense))]"}`}>
-                          {emoji}
+                        {/* Left: Category dot + icon */}
+                        <div className="flex items-center gap-1.5 w-10 flex-shrink-0 justify-end mr-1">
+                          <span
+                            className="w-2 h-2 rounded-full flex-shrink-0 animate-pulse"
+                            style={{ backgroundColor: dotColor }}
+                            aria-hidden="true"
+                          />
+                          <Icon
+                            className="w-4 h-4 text-[#8B89A0] flex-shrink-0"
+                            aria-hidden="true"
+                          />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium capitalize leading-tight truncate text-foreground">{tx.category}</p>
-                          {tx.note && <p className="text-xs text-muted-foreground truncate">{tx.note}</p>}
+                          <p className="text-[13px] font-bold text-[#0F0E17] capitalize leading-tight truncate">{tx.category}</p>
+                          {tx.note && <p className="text-[11px] text-[#8B89A0] font-medium truncate mt-0.5">{tx.note}</p>}
                         </div>
-                        <p className={`font-sora text-sm font-semibold flex-shrink-0 ${isIncome ? "text-[hsl(var(--income))]" : "text-[hsl(var(--expense))]"}`}>
+                        <p className={`text-[14px] font-bold tabular-nums flex-shrink-0 ${isIncome ? "text-emerald-600" : "text-rose-500"}`}>
                           {isIncome ? "+" : "-"}{formatCurrency(tx.amount, currency)}
                         </p>
                         {/* Actions — reveal on hover */}
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                          <Button variant="ghost" size="icon" onClick={() => handleEditClick(tx)} className="h-8 w-8 rounded-xl hover:bg-[hsl(var(--border))]">
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0 pl-2">
+                          <Button variant="ghost" size="icon" onClick={() => handleEditClick(tx)} className="h-8 w-8 rounded-xl hover:bg-[rgba(0,0,0,0.04)] text-[#8B89A0] hover:text-[#0F0E17]">
                             <Pencil className="w-3.5 h-3.5" />
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(tx)} className="h-8 w-8 rounded-xl hover:bg-[var(--expense-bg)] hover:text-[hsl(var(--expense))]">
+                          <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(tx)} className="h-8 w-8 rounded-xl hover:bg-rose-50 text-[#8B89A0] hover:text-rose-500">
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
                         </div>

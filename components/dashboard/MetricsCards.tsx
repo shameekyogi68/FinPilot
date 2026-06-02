@@ -58,7 +58,9 @@ function StatCard({
   value,
   description,
   Icon,
-  accentColor,
+  accent,
+  iconBg,
+  iconColor,
   trend,
   loading,
 }: {
@@ -66,7 +68,9 @@ function StatCard({
   value: number
   description: string
   Icon: React.ElementType
-  accentColor: string
+  accent: "emerald" | "rose" | "brand" | "amber"
+  iconBg: string
+  iconColor: string
   trend?: { label: string; up: boolean } | null
   loading: boolean
 }) {
@@ -74,43 +78,46 @@ function StatCard({
 
   return (
     <motion.div variants={cardVariants} className="group">
-      <div
-        className="stat-card h-full flex flex-col gap-3"
-        style={{ borderLeft: `3px solid ${accentColor}` }}
-      >
-        {/* Row 1: label + trend */}
-        <div className="flex items-center gap-2">
-          <Icon size={16} strokeWidth={1.5} className="text-[#a1a1aa] flex-shrink-0" aria-hidden="true" />
-          <span className="label-xs text-[#a1a1aa] flex-1">{title}</span>
-          {trend && (
-            <span
-              className={`fp-chip text-[10px] ${trend.up ? "fp-chip-gain" : "fp-chip-loss"}`}
-            >
-              {trend.up
-                ? <ArrowUpRight size={10} aria-hidden="true" />
-                : <ArrowDownRight size={10} aria-hidden="true" />}
-              {trend.label}
-            </span>
+      <div className="stat-card h-full flex flex-col justify-between" data-accent={accent}>
+        <div>
+          {/* Row 1: Icon container, Title & Trend badge */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className={`w-8 h-8 rounded-[10px] ${iconBg} flex items-center justify-center`}>
+                <Icon size={16} strokeWidth={2.5} className={iconColor} aria-hidden="true" />
+              </div>
+              <span className="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase">{title}</span>
+            </div>
+            {trend && (
+              <span
+                className={`flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                  trend.up ? "text-emerald-600 bg-emerald-50" : "text-rose-600 bg-rose-50"
+                }`}
+              >
+                {trend.up ? <ArrowUpRight size={10} aria-hidden="true" /> : <ArrowDownRight size={10} aria-hidden="true" />}
+                {trend.label}
+              </span>
+            )}
+          </div>
+
+          {/* Row 2: Metric Value */}
+          {loading ? (
+            <div className="h-8 w-32 rounded-[6px] bg-[#F5F3FF] animate-pulse my-1.5" />
+          ) : (
+            <div className="text-[26px] font-bold tracking-tight text-[#0F0E17] tabular-nums leading-none">
+              <span ref={countRef}>
+                {value.toLocaleString("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                  maximumFractionDigits: 0,
+                })}
+              </span>
+            </div>
           )}
         </div>
 
-        {/* Row 2: amount */}
-        {loading ? (
-          <div className="h-8 w-32 rounded-[6px] bg-[rgba(255,255,255,0.1)] animate-pulse" />
-        ) : (
-          <div className="metric-value text-[#fafafa]">
-            <span ref={countRef} className="tabular-nums">
-              {value.toLocaleString("en-IN", {
-                style: "currency",
-                currency: "INR",
-                maximumFractionDigits: 0,
-              })}
-            </span>
-          </div>
-        )}
-
-        {/* Row 3: subtitle */}
-        <p className="text-[12px] text-[#a1a1aa] leading-tight">{description}</p>
+        {/* Row 3: Description */}
+        <p className="text-[12px] text-[#8B89A0] mt-2 font-medium leading-tight">{description}</p>
       </div>
     </motion.div>
   )
@@ -129,45 +136,6 @@ export function MetricsCards({ data, loading, error }: MetricsCardsProps) {
     )
   }
 
-  const cards = [
-    {
-      title: "Monthly Income",
-      value: data?.monthlyIncome ?? 0,
-      description: "Total received this month",
-      Icon: TrendingUp,
-      accentColor: "#059669",
-      trend: null,
-    },
-    {
-      title: "Monthly Expenses",
-      value: data?.monthlyExpenses ?? 0,
-      description: "Total spent this month",
-      Icon: TrendingDown,
-      accentColor: "#ef4444",
-      trend: null,
-    },
-    {
-      title: "Net Balance",
-      value: data?.currentBalance ?? 0,
-      description: "Income minus expenses",
-      Icon: Wallet,
-      accentColor: "#7C3AED",
-      trend: data
-        ? { label: balancePositive ? "Positive" : "Negative", up: balancePositive }
-        : null,
-    },
-    {
-      title: "Savings Rate",
-      value: 0, // handled separately
-      description: "Share of income saved",
-      Icon: PiggyBank,
-      accentColor: "#D97706",
-      trend: data && savingsRate !== null
-        ? { label: savingsRate >= 20 ? "Healthy" : "Improve", up: savingsRate >= 20 }
-        : null,
-    },
-  ]
-
   return (
     <motion.div
       className="grid gap-4 grid-cols-2 xl:grid-cols-4"
@@ -175,53 +143,78 @@ export function MetricsCards({ data, loading, error }: MetricsCardsProps) {
       initial="initial"
       animate="animate"
     >
-      {cards.map((card, i) => {
-        if (i === 3) {
-          // Savings rate card — rendered separately as % not currency
-          return (
-            <motion.div key="savings-rate" variants={cardVariants} className="group">
-              <div
-                className="stat-card h-full flex flex-col gap-3"
-                style={{ borderLeft: "3px solid #D97706" }}
-              >
-                <div className="flex items-center gap-2">
-                  <PiggyBank size={16} strokeWidth={1.5} className="text-[#a1a1aa] flex-shrink-0" aria-hidden="true" />
-                  <span className="label-xs text-[#a1a1aa] flex-1">Savings Rate</span>
-                  {card.trend && (
-                    <span className={`fp-chip text-[10px] ${card.trend.up ? "fp-chip-gain" : "fp-chip-loss"}`}>
-                      {card.trend.up
-                        ? <ArrowUpRight size={10} aria-hidden="true" />
-                        : <ArrowDownRight size={10} aria-hidden="true" />}
-                      {card.trend.label}
-                    </span>
-                  )}
-                </div>
-                {loading ? (
-                  <div className="h-8 w-20 rounded-[6px] bg-[rgba(255,255,255,0.1)] animate-pulse" />
-                ) : (
-                  <div className="metric-value text-[#fafafa] tabular-nums">
-                    {data && savingsRate !== null ? `${savingsRate.toFixed(1)}%` : "N/A"}
-                  </div>
-                )}
-                <p className="text-[12px] text-[#a1a1aa] leading-tight">Share of income saved</p>
-              </div>
-            </motion.div>
-          )
-        }
+      {/* Monthly Income Card */}
+      <StatCard
+        title="Income"
+        value={data?.monthlyIncome ?? 0}
+        description="Total received this month"
+        Icon={TrendingUp}
+        accent="emerald"
+        iconBg="bg-emerald-50"
+        iconColor="text-emerald-600"
+        trend={null}
+        loading={loading}
+      />
 
-        return (
-          <StatCard
-            key={card.title}
-            title={card.title}
-            value={card.value}
-            description={card.description}
-            Icon={card.Icon}
-            accentColor={card.accentColor}
-            trend={card.trend}
-            loading={loading}
-          />
-        )
-      })}
+      {/* Monthly Expenses Card */}
+      <StatCard
+        title="Expenses"
+        value={data?.monthlyExpenses ?? 0}
+        description="Total spent this month"
+        Icon={TrendingDown}
+        accent="rose"
+        iconBg="bg-red-50"
+        iconColor="text-red-500"
+        trend={null}
+        loading={loading}
+      />
+
+      {/* Net Balance Card */}
+      <StatCard
+        title="Balance"
+        value={data?.currentBalance ?? 0}
+        description="Income minus expenses"
+        Icon={Wallet}
+        accent="brand"
+        iconBg="bg-purple-50"
+        iconColor="text-brand-600"
+        trend={data ? { label: balancePositive ? "Positive" : "Negative", up: balancePositive } : null}
+        loading={loading}
+      />
+
+      {/* Savings Rate Card */}
+      <motion.div key="savings-rate" variants={cardVariants} className="group">
+        <div className="stat-card h-full flex flex-col justify-between" data-accent="amber">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-[10px] bg-amber-50 flex items-center justify-center">
+                  <PiggyBank size={16} strokeWidth={2.5} className="text-amber-600" aria-hidden="true" />
+                </div>
+                <span className="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase">Savings</span>
+              </div>
+              {data && savingsRate !== null && (
+                <span
+                  className={`flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                    savingsRate >= 20 ? "text-emerald-700 bg-emerald-50" : "text-amber-700 bg-amber-50"
+                  }`}
+                >
+                  {savingsRate >= 20 ? <ArrowUpRight size={10} aria-hidden="true" /> : <ArrowDownRight size={10} aria-hidden="true" />}
+                  {savingsRate >= 20 ? "Healthy" : "Improve"}
+                </span>
+              )}
+            </div>
+            {loading ? (
+              <div className="h-8 w-20 rounded-[6px] bg-[#F5F3FF] animate-pulse my-1.5" />
+            ) : (
+              <div className="text-[26px] font-bold tracking-tight text-[#0F0E17] tabular-nums leading-none">
+                {data && savingsRate !== null ? `${savingsRate.toFixed(1)}%` : "0.0%"}
+              </div>
+            )}
+          </div>
+          <p className="text-[12px] text-[#8B89A0] mt-2 font-medium leading-tight">Share of income saved</p>
+        </div>
+      </motion.div>
     </motion.div>
   )
 }

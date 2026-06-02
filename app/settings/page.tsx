@@ -3,9 +3,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
 import { formatCurrency, updateCurrencyInAllAmounts } from "@/lib/utils/settings"
 import ExportData from "@/components/settings/ExportData"
 import DeleteData from "@/components/settings/DeleteData"
@@ -125,177 +122,245 @@ export default function SettingsPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen space-y-6 max-w-3xl">
+      <div className="min-h-screen space-y-8 max-w-3xl pb-12">
 
-          {/* ── Page Header ── */}
+        {/* ── Page Header ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+          className="flex items-center justify-between"
+        >
+          <div className="flex items-center gap-4">
+            {/* Avatar */}
+            <div
+              className="w-14 h-14 rounded-[18px] flex items-center justify-center flex-shrink-0 text-[16px] font-bold text-[#7C3AED] bg-gradient-to-br from-purple-50 to-purple-100 shadow-sm border border-purple-200/50 select-none"
+              aria-hidden="true"
+            >
+              {loading ? "…" : initials}
+            </div>
+            <div>
+              <h1 className="text-[26px] font-bold text-[#0F0E17] leading-tight tracking-tight">Account Settings</h1>
+              <p className="text-[14px] text-[#8B89A0] mt-0.5 font-medium">Member since {memberSince}</p>
+            </div>
+          </div>
+          <button
+            onClick={handleSave}
+            disabled={loading || saving}
+            className="btn-primary flex items-center gap-1.5"
+          >
+            {savedPulse ? (
+              <><CheckCircle2 size={14} strokeWidth={1.5} aria-hidden="true" /> Saved!</>
+            ) : saving ? (
+              <><Save size={14} strokeWidth={1.5} className="animate-spin" aria-hidden="true" /> Saving…</>
+            ) : (
+              <><Save size={14} strokeWidth={1.5} aria-hidden="true" /> Save Settings</>
+            )}
+          </button>
+        </motion.div>
+
+        <div className="space-y-6">
+          {/* Profile Card */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-            className="flex items-center justify-between"
+            transition={{ delay: 0.1, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+            className="fp-card p-6"
           >
-            <div className="flex items-center gap-4">
-              {/* Avatar */}
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 text-[15px] font-semibold text-[#6D28D9] select-none"
-                style={{ background: "#EDE9FE" }}
-                aria-hidden="true"
-              >
-                {loading ? "…" : initials}
+            <div className="flex items-center gap-3 mb-6 pb-5 border-b border-[rgba(0,0,0,0.06)]">
+              <div className="section-header-icon !mb-0">
+                <User size={18} strokeWidth={1.5} aria-hidden="true" />
               </div>
               <div>
-                <h1 className="text-[22px] font-medium text-[#fafafa] leading-tight">Account Settings</h1>
-                <p className="text-[14px] text-[#a1a1aa] mt-0.5">Member since {memberSince}</p>
+                <h2 className="text-[15px] font-bold text-[#0F0E17]">Profile</h2>
+                <p className="text-[12px] text-[#8B89A0] font-medium">Your display credentials</p>
               </div>
             </div>
-            <button
-              onClick={handleSave}
-              disabled={loading || saving}
-              className={`flex items-center gap-1.5 h-9 px-4 rounded-[10px] text-[13px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 disabled:opacity-50 ${
-                savedPulse
-                  ? "bg-[#ECFDF5] text-[#065F46] border border-[rgba(5,150,105,0.2)]"
-                  : "bg-[#7C3AED] text-white hover:bg-[#6D28D9] active:scale-[0.99]"
-              }`}
-            >
-              {savedPulse ? (
-                <><CheckCircle2 size={14} strokeWidth={1.5} aria-hidden="true" /> Saved!′</>
-              ) : saving ? (
-                <><Save size={14} strokeWidth={1.5} className="animate-spin" aria-hidden="true" /> Saving…</>
-              ) : (
-                <><Save size={14} strokeWidth={1.5} aria-hidden="true" /> Save Settings</>
-              )}
-            </button>
-          </motion.div>
-
-          {/* Profile section */}
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
-            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
-              <User size={15} strokeWidth={1.5} className="text-[#e4e4e7]" aria-hidden="true" />
+            <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <h2 className="text-[15px] font-medium text-[#fafafa]">Profile</h2>
-                <p className="text-[12px] text-[#a1a1aa] mt-0.5">Your name and account details</p>
+                <label htmlFor="settings-name" className="label-premium">Display Name</label>
+                <input
+                  id="settings-name"
+                  type="text"
+                  value={state.name}
+                  onChange={(e) => setState({ ...state, name: e.target.value })}
+                  placeholder="Your name"
+                  className="custom-input"
+                />
               </div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <label htmlFor="settings-name" className="block text-[12px] font-medium text-[#e4e4e7]">Display Name</label>
-                <Input id="settings-name" value={state.name} onChange={(e) => setState({ ...state, name: e.target.value })} placeholder="Your name" />
-              </div>
-              <div className="space-y-1.5">
-                <label htmlFor="settings-email" className="block text-[12px] font-medium text-[#e4e4e7]">Email</label>
-                <Input id="settings-email" value={state.email} readOnly className="opacity-60 cursor-default" placeholder="Not set" />
+              <div>
+                <label htmlFor="settings-email" className="label-premium">Email Address</label>
+                <input
+                  id="settings-email"
+                  type="email"
+                  value={state.email}
+                  disabled
+                  placeholder="Not set"
+                  className="custom-input opacity-50 cursor-not-allowed"
+                />
               </div>
             </div>
           </motion.div>
 
-          {/* Financial settings */}
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
-            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
-              <IndianRupee size={15} strokeWidth={1.5} className="text-[#e4e4e7]" aria-hidden="true" />
+          {/* Financial Settings Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+            className="fp-card p-6"
+          >
+            <div className="flex items-center gap-3 mb-6 pb-5 border-b border-[rgba(0,0,0,0.06)]">
+              <div className="section-header-icon !mb-0">
+                <IndianRupee size={18} strokeWidth={1.5} aria-hidden="true" />
+              </div>
               <div>
-                <h2 className="text-[15px] font-medium text-[#fafafa]">Financial Settings</h2>
-                <p className="text-[12px] text-[#a1a1aa] mt-0.5">Currency, income &amp; savings targets</p>
+                <h2 className="text-[15px] font-bold text-[#0F0E17]">Financial Settings</h2>
+                <p className="text-[12px] text-[#8B89A0] font-medium">Currency, income &amp; savings targets</p>
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <label htmlFor="settings-currency" className="block text-[12px] font-medium text-[#e4e4e7]">Currency</label>
-                <Select value={state.currency} onValueChange={(v) => setState({ ...state, currency: v as CurrencyOption })}>
-                  <SelectTrigger id="settings-currency">
-                    <SelectValue placeholder="Select currency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencyOptions.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.flag} {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label htmlFor="settings-currency" className="label-premium">Currency</label>
+                <select
+                  id="settings-currency"
+                  value={state.currency}
+                  onChange={(e) => setState({ ...state, currency: e.target.value as CurrencyOption })}
+                  className="custom-input appearance-none bg-no-repeat bg-[right_16px_center]"
+                  style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234B4963' stroke-width='2'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3e%3c/svg%3e")`, backgroundSize: '16px' }}
+                >
+                  {currencyOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.flag} {opt.label}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div className="space-y-1.5">
-                <label htmlFor="settings-income" className="block text-[12px] font-medium text-[#e4e4e7]">Monthly Income</label>
-                <Input id="settings-income" type="number" step="1" min="0" value={state.monthlyIncome} onChange={(e) => setState({ ...state, monthlyIncome: e.target.value })} placeholder="e.g. 80000" />
+              <div>
+                <label htmlFor="settings-income" className="label-premium">Monthly Income</label>
+                <input
+                  id="settings-income"
+                  type="number"
+                  step="1"
+                  min="0"
+                  value={state.monthlyIncome}
+                  onChange={(e) => setState({ ...state, monthlyIncome: e.target.value })}
+                  placeholder="e.g. 80000"
+                  className="custom-input"
+                />
               </div>
-              <div className="space-y-1.5 sm:col-span-2">
-                <label htmlFor="settings-savings" className="block text-[12px] font-medium text-[#e4e4e7]">Savings Target (Monthly)</label>
-                <Input id="settings-savings" type="number" step="1" min="0" value={state.savingsTarget} onChange={(e) => setState({ ...state, savingsTarget: e.target.value })} placeholder="e.g. 20000" />
+              <div className="sm:col-span-2">
+                <label htmlFor="settings-savings" className="label-premium">Savings Target (Monthly)</label>
+                <input
+                  id="settings-savings"
+                  type="number"
+                  step="1"
+                  min="0"
+                  value={state.savingsTarget}
+                  onChange={(e) => setState({ ...state, savingsTarget: e.target.value })}
+                  placeholder="e.g. 20000"
+                  className="custom-input"
+                />
               </div>
             </div>
 
-            {/* Preview */}
-            <div className="mt-4 rounded-[10px] px-4 py-3 text-[13px] font-medium text-[#7C3AED] flex items-center gap-2" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(196,181,253,0.5)" }}>
-              <BarChart3 size={14} strokeWidth={1.5} className="flex-shrink-0" aria-hidden="true" />
+            {/* Live Preview Card */}
+            <div className="mt-5 rounded-[12px] px-4 py-3.5 text-[13px] font-semibold text-[#7C3AED] flex items-center gap-2 bg-gradient-to-r from-purple-50 to-transparent border border-purple-100/40">
+              <BarChart3 size={15} className="flex-shrink-0" aria-hidden="true" />
               <span className="tabular-nums">{formatCurrency(monthlyIncomePreview, state.currency)} income · {formatCurrency(savingsTargetPreview, state.currency)} savings target</span>
               {monthlyIncomePreview > 0 && savingsTargetPreview > 0 && (
-                <span className="text-[#a1a1aa] font-normal">
-                  ({((savingsTargetPreview / monthlyIncomePreview) * 100).toFixed(0)}% rate)
+                <span className="text-[#8B89A0] font-medium ml-auto">
+                  {((savingsTargetPreview / monthlyIncomePreview) * 100).toFixed(0)}% Savings Rate
                 </span>
               )}
             </div>
           </motion.div>
 
-          {/* Preferences with toggles */}
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
-            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(255,255,255,0.06)]">
-              <SlidersHorizontal size={15} strokeWidth={1.5} className="text-[#e4e4e7]" aria-hidden="true" />
+          {/* Preferences Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+            className="fp-card p-6"
+          >
+            <div className="flex items-center gap-3 mb-6 pb-5 border-b border-[rgba(0,0,0,0.06)]">
+              <div className="section-header-icon !mb-0">
+                <SlidersHorizontal size={18} strokeWidth={1.5} aria-hidden="true" />
+              </div>
               <div>
-                <h2 className="text-[15px] font-medium text-[#fafafa]">Preferences</h2>
-                <p className="text-[12px] text-[#a1a1aa] mt-0.5">Month view &amp; AI features</p>
+                <h2 className="text-[15px] font-bold text-[#0F0E17]">Preferences</h2>
+                <p className="text-[12px] text-[#8B89A0] font-medium">Manage advisor features</p>
               </div>
             </div>
 
             <div className="space-y-4">
-              {/* AI Insights */}
-              <div className="flex items-center justify-between rounded-[10px] px-4 py-3.5" style={{ background: "rgba(255,255,255,0.05)" }}>
-                <div className="flex items-center gap-3">
-                  <BrainCircuit size={16} strokeWidth={1.5} className="text-[#7C3AED]" aria-hidden="true" />
+              {/* AI Insights Switch */}
+              <div className="flex items-center justify-between rounded-[14px] px-5 py-4 bg-gradient-to-r from-[rgba(0,0,0,0.02)] to-transparent border border-[rgba(0,0,0,0.06)]">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-[12px] bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center flex-shrink-0">
+                    <BrainCircuit className="w-5 h-5 text-[#7C3AED]" aria-hidden="true" />
+                  </div>
                   <div>
-                    <p className="text-[14px] font-medium text-[#fafafa]">AI Insights</p>
-                    <p className="text-[12px] text-[#a1a1aa]">Powered by Gemini · Free forever</p>
+                    <p className="text-[14px] font-bold text-[#0F0E17]">AI Advisor Insights</p>
+                    <p className="text-[12px] text-[#8B89A0] font-medium">Wealth recommendations on dashboard</p>
                   </div>
                 </div>
-                <Switch
-                  checked={state.aiEnabled}
-                  onCheckedChange={(checked) => setState({ ...state, aiEnabled: checked })}
-                  className="data-[state=checked]:bg-[#7C3AED]"
-                />
+                <button
+                  type="button"
+                  onClick={() => setState({ ...state, aiEnabled: !state.aiEnabled })}
+                  className={`toggle-switch ${state.aiEnabled ? "active" : ""}`}
+                >
+                  <span className="toggle-switch-thumb" />
+                </button>
               </div>
 
-              {/* Month view */}
-              <div className="rounded-[10px] px-4 py-3.5 space-y-3" style={{ background: "rgba(255,255,255,0.05)" }}>
-                <label className="block text-[12px] font-medium text-[#e4e4e7]">Default Month View</label>
-                <Select value={state.monthView} onValueChange={(v) => setState({ ...state, monthView: v as MonthView })}>
-                  <SelectTrigger className="h-10">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="current">Current month</SelectItem>
-                    <SelectItem value="last">Last month</SelectItem>
-                  </SelectContent>
-                </Select>
+              {/* Default Month View */}
+              <div className="rounded-[14px] px-5 py-4 bg-gradient-to-r from-[rgba(0,0,0,0.02)] to-transparent border border-[rgba(0,0,0,0.06)] flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-[12px] bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center flex-shrink-0">
+                    <SlidersHorizontal className="w-5 h-5 text-[#7C3AED]" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="text-[14px] font-bold text-[#0F0E17]">Default Month View</p>
+                    <p className="text-[12px] text-[#8B89A0] font-medium">Which month to display first</p>
+                  </div>
+                </div>
+                <select
+                  value={state.monthView}
+                  onChange={(e) => setState({ ...state, monthView: e.target.value as MonthView })}
+                  className="custom-input appearance-none bg-no-repeat bg-[right_16px_center] !w-44"
+                  style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234B4963' stroke-width='2'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3e%3c/svg%3e")`, backgroundSize: '16px' }}
+                >
+                  <option value="current">Current month</option>
+                  <option value="last">Last month</option>
+                </select>
               </div>
             </div>
           </motion.div>
 
-          {/* Danger zone */}
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }} className="fp-card p-5">
-            <div className="flex items-center gap-2 mb-5 pb-4 border-b border-[rgba(220,38,38,0.12)]">
-              <AlertOctagon size={15} strokeWidth={1.5} className="text-[#ef4444]" aria-hidden="true" />
+          {/* Danger Zone Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+            className="fp-card p-6 border-red-200 bg-gradient-to-br from-red-50/30 to-transparent"
+          >
+            <div className="flex items-center gap-3 mb-6 pb-5 border-b border-red-100">
+              <div className="w-9 h-9 rounded-[10px] bg-red-50 flex items-center justify-center">
+                <AlertOctagon size={18} strokeWidth={1.5} className="text-red-600" aria-hidden="true" />
+              </div>
               <div>
-                <h2 className="text-[15px] font-medium text-[#ef4444]">Danger Zone</h2>
-                <p className="text-[12px] text-[#a1a1aa] mt-0.5">Export or permanently delete your data</p>
+                <h2 className="text-[15px] font-bold text-red-700">Danger Zone</h2>
+                <p className="text-[12px] text-red-500/70 font-medium">Irreversible data actions</p>
               </div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="flex flex-wrap gap-3">
               <ExportData />
               <BackupRestore />
-            </div>
-            <div className="mt-3">
               <DeleteData />
             </div>
           </motion.div>
+        </div>
       </div>
     </ErrorBoundary>
   )

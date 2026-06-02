@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { Trash2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -66,9 +65,9 @@ export default function DeleteData() {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" className="gap-2">
+        <button className="flex items-center justify-center gap-2 h-10 px-5 rounded-[12px] bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white text-[13px] font-bold shadow-lg shadow-red-200 hover:shadow-red-300 transition-all hover:-translate-y-0.5 active:scale-95">
           <Trash2 className="h-4 w-4" /> Delete All Data
-        </Button>
+        </button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

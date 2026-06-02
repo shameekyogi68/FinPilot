@@ -8,22 +8,20 @@ import {
   Send,
   Trash2,
   Sparkles,
-  User,
   ChevronDown,
+  MessageSquare,
+  Search,
+  FileText,
+  TrendingUp,
 } from "lucide-react"
 import { ChatMessage, type ChatMessageItem } from "@/components/ai-advisor/ChatMessage"
 
 const STORAGE_KEY = "finpilot-ai-advisor-conversation"
 
 const SUGGESTIONS = [
-  "How can I save more money?",
-  "Where am I overspending?",
-  "Am I on track with my budget?",
-  "What were my biggest expenses?",
-  "Give me a monthly summary",
-  "How should I invest my savings?",
-  "Explain SIP vs FD for me",
-  "How much should I keep as emergency fund?",
+  { text: "Where am I overspending?", label: "Where am I overspending?", icon: Search },
+  { text: "Give me a monthly summary", label: "Monthly summary", icon: FileText },
+  { text: "Explain SIP vs FD for me", label: "SIP vs FD", icon: TrendingUp },
 ]
 
 const createWelcomeMessage = (): ChatMessageItem => ({
@@ -136,21 +134,23 @@ export function ChatInterface() {
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(255,255,255,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl px-5 py-4 mb-4 flex items-center justify-between"
+        className="fp-card px-6 py-5 mb-4 flex items-center justify-between shadow-sm"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-10 h-10 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center">
-              <BrainCircuit className="w-5 h-5 text-[hsl(var(--primary))]" />
+            <div className="w-12 h-12 rounded-[16px] bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center shadow-sm">
+              <BrainCircuit className="w-6 h-6 text-[#7C3AED]" />
             </div>
-            <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-[hsl(var(--income))] rounded-full border-2 border-card" />
+            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-400 rounded-full border-[2.5px] border-white shadow-sm" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <h1 className="font-jakarta font-semibold text-base leading-tight text-foreground">FinPilot AI Advisor</h1>
-              <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
+              <h1 className="font-bold text-[17px] leading-tight text-[#0F0E17]">FinPilot AI Advisor</h1>
+              <Sparkles className="w-4 h-4 text-[#8B5CF6]" />
             </div>
-            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-[hsl(var(--income))]">● Online · Free forever</p>
+            <p className="text-[11px] font-bold tracking-[0.06em] uppercase text-emerald-600 flex items-center gap-1.5 mt-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Online · Premium Support
+            </p>
           </div>
         </div>
 
@@ -158,7 +158,7 @@ export function ChatInterface() {
           variant="ghost"
           size="sm"
           onClick={clearChat}
-          className="gap-1.5 text-[10px] font-semibold tracking-[0.1em] text-muted-foreground hover:text-[hsl(var(--destructive))] hover:bg-[var(--expense-bg)] rounded-xl"
+          className="flex items-center gap-1.5 h-9 px-4 rounded-[10px] text-[12px] font-semibold border border-[hsl(var(--border))] text-red-500 hover:text-red-600 hover:bg-red-50/50 hover:border-red-200 transition-colors"
         >
           <Trash2 className="w-3.5 h-3.5" />
           Clear
@@ -169,17 +169,22 @@ export function ChatInterface() {
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(255,255,255,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-4 sm:p-6 space-y-4 relative"
+        className="flex-1 overflow-y-auto fp-card p-5 sm:p-7 space-y-5 !shadow-sm relative"
       >
         <AnimatePresence>
-          {messages.map((msg, i) => (
-            <ChatMessage
-              key={msg.id}
-              message={msg}
-              isUser={msg.role === "user"}
-              isLatest={i === messages.length - 1}
-            />
-          ))}
+          {messages.map((msg, i) => {
+            const prevMsg = messages[i - 1]
+            const hideAvatar = prevMsg && prevMsg.role === msg.role
+            return (
+              <ChatMessage
+                key={msg.id}
+                message={msg}
+                isUser={msg.role === "user"}
+                isLatest={i === messages.length - 1}
+                hideAvatar={hideAvatar}
+              />
+            )
+          })}
 
           {/* Loading indicator */}
           {loading && (
@@ -188,17 +193,15 @@ export function ChatInterface() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="flex items-end gap-2"
+              className="flex items-center gap-3 max-w-[80%]"
             >
-              <div className="w-7 h-7 rounded-xl bg-[hsl(var(--muted))] flex items-center justify-center flex-shrink-0">
-                <BrainCircuit className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
+              <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <BrainCircuit className="w-4 h-4 text-[#7C3AED]" />
               </div>
-              <div className="bg-[hsl(var(--muted))] px-4 py-3 rounded-xl border-[hsl(var(--border))]">
-                <div className="flex gap-1.5 items-center h-4">
-                  <span className="typing-dot bg-[hsl(var(--primary))]" />
-                  <span className="typing-dot bg-[hsl(var(--primary))]" />
-                  <span className="typing-dot bg-[hsl(var(--primary))]" />
-                </div>
+              <div className="chat-bubble-assistant px-5 py-3.5 flex gap-1.5 items-center">
+                <span className="typing-dot" />
+                <span className="typing-dot" />
+                <span className="typing-dot" />
               </div>
             </motion.div>
           )}
@@ -213,9 +216,9 @@ export function ChatInterface() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               onClick={scrollToBottom}
-              className="absolute bottom-4 right-4 w-8 h-8 bg-[hsl(var(--muted))] rounded-full flex items-center justify-center border border-[hsl(var(--border))]"
+              className="absolute bottom-4 right-4 w-8 h-8 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center border border-[rgba(0,0,0,0.08)] shadow-sm hover:bg-white transition-colors"
             >
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              <ChevronDown className="w-4 h-4 text-[#4B4963]" />
             </motion.button>
           )}
         </AnimatePresence>
@@ -226,26 +229,30 @@ export function ChatInterface() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-card border border-[hsl(var(--border))] shadow-[0_1px_4px_rgba(255,255,255,0.06),0_4px_16px_rgba(0,0,0,0.04)] rounded-2xl p-4 mt-4"
+        className="fp-card p-5 mt-4 space-y-4 !shadow-sm"
       >
         {/* Suggestion chips */}
-        <div className="flex gap-2 overflow-x-auto whitespace-nowrap mb-3 pb-1">
-          {SUGGESTIONS.slice(0, 4).map((s) => (
-            <button
-              key={s}
-              onClick={() => sendMessage(s)}
-              disabled={loading}
-              className="text-[10px] font-semibold tracking-[0.1em] px-3 py-1.5 rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--muted))] text-foreground hover:bg-[hsl(var(--border))] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-            >
-              {s}
-            </button>
-          ))}
+        <div className="flex gap-2 overflow-x-auto whitespace-nowrap pb-1 scrollbar-hide">
+          {SUGGESTIONS.map((s) => {
+            const Icon = s.icon
+            return (
+              <button
+                key={s.text}
+                onClick={() => sendMessage(s.text)}
+                disabled={loading}
+                className="suggestion-chip hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+              >
+                <Icon className="w-3 h-3 mr-1.5 text-[#8B89A0]" />
+                {s.label}
+              </button>
+            )
+          })}
         </div>
 
         {/* Input row */}
-        <div className="flex gap-2 items-end">
-          <div className="flex-1 flex items-start gap-2 bg-[hsl(var(--muted))] rounded-xl px-3 py-2.5 relative border-[hsl(var(--border))]">
-            <User className="w-4 h-4 mt-1 text-muted-foreground flex-shrink-0" />
+        <div className="flex gap-3 items-end">
+          <div className="flex-1 flex items-start gap-3 bg-[rgba(0,0,0,0.03)] dark:bg-[rgba(255,255,255,0.03)] rounded-[16px] px-4 py-3.5 relative border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.06)] focus-within:border-[#7C3AED] focus-within:bg-card focus-within:shadow-[0_0_0_4px_rgba(124,58,237,0.10)] transition-all">
+            <MessageSquare className="w-[18px] h-[18px] mt-0.5 text-[#B8B5C9]" />
             <textarea
               ref={inputRef}
               value={input}
@@ -261,28 +268,25 @@ export function ChatInterface() {
                   if (inputRef.current) inputRef.current.style.height = "auto"
                 }
               }}
-              placeholder="Ask about your finances, SIPs, budgets..."
+              placeholder="Ask about mutual funds, salary savings, budgets..."
               disabled={loading}
               rows={1}
               maxLength={1000}
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50 min-w-0 resize-none max-h-[120px] text-foreground"
+              className="flex-1 bg-transparent text-[14px] outline-none placeholder:text-[#A5A3B8] min-w-0 resize-none max-h-[120px] text-[#0F0E17] dark:text-foreground font-medium leading-relaxed"
             />
-            <span className="absolute bottom-1 right-2 text-[10px] font-semibold tracking-[0.1em] text-muted-foreground/40 pointer-events-none">
-              {input.length}/1000
-            </span>
           </div>
 
           <Button
             onClick={() => sendMessage(input)}
             disabled={loading || !input.trim()}
-            className="rounded-xl px-4 h-auto"
+            className="w-12 h-12 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#6D28D9] text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-purple-200 hover:shadow-xl hover:shadow-purple-300 transition-all hover:-translate-y-0.5 active:scale-95 border-none p-0"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-[18px] h-[18px]" />
           </Button>
         </div>
 
         {error && (
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[hsl(var(--destructive))] mt-2 px-1">{error}</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-red-500 mt-2 px-1">{error}</p>
         )}
       </motion.div>
     </div>

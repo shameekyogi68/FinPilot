@@ -1,0 +1,2626 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>FinPilot — Premium Financial Intelligence Dashboard</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..700;1,14..32,100..700&display=swap">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50:  '#F5F3FF',
+              100: '#EDE9FE',
+              200: '#DDD6FE',
+              300: '#C4B5FD',
+              400: '#A78BFA',
+              500: '#8B5CF6',
+              600: '#7C3AED',
+              700: '#6D28D9',
+              800: '#5B21B6',
+              900: '#4C1D95',
+            },
+            surface: {
+              DEFAULT: '#FFFFFF',
+              subtle:  '#F8F7FF',
+              raised:  '#FFFFFF',
+              overlay: 'rgba(248,247,255,0.85)',
+            },
+            gain:  { DEFAULT:'#059669', subtle:'#ECFDF5', text:'#065F46' },
+            loss:  { DEFAULT:'#DC2626', subtle:'#FEF2F2', text:'#991B1B' },
+            warn:  { DEFAULT:'#D97706', subtle:'#FFFBEB', text:'#92400E' },
+            ink: {
+              primary:   '#0F0E17',
+              secondary: '#4B4963',
+              tertiary:  '#8B89A0',
+              disabled:  '#C4C2D4',
+            },
+            edge: {
+              subtle: 'rgba(0,0,0,0.06)',
+              base:   'rgba(0,0,0,0.10)',
+              strong: 'rgba(0,0,0,0.18)',
+            },
+          },
+          boxShadow: {
+            card:     '0 1px 2px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.06)',
+            elevated: '0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)',
+            focus:    '0 0 0 3px rgba(124,58,237,0.18)',
+          },
+          borderRadius: {
+            sm: '6px', md: '10px', lg: '14px', xl: '20px', pill: '999px',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html {
+      font-family: "Inter", system-ui, sans-serif;
+      font-feature-settings: 'cv01','ss01','ss03';
+      color-scheme: light;
+      scroll-behavior: smooth;
+    }
+    body {
+      background-color: #F8F7FF;
+      color: #0F0E17;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      letter-spacing: -0.01em;
+    }
+
+    /* Premium page background with layered mesh gradients */
+    .page-bg {
+      background-color: #F8F7FF;
+      background-image:
+        radial-gradient(ellipse at 10% 0%, rgba(124, 58, 237, 0.10) 0%, transparent 55%),
+        radial-gradient(ellipse at 90% 10%, rgba(139, 92, 246, 0.07) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, rgba(124, 58, 237, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.04) 0%, transparent 40%);
+      background-size: 100% 100%;
+      background-attachment: fixed;
+    }
+
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+
+    /* All interactive elements transition */
+    button, a, input, select, textarea, .nav-item, .select-trigger {
+      transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Premium scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(124, 58, 237, 0.12);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(124, 58, 237, 0.35); }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM GLASSMORPHISM CARD SYSTEM
+       ═══════════════════════════════════════════ */
+    .fp-card {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.03),
+        0 4px 16px rgba(0,0,0,0.04),
+        0 12px 48px rgba(124, 58, 237, 0.04);
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .fp-card:hover {
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.03),
+        0 8px 24px rgba(0,0,0,0.06),
+        0 20px 60px rgba(124, 58, 237, 0.06);
+      transform: translateY(-1px);
+    }
+    /* Animated gradient border on hover */
+    .fp-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      padding: 1.5px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.15), transparent 40%, rgba(139,92,246,0.10));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 400ms ease;
+    }
+    .fp-card:hover::before { opacity: 1; }
+    /* Subtle inner glow */
+    .fp-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM STAT CARDS
+       ═══════════════════════════════════════════ */
+    .stat-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow:
+        0 1px 3px rgba(0,0,0,0.04),
+        0 0 0 1px rgba(0,0,0,0.03);
+      padding: 24px;
+      transition: all 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #A78BFA, #7C3AED, #C4B5FD);
+      background-size: 200% 100%;
+      opacity: 0;
+      transition: opacity 350ms ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        0 8px 24px rgba(124, 58, 237, 0.10),
+        0 16px 48px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgba(124, 58, 237, 0.06);
+    }
+    .stat-card:hover::after {
+      opacity: 1;
+      animation: gradient-shift 3s ease infinite;
+    }
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    /* Stat card accent colors */
+    .stat-card[data-accent="emerald"]::after { background: linear-gradient(90deg, #34D399, #059669, #10B981); background-size: 200% 100%; }
+    .stat-card[data-accent="rose"]::after { background: linear-gradient(90deg, #FB7185, #DC2626, #F87171); background-size: 200% 100%; }
+    .stat-card[data-accent="amber"]::after { background: linear-gradient(90deg, #FBBF24, #D97706, #F59E0B); background-size: 200% 100%; }
+    .stat-card[data-accent="brand"]::after { background: linear-gradient(90deg, #A78BFA, #7C3AED, #C4B5FD); background-size: 200% 100%; }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM SIDEBAR
+       ═══════════════════════════════════════════ */
+    .fp-sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 240px;
+      background: rgba(255, 255, 255, 0.70);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border-right: 1px solid rgba(0,0,0,0.06);
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 42px;
+      padding: 0 14px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #6B6885;
+      position: relative;
+      margin: 1px 8px;
+      transition: all 200ms ease;
+    }
+    .nav-item:hover {
+      background: rgba(124, 58, 237, 0.06);
+      color: #0F0E17;
+    }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(124,58,237,0.10), rgba(139,92,246,0.06));
+      color: #7C3AED;
+      font-weight: 600;
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 20px;
+      background: linear-gradient(180deg, #A78BFA, #7C3AED);
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM MOILE BOTTOM NAV
+       ═══════════════════════════════════════════ */
+    .fp-bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 64px;
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-top: 1px solid rgba(0,0,0,0.06);
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      box-shadow: 0 -8px 32px rgba(124, 58, 237, 0.06);
+    }
+    .mobile-tab {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      color: #8B89A0;
+      transition: all 200ms ease;
+      position: relative;
+    }
+    .mobile-tab.active {
+      color: #7C3AED;
+      background: linear-gradient(135deg, rgba(124,58,237,0.10), rgba(139,92,246,0.06));
+    }
+    .mobile-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #7C3AED;
+    }
+
+    /* ═══════════════════════════════════════════
+       TYPOGRAPHY & GRADIENTS
+       ═══════════════════════════════════════════ */
+    .text-gradient {
+      background: linear-gradient(135deg, #8B5CF6, #6D28D9, #A78BFA);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .text-gradient-subtle {
+      background: linear-gradient(135deg, #A78BFA, #7C3AED);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ═══════════════════════════════════════════
+       PAGE SECTION ANIMATIONS
+       ═══════════════════════════════════════════ */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); filter: blur(4px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .page-section {
+      display: none;
+    }
+    .page-section.active {
+      display: block;
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .animate-stagger-1 { animation-delay: 0.05s; }
+    .animate-stagger-2 { animation-delay: 0.10s; }
+    .animate-stagger-3 { animation-delay: 0.15s; }
+    .animate-stagger-4 { animation-delay: 0.20s; }
+
+    /* ═══════════════════════════════════════════
+       TYPING INDICATORS
+       ═══════════════════════════════════════════ */
+    .typing-dot {
+      width: 7px; height: 7px;
+      background: linear-gradient(135deg, #A78BFA, #7C3AED);
+      border-radius: 50%;
+      animation: typingBounce 1.4s infinite ease-in-out;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: scale(1); opacity: 0.4; }
+      30% { transform: scale(1.4); opacity: 1; }
+    }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM SELECT DROPDOWN
+       ═══════════════════════════════════════════ */
+    .select-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 38px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 0 14px;
+      font-size: 13px;
+      color: #4B4963;
+      font-weight: 500;
+      cursor: pointer;
+      position: relative;
+      min-width: 120px;
+      transition: all 200ms ease;
+    }
+    .select-trigger:hover {
+      border-color: rgba(124, 58, 237, 0.25);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.08);
+    }
+    .select-dropdown {
+      position: absolute;
+      top: 44px;
+      right: 0;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
+      border-radius: 14px;
+      width: 150px;
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      padding: 6px;
+      animation: scaleIn 0.15s ease;
+    }
+    .select-option {
+      padding: 8px 14px;
+      font-size: 13px;
+      border-radius: 8px;
+      color: #4B4963;
+      cursor: pointer;
+      text-align: left;
+      font-weight: 500;
+      transition: all 150ms ease;
+    }
+    .select-option:hover {
+      background: linear-gradient(135deg, #F5F3FF, #EDE9FE);
+      color: #7C3AED;
+    }
+
+    /* ═══════════════════════════════════════════
+       TOAST NOTIFICATION SYSTEM
+       ═══════════════════════════════════════════ */
+    #toast-container {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .toast-box {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
+      border-radius: 14px;
+      padding: 14px 18px;
+      min-width: 280px;
+      display: flex;
+      align-items: start;
+      gap: 14px;
+      transform: translateX(140%);
+      transition: transform 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .toast-box.show { transform: translateX(0); }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM FORM INPUTS
+       ═══════════════════════════════════════════ */
+    .custom-input {
+      height: 48px;
+      border: 1.5px solid rgba(0, 0, 0, 0.10);
+      border-radius: 12px;
+      padding: 0 16px;
+      font-size: 15px;
+      color: #0F0E17;
+      background: rgba(255, 255, 255, 0.70);
+      backdrop-filter: blur(8px);
+      width: 100%;
+      outline: none;
+      transition: all 200ms ease;
+      font-weight: 450;
+    }
+    .custom-input::placeholder { color: #A5A3B8; }
+    .custom-input:hover {
+      border-color: rgba(124, 58, 237, 0.20);
+      background: rgba(255, 255, 255, 0.85);
+    }
+    .custom-input:focus {
+      border-color: #7C3AED;
+      box-shadow: 0 0 0 4px rgba(124,58,237,0.12);
+      background: rgba(255, 255, 255, 0.95);
+    }
+    select.custom-input {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238B89A0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+    }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM BUTTONS
+       ═══════════════════════════════════════════ */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 44px;
+      padding: 0 20px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+      transition: all 200ms ease;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #7C3AED, #6D28D9);
+      box-shadow: 0 6px 24px rgba(124, 58, 237, 0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 40px;
+      padding: 0 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(0, 0, 0, 0.08);
+      color: #4B4963;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 200ms ease;
+    }
+    .btn-secondary:hover {
+      border-color: rgba(124, 58, 237, 0.25);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.08);
+    }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM TOGGLE SWITCH
+       ═══════════════════════════════════════════ */
+    .toggle-switch {
+      width: 48px;
+      height: 26px;
+      border-radius: 999px;
+      background: #E2E0E8;
+      position: relative;
+      cursor: pointer;
+      transition: background 300ms ease;
+      border: none;
+      padding: 0;
+    }
+    .toggle-switch.active {
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+    }
+    .toggle-switch-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: white;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .toggle-switch.active .toggle-switch-thumb {
+      transform: translateX(22px);
+    }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM PROGRESS BARS
+       ═══════════════════════════════════════════ */
+    .progress-track {
+      height: 8px;
+      background: rgba(0, 0, 0, 0.04);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+    }
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 2s ease infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM AI CHAT
+       ═══════════════════════════════════════════ */
+    .chat-bubble-user {
+      background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+      color: white;
+      border-radius: 18px 18px 4px 18px;
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.20);
+    }
+    .chat-bubble-assistant {
+      background: rgba(255, 255, 255, 0.90);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 18px 18px 18px 4px;
+    }
+    .suggestion-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.70);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(0,0,0,0.08);
+      color: #4B4963;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 200ms ease;
+    }
+    .suggestion-chip:hover {
+      background: linear-gradient(135deg, #F5F3FF, #EDE9FE);
+      border-color: rgba(124, 58, 237, 0.20);
+      color: #7C3AED;
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.10);
+      transform: translateY(-1px);
+    }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM INSIGHT CARDS
+       ═══════════════════════════════════════════ */
+    .insight-card {
+      border-radius: 14px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all 300ms ease;
+      border: 1px solid transparent;
+    }
+    .insight-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.04;
+      transition: opacity 300ms ease;
+    }
+    .insight-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+    .insight-card:hover::before { opacity: 0.07; }
+    .insight-positive {
+      background: linear-gradient(135deg, rgba(5,150,105,0.06), rgba(16,185,129,0.03));
+      border-color: rgba(5,150,105,0.12);
+    }
+    .insight-positive::before { background: radial-gradient(circle at 80% 80%, rgba(5,150,105,0.15), transparent 70%); }
+    .insight-warning {
+      background: linear-gradient(135deg, rgba(217,119,6,0.06), rgba(245,158,11,0.03));
+      border-color: rgba(217,119,6,0.12);
+    }
+    .insight-warning::before { background: radial-gradient(circle at 80% 80%, rgba(217,119,6,0.15), transparent 70%); }
+    .insight-tip {
+      background: linear-gradient(135deg, rgba(124,58,237,0.06), rgba(139,92,246,0.03));
+      border-color: rgba(124,58,237,0.12);
+    }
+    .insight-tip::before { background: radial-gradient(circle at 80% 80%, rgba(124,58,237,0.15), transparent 70%); }
+
+    /* ═══════════════════════════════════════════
+       PREMIUM MODAL / DIALOG
+       ═══════════════════════════════════════════ */
+    .modal-overlay {
+      background: rgba(15, 14, 23, 0.40);
+      backdrop-filter: blur(8px);
+    }
+    .modal-content {
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(40px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.06);
+      border-radius: 24px;
+    }
+
+    /* ═══════════════════════════════════════════
+       HEATMAP STYLES
+       ═══════════════════════════════════════════ */
+    .heatmap-cell {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: default;
+      transition: all 200ms ease;
+      position: relative;
+    }
+    .heatmap-cell:hover {
+      transform: scale(1.15);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.20);
+      z-index: 10;
+    }
+
+    /* ═══════════════════════════════════════════
+       GOAL RING ANIMATION
+       ═══════════════════════════════════════════ */
+    .goal-ring-circle {
+      transition: stroke-dashoffset 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* ═══════════════════════════════════════════
+       FLOATING LABEL HELPER
+       ═══════════════════════════════════════════ */
+    .label-premium {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #8B89A0;
+      margin-bottom: 8px;
+    }
+
+    /* ═══════════════════════════════════════════
+       SECTION HEADER STYLES
+       ═══════════════════════════════════════════ */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .section-header-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.10), rgba(139,92,246,0.06));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7C3AED;
+    }
+
+    /* Chart container premium */
+    .chart-container {
+      background: linear-gradient(180deg, rgba(248,247,255,0.8) 0%, rgba(255,255,255,0.4) 100%);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .chart-container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(124,58,237,0.1), transparent);
+    }
+  </style>
+</head>
+<body class="page-bg min-h-screen pb-20 lg:pb-0">
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- ═══════════════════════════════════════════
+       DESKTOP SIDEBAR
+       ═══════════════════════════════════════════ -->
+  <aside class="fp-sidebar hidden lg:flex">
+    <!-- Logo -->
+    <div class="h-16 flex items-center px-5 flex-shrink-0">
+      <span class="flex items-center gap-2.5 text-[18px] font-bold text-[#0F0E17] tracking-tight select-none">
+        <span class="inline-flex w-8 h-8 rounded-[10px] items-center justify-center flex-shrink-0 bg-gradient-to-br from-[#A78BFA] to-[#6D28D9] shadow-[0_4px_12px_rgba(124,58,237,0.30)]">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M2 12h20M17 7l-5-5-5 5M17 17l-5 5-5-5"/>
+          </svg>
+        </span>
+        <span class="text-gradient">FinPilot</span>
+      </span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
+      <div class="px-4 pb-2 pt-1">
+        <span class="text-[10px] font-bold uppercase tracking-[0.12em] text-[#B8B5C9]">Main</span>
+      </div>
+      <div onclick="switchPage('dashboard')" class="nav-item active" data-page="dashboard">
+        <i data-lucide="layout-dashboard" class="w-[18px] h-[18px]"></i>
+        <span>Dashboard</span>
+      </div>
+      <div onclick="switchPage('transactions')" class="nav-item" data-page="transactions">
+        <i data-lucide="receipt" class="w-[18px] h-[18px]"></i>
+        <span>Transactions</span>
+      </div>
+      <div onclick="switchPage('budgets')" class="nav-item" data-page="budgets">
+        <i data-lucide="wallet" class="w-[18px] h-[18px]"></i>
+        <span>Budgets</span>
+      </div>
+      <div onclick="switchPage('goals')" class="nav-item" data-page="goals">
+        <i data-lucide="target" class="w-[18px] h-[18px]"></i>
+        <span>Goals</span>
+      </div>
+      <div onclick="switchPage('analytics')" class="nav-item" data-page="analytics">
+        <i data-lucide="pie-chart" class="w-[18px] h-[18px]"></i>
+        <span>Analytics</span>
+      </div>
+      <div class="px-4 pb-2 pt-4">
+        <span class="text-[10px] font-bold uppercase tracking-[0.12em] text-[#B8B5C9]">Intelligence</span>
+      </div>
+      <div onclick="switchPage('ai-advisor')" class="nav-item" data-page="ai-advisor">
+        <i data-lucide="brain-circuit" class="w-[18px] h-[18px]"></i>
+        <span>AI Advisor</span>
+      </div>
+    </nav>
+
+    <!-- Bottom User Profile -->
+    <div class="px-3 pb-5 pt-3 border-t border-dashed border-[rgba(0,0,0,0.06)]">
+      <div onclick="switchPage('settings')" class="nav-item" data-page="settings">
+        <i data-lucide="settings" class="w-[18px] h-[18px]"></i>
+        <span>Settings</span>
+      </div>
+      <div class="flex items-center gap-3 px-3 py-3 mt-2 rounded-[14px] bg-gradient-to-r from-[rgba(124,58,237,0.05)] to-transparent border border-[rgba(124,58,237,0.08)]">
+        <div class="relative w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-[#EDE9FE] to-[#DDD6FE] shadow-[0_0_0_2px_rgba(124,58,237,0.15),0_2px_8px_rgba(124,58,237,0.15)]">
+          <span id="user-initials" class="text-[11px] font-bold text-[#6D28D9] leading-none select-none">SY</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p id="user-display-name" class="text-[13px] font-semibold text-[#0F0E17] truncate leading-tight">Shameek Yogi</p>
+          <p class="text-[11px] text-[#8B89A0] leading-tight">Premium Member</p>
+        </div>
+        <div class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════
+       MOBILE BOTTOM NAVIGATION
+       ═══════════════════════════════════════════ -->
+  <nav class="fp-bottom-nav lg:hidden">
+    <button onclick="switchPage('dashboard')" class="mobile-tab active" data-mobile-page="dashboard" aria-label="Dashboard">
+      <i data-lucide="layout-dashboard" class="w-[20px] h-[20px]"></i>
+    </button>
+    <button onclick="switchPage('transactions')" class="mobile-tab" data-mobile-page="transactions" aria-label="Transactions">
+      <i data-lucide="receipt" class="w-[20px] h-[20px]"></i>
+    </button>
+    <button onclick="switchPage('budgets')" class="mobile-tab" data-mobile-page="budgets" aria-label="Budgets">
+      <i data-lucide="wallet" class="w-[20px] h-[20px]"></i>
+    </button>
+    <button onclick="switchPage('goals')" class="mobile-tab" data-mobile-page="goals" aria-label="Goals">
+      <i data-lucide="target" class="w-[20px] h-[20px]"></i>
+    </button>
+    <button onclick="switchPage('analytics')" class="mobile-tab" data-mobile-page="analytics" aria-label="Analytics">
+      <i data-lucide="pie-chart" class="w-[20px] h-[20px]"></i>
+    </button>
+    <button onclick="switchPage('ai-advisor')" class="mobile-tab" data-mobile-page="ai-advisor" aria-label="AI Advisor">
+      <i data-lucide="brain-circuit" class="w-[20px] h-[20px]"></i>
+    </button>
+    <button onclick="switchPage('settings')" class="mobile-tab" data-mobile-page="settings" aria-label="Settings">
+      <i data-lucide="settings" class="w-[20px] h-[20px]"></i>
+    </button>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       MAIN CONTENT AREA
+       ═══════════════════════════════════════════ -->
+  <main class="lg:ml-[240px]">
+    <div class="lg:px-10 lg:py-8 px-4 py-6 max-w-[1320px]">
+
+      <!-- ==========================================
+           1. DASHBOARD PAGE
+           ========================================== -->
+      <section id="page-dashboard" class="page-section active space-y-8">
+        <!-- Premium Header -->
+        <div class="flex items-start justify-between gap-4" style="animation: fadeInUp 0.4s ease both;">
+          <div>
+            <div class="flex items-center gap-3 mb-1">
+              <h1 class="text-[28px] font-bold text-[#0F0E17] leading-tight tracking-tight">
+                Good morning, <span id="dash-greeting-name" class="text-gradient">Shameek</span>
+              </h1>
+              <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 text-[11px] font-bold text-emerald-700 uppercase tracking-wider">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                All Good
+              </span>
+            </div>
+            <p class="text-[14px] text-[#8B89A0] mt-1 font-medium">
+              <span id="dash-date">June 2026</span>
+              <span class="mx-2 text-[#DDD6FE]">|</span>
+              Net worth <span id="dash-networth" class="tabular-nums font-bold text-[#0F0E17]">₹7,85,000</span>
+            </p>
+          </div>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <button onclick="simulateRefresh()" class="w-10 h-10 rounded-[12px] border border-[rgba(0,0,0,0.08)] bg-white/70 flex items-center justify-center text-[#8B89A0] hover:text-[#0F0E17] hover:border-[rgba(0,0,0,0.14)] hover:bg-white/95 backdrop-blur-xl transition-all shadow-sm hover:shadow-md">
+              <i id="refresh-icon" data-lucide="refresh-cw" class="w-[16px] h-[16px]"></i>
+            </button>
+            <div class="flex items-center gap-2 px-4 h-10 rounded-[12px] border border-[rgba(0,0,0,0.08)] bg-white/70 text-[13px] text-[#4B4963] font-semibold backdrop-blur-xl shadow-sm">
+              <i data-lucide="calendar-days" class="w-[15px] h-[15px] text-[#A78BFA]"></i>
+              <span id="today-date-str">02 Jun 2026</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Premium Stats Grid -->
+        <div class="grid gap-5 grid-cols-2 xl:grid-cols-4" style="animation: fadeInUp 0.4s ease both; animation-delay: 0.08s;">
+          <div class="stat-card" data-accent="emerald">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-[10px] bg-emerald-50 flex items-center justify-center">
+                  <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i>
+                </div>
+                <span class="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase">Income</span>
+              </div>
+              <span class="flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                <i data-lucide="arrow-up-right" class="w-3 h-3"></i> 12%
+              </span>
+            </div>
+            <div class="text-[26px] font-bold tracking-tight text-[#0F0E17] tabular-nums leading-none">
+              <span id="stat-income">₹1,25,000</span>
+            </div>
+            <p class="text-[12px] text-[#8B89A0] mt-2 font-medium">Total received this month</p>
+          </div>
+
+          <div class="stat-card" data-accent="rose">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-[10px] bg-red-50 flex items-center justify-center">
+                  <i data-lucide="trending-down" class="w-4 h-4 text-red-500"></i>
+                </div>
+                <span class="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase">Expenses</span>
+              </div>
+              <span class="flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                <i data-lucide="arrow-down-right" class="w-3 h-3"></i> 8%
+              </span>
+            </div>
+            <div class="text-[26px] font-bold tracking-tight text-[#0F0E17] tabular-nums leading-none">
+              <span id="stat-expense">₹45,000</span>
+            </div>
+            <p class="text-[12px] text-[#8B89A0] mt-2 font-medium">Total spent this month</p>
+          </div>
+
+          <div class="stat-card" data-accent="brand">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-[10px] bg-purple-50 flex items-center justify-center">
+                  <i data-lucide="wallet" class="w-4 h-4 text-brand-600"></i>
+                </div>
+                <span class="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase">Balance</span>
+              </div>
+              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full uppercase tracking-wider">Positive</span>
+            </div>
+            <div class="text-[26px] font-bold tracking-tight text-[#0F0E17] tabular-nums leading-none">
+              <span id="stat-net">₹80,000</span>
+            </div>
+            <p class="text-[12px] text-[#8B89A0] mt-2 font-medium">Income minus expenses</p>
+          </div>
+
+          <div class="stat-card" data-accent="amber">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-[10px] bg-amber-50 flex items-center justify-center">
+                  <i data-lucide="piggy-bank" class="w-4 h-4 text-amber-600"></i>
+                </div>
+                <span class="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase">Savings</span>
+              </div>
+              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full uppercase tracking-wider">Healthy</span>
+            </div>
+            <div class="text-[26px] font-bold tracking-tight text-[#0F0E17] tabular-nums leading-none">
+              <span id="stat-savings-rate">64.0%</span>
+            </div>
+            <p class="text-[12px] text-[#8B89A0] mt-2 font-medium">Share of income saved</p>
+          </div>
+        </div>
+
+        <!-- AI Insights Premium -->
+        <div class="fp-card p-7" style="animation: fadeInUp 0.4s ease both; animation-delay: 0.16s;">
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-[12px] bg-gradient-to-br from-[#F5F3FF] to-[#EDE9FE] flex items-center justify-center shadow-sm">
+                <i data-lucide="sparkles" class="w-5 h-5 text-brand-600"></i>
+              </div>
+              <div>
+                <h2 class="text-[16px] font-bold text-[#0F0E17]">AI Insights</h2>
+                <span class="text-[11px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full uppercase tracking-wider">92% confidence</span>
+              </div>
+            </div>
+            <button onclick="simulateRefresh()" class="btn-secondary !h-9 !text-[12px]">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
+            </button>
+          </div>
+
+          <div class="space-y-3">
+            <div class="insight-card insight-positive">
+              <div class="relative z-10">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-emerald-600">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Positive
+                  </span>
+                  <button onclick="switchPage('analytics')" class="text-[11px] font-semibold text-[#8B89A0] hover:text-[#0F0E17] transition-colors">View Details →</button>
+                </div>
+                <p class="text-[14px] leading-relaxed text-[#0F0E17] font-medium">Your savings rate is <strong class="text-emerald-700">64%</strong> this month, which is <strong>14% higher</strong> than your set baseline. Outstanding discipline, Shameek!</p>
+              </div>
+            </div>
+            <div class="insight-card insight-warning">
+              <div class="relative z-10">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-amber-600">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Warning
+                  </span>
+                  <button onclick="switchPage('budgets')" class="text-[11px] font-semibold text-[#8B89A0] hover:text-[#0F0E17] transition-colors">Adjust Budget →</button>
+                </div>
+                <p class="text-[14px] leading-relaxed text-[#0F0E17] font-medium">Dining out is at <strong class="text-amber-700">91%</strong> of your monthly limit (₹4,550 spent of ₹5,000). Consider cooking at home for the rest of the week.</p>
+              </div>
+            </div>
+            <div class="insight-card insight-tip">
+              <div class="relative z-10">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-brand-600">
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span> Tip
+                  </span>
+                  <button onclick="switchPage('ai-advisor')" class="text-[11px] font-semibold text-[#8B89A0] hover:text-[#0F0E17] transition-colors">Ask Advisor →</button>
+                </div>
+                <p class="text-[14px] leading-relaxed text-[#0F0E17] font-medium">You have <strong class="text-brand-700">₹80,000</strong> idle cash in savings. Moving ₹25,000 to your mutual fund SIP will increase projected annual returns by <strong>₹3,200</strong>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Split Layout: Categories + Transactions -->
+        <div class="grid gap-6 md:grid-cols-[38%_62%]" style="animation: fadeInUp 0.4s ease both; animation-delay: 0.24s;">
+          <div class="fp-card p-6">
+            <div class="section-header !mb-5">
+              <div class="section-header-icon">
+                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+              </div>
+              <h2 class="text-[15px] font-bold text-[#0F0E17]">Expenses by Category</h2>
+            </div>
+            <div class="space-y-5" id="dash-category-progress"></div>
+          </div>
+
+          <div class="fp-card p-6">
+            <div class="flex items-center justify-between mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+              <div class="flex items-center gap-3">
+                <div class="section-header-icon !mb-0">
+                  <i data-lucide="receipt" class="w-4 h-4"></i>
+                </div>
+                <h2 class="text-[15px] font-bold text-[#0F0E17]">Recent Transactions</h2>
+              </div>
+              <button onclick="switchPage('transactions')" class="text-[12px] font-semibold text-brand-600 hover:text-brand-700 transition-colors">View All →</button>
+            </div>
+            <div id="dashboard-tx-list" class="space-y-1"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           2. TRANSACTIONS PAGE
+           ========================================== -->
+      <section id="page-transactions" class="page-section space-y-8">
+        <div class="flex items-center justify-between" style="animation: fadeInUp 0.35s ease both;">
+          <div>
+            <h1 class="text-[26px] font-bold text-[#0F0E17] leading-tight tracking-tight">Record Transaction</h1>
+            <p class="text-[14px] text-[#8B89A0] mt-1 font-medium">Add transactions to update your budgets instantly</p>
+          </div>
+          <button onclick="switchPage('analytics')" class="btn-secondary">
+            <i data-lucide="arrow-left-right" class="w-4 h-4"></i> Analytics
+          </button>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-[42%_58%]" style="animation: fadeInUp 0.35s ease both; animation-delay: 0.08s;">
+          <!-- Transaction Form -->
+          <div class="fp-card p-6 space-y-6">
+            <!-- Sliding Toggle -->
+            <div class="flex p-1.5 rounded-full border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.03)] relative" role="group">
+              <div id="toggle-slide-bg" class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(50%-6px)] bg-white shadow-md border border-[rgba(0,0,0,0.04)] rounded-full transition-all duration-300 ease-out z-0"></div>
+              <button type="button" onclick="setTxType('expense')" class="flex-1 flex items-center justify-center gap-2 h-10 rounded-full text-[14px] font-bold text-ink-primary z-10 relative">
+                <i data-lucide="trending-down" class="w-4 h-4"></i> Expense
+              </button>
+              <button type="button" onclick="setTxType('income')" class="flex-1 flex items-center justify-center gap-2 h-10 rounded-full text-[14px] font-bold text-[#8B89A0] z-10 relative">
+                <i data-lucide="trending-up" class="w-4 h-4"></i> Income
+              </button>
+            </div>
+
+            <form id="tx-form" onsubmit="handleAddTx(event)" class="space-y-5">
+              <div>
+                <label for="form-amount" class="label-premium">Amount</label>
+                <div class="flex rounded-[14px] border-[1.5px] border-[rgba(0,0,0,0.10)] overflow-hidden focus-within:border-brand-600 focus-within:shadow-[0_0_0_4px_rgba(124,58,237,0.12)] transition-all bg-[rgba(255,255,255,0.70)]">
+                  <div class="w-14 flex items-center justify-center text-[20px] font-bold text-[#8B89A0] border-r border-[rgba(0,0,0,0.06)] bg-[rgba(0,0,0,0.02)]">₹</div>
+                  <input id="form-amount" type="number" required placeholder="0" class="flex-1 h-[56px] px-5 text-[24px] font-bold text-[#0F0E17] tabular-nums bg-transparent outline-none">
+                </div>
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label for="form-date" class="label-premium">Date</label>
+                  <input id="form-date" type="date" required class="custom-input !h-11">
+                </div>
+                <div>
+                  <label for="form-category" class="label-premium">Category</label>
+                  <select id="form-category" required class="custom-input !h-11">
+                    <option value="food">Food & Dining</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="bills">Bills & Utilities</option>
+                    <option value="transport">Transport</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="rent">Rent & Housing</option>
+                    <option value="salary">Salary</option>
+                    <option value="freelance">Freelance</option>
+                    <option value="miscellaneous">Miscellaneous</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label for="form-note" class="label-premium">Note</label>
+                <input id="form-note" type="text" placeholder="e.g. Swiggy Lunch, Rent deposit..." class="custom-input !h-11">
+              </div>
+
+              <button type="submit" class="btn-primary w-full !h-12 !text-[15px]">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i> Add Transaction
+              </button>
+            </form>
+          </div>
+
+          <!-- Transaction History -->
+          <div class="fp-card p-6 flex flex-col">
+            <div class="flex items-center justify-between mb-5 pb-4 border-b border-[rgba(0,0,0,0.06)]">
+              <div class="flex items-center gap-3">
+                <div class="section-header-icon !mb-0">
+                  <i data-lucide="history" class="w-4 h-4"></i>
+                </div>
+                <h2 class="text-[15px] font-bold text-[#0F0E17]">Transaction History</h2>
+              </div>
+              <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B8B5C9]"></i>
+                <input id="tx-search" oninput="searchTransactions()" type="text" placeholder="Search transactions..." class="h-10 w-[180px] pl-10 pr-4 rounded-[12px] border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.02)] text-[13px] font-medium outline-none focus:border-brand-600 focus:bg-white focus:shadow-[0_0_0_3px_rgba(124,58,237,0.10)] transition-all">
+              </div>
+            </div>
+            <div id="tx-history-list" class="flex-1 space-y-1 max-h-[420px] overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           3. BUDGETS PAGE
+           ========================================== -->
+      <section id="page-budgets" class="page-section space-y-8">
+        <div class="flex items-center justify-between" style="animation: fadeInUp 0.35s ease both;">
+          <div>
+            <h1 class="text-[26px] font-bold text-[#0F0E17] leading-tight tracking-tight">Budget Management</h1>
+            <p class="text-[14px] text-[#8B89A0] mt-1 font-medium">Control monthly limits and view excess spending</p>
+          </div>
+          <button onclick="openBudgetModal()" class="btn-primary">
+            <i data-lucide="plus" class="w-4 h-4"></i> Add Budget
+          </button>
+        </div>
+
+        <!-- Budget Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5" style="animation: fadeInUp 0.35s ease both; animation-delay: 0.08s;">
+          <div class="fp-card p-6 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-[14px] bg-gradient-to-br from-emerald-50 to-emerald-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="trending-up" class="w-6 h-6 text-emerald-600"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase mb-1">Actual Income</p>
+              <p class="text-[22px] font-bold text-emerald-700 tabular-nums leading-none">₹1,25,000</p>
+            </div>
+          </div>
+          <div class="fp-card p-6 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-[14px] bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="wallet" class="w-6 h-6 text-brand-600"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase mb-1">Total Budgeted</p>
+              <p class="text-[22px] font-bold text-brand-600 tabular-nums leading-none" id="budget-summary-total">₹35,000</p>
+            </div>
+          </div>
+          <div class="fp-card p-6 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-[14px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check-circle" class="w-6 h-6 text-[#4B4963]"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase mb-1">Available Balance</p>
+              <p class="text-[22px] font-bold text-[#4B4963] tabular-nums leading-none" id="budget-summary-avail">₹90,000</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Budget Cards -->
+        <div id="budget-card-container" class="space-y-4" style="animation: fadeInUp 0.35s ease both; animation-delay: 0.16s;"></div>
+
+        <!-- Unbudgeted Section -->
+        <div id="unbudgeted-section" class="fp-card p-6" style="animation: fadeInUp 0.35s ease both; animation-delay: 0.24s;">
+          <div class="flex items-center gap-3 mb-1">
+            <div class="w-8 h-8 rounded-[10px] bg-amber-50 flex items-center justify-center">
+              <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600"></i>
+            </div>
+            <div>
+              <h2 class="text-[15px] font-bold text-[#0F0E17]">Unbudgeted Categories</h2>
+              <p class="text-[12px] text-[#8B89A0] font-medium">Categories with spending but no limit set</p>
+            </div>
+          </div>
+          <div class="space-y-2 mt-4" id="unbudgeted-container"></div>
+        </div>
+
+        <!-- Budget Modal -->
+        <div id="budget-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden" style="animation: fadeIn 0.2s ease;">
+          <div class="modal-content p-7 w-full max-w-md" style="animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+            <div class="flex items-center gap-3 mb-1">
+              <div class="w-10 h-10 rounded-[12px] bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center">
+                <i data-lucide="plus" class="w-5 h-5 text-brand-600"></i>
+              </div>
+              <div>
+                <h3 class="text-[16px] font-bold text-[#0F0E17]">Add Category Budget</h3>
+                <p class="text-[12px] text-[#8B89A0] font-medium">Set monthly ceiling limits</p>
+              </div>
+            </div>
+            <form onsubmit="handleCreateBudget(event)" class="space-y-5 mt-6">
+              <div>
+                <label for="bm-category" class="label-premium">Category</label>
+                <select id="bm-category" required class="custom-input !h-11">
+                  <option value="food">Food & Dining</option>
+                  <option value="shopping">Shopping</option>
+                  <option value="bills">Bills & Utilities</option>
+                  <option value="transport">Transport</option>
+                  <option value="entertainment">Entertainment</option>
+                  <option value="rent">Rent & Housing</option>
+                </select>
+              </div>
+              <div>
+                <label for="bm-limit" class="label-premium">Monthly Limit (₹)</label>
+                <input id="bm-limit" type="number" required placeholder="e.g. 5000" class="custom-input">
+              </div>
+              <div class="flex gap-3 justify-end pt-2">
+                <button type="button" onclick="closeBudgetModal()" class="btn-secondary">Cancel</button>
+                <button type="submit" class="btn-primary">Create Limit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           4. GOALS PAGE
+           ========================================== -->
+      <section id="page-goals" class="page-section space-y-8">
+        <div class="flex items-center justify-between" style="animation: fadeInUp 0.35s ease both;">
+          <div>
+            <h1 class="text-[26px] font-bold text-[#0F0E17] leading-tight tracking-tight">Financial Goals</h1>
+            <p class="text-[14px] text-[#8B89A0] mt-1 font-medium">Milestones and targets for wealth building</p>
+          </div>
+          <button onclick="openGoalModal()" class="btn-primary">
+            <i data-lucide="plus" class="w-4 h-4"></i> New Goal
+          </button>
+        </div>
+
+        <!-- Goals Stats -->
+        <div class="fp-card p-6" style="animation: fadeInUp 0.35s ease both; animation-delay: 0.08s;">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
+            <div class="text-center sm:text-left">
+              <p class="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase mb-2">Total Goals</p>
+              <p class="text-[24px] font-bold text-[#0F0E17] leading-none" id="goal-count-label">3</p>
+            </div>
+            <div class="text-center sm:text-left">
+              <p class="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase mb-2">Total Saved</p>
+              <p class="text-[24px] font-bold text-emerald-700 leading-none" id="goal-saved-label">₹2,55,000</p>
+            </div>
+            <div class="text-center sm:text-left">
+              <p class="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase mb-2">Total Target</p>
+              <p class="text-[24px] font-bold text-[#4B4963] leading-none" id="goal-target-label">₹6,50,000</p>
+            </div>
+            <div class="text-center sm:text-left">
+              <p class="text-[11px] font-bold tracking-[0.08em] text-[#8B89A0] uppercase mb-2">Overall Progress</p>
+              <p class="text-[24px] font-bold text-gradient leading-none" id="goal-progress-label">39.2%</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goals Grid -->
+        <div id="goals-grid-container" class="grid gap-5 md:grid-cols-2 lg:grid-cols-3" style="animation: fadeInUp 0.35s ease both; animation-delay: 0.16s;"></div>
+
+        <!-- Fund Modal -->
+        <div id="funds-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+          <div class="modal-content p-7 w-full max-w-md">
+            <div class="flex items-center gap-3 mb-1">
+              <div class="w-10 h-10 rounded-[12px] bg-gradient-to-br from-emerald-50 to-emerald-100 flex items-center justify-center">
+                <i data-lucide="banknote" class="w-5 h-5 text-emerald-600"></i>
+              </div>
+              <div>
+                <h3 class="text-[16px] font-bold text-[#0F0E17]">Add Saved Funds</h3>
+                <p class="text-[12px] text-[#8B89A0] font-medium">Transfer saved amounts to goal ledger</p>
+              </div>
+            </div>
+            <form onsubmit="handleSaveFunds(event)" class="space-y-5 mt-6">
+              <input type="hidden" id="fm-goal-id">
+              <div>
+                <label for="fm-amount" class="label-premium">Amount (₹)</label>
+                <input id="fm-amount" type="number" required placeholder="e.g. 5000" class="custom-input">
+              </div>
+              <div class="flex gap-3 justify-end pt-2">
+                <button type="button" onclick="closeFundsModal()" class="btn-secondary">Cancel</button>
+                <button type="submit" class="btn-primary">Save Funds</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Create Goal Modal -->
+        <div id="goal-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+          <div class="modal-content p-7 w-full max-w-md">
+            <div class="flex items-center gap-3 mb-1">
+              <div class="w-10 h-10 rounded-[12px] bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center">
+                <i data-lucide="target" class="w-5 h-5 text-brand-600"></i>
+              </div>
+              <div>
+                <h3 class="text-[16px] font-bold text-[#0F0E17]">Create Milestone Goal</h3>
+                <p class="text-[12px] text-[#8B89A0] font-medium">Define your wealth building target</p>
+              </div>
+            </div>
+            <form onsubmit="handleCreateGoal(event)" class="space-y-5 mt-6">
+              <div>
+                <label for="gm-name" class="label-premium">Goal Name</label>
+                <input id="gm-name" type="text" required placeholder="e.g. Europe Vacation, MacBook Pro..." class="custom-input">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="gm-target" class="label-premium">Target (₹)</label>
+                  <input id="gm-target" type="number" required placeholder="50000" class="custom-input">
+                </div>
+                <div>
+                  <label for="gm-saved" class="label-premium">Saved Already (₹)</label>
+                  <input id="gm-saved" type="number" placeholder="0" class="custom-input">
+                </div>
+              </div>
+              <div>
+                <label for="gm-date" class="label-premium">Target Date</label>
+                <input id="gm-date" type="date" class="custom-input !h-11">
+              </div>
+              <div class="flex gap-3 justify-end pt-2">
+                <button type="button" onclick="closeGoalModal()" class="btn-secondary">Cancel</button>
+                <button type="submit" class="btn-primary">Create Goal</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+      <!-- ==========================================
+           5. SPENDING ANALYTICS PAGE
+           ========================================== -->
+      <section id="page-analytics" class="page-section space-y-8">
+        <div class="flex flex-wrap items-center justify-between gap-4" style="animation: fadeInUp 0.35s ease both;">
+          <div>
+            <h1 class="text-[26px] font-bold text-[#0F0E17] leading-tight tracking-tight">Spending Analytics</h1>
+            <p class="text-[14px] text-[#8B89A0] mt-1 font-medium">Visual trends, heatmap index and categories</p>
+          </div>
+          
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <button onclick="toggleDropdown('dropdown-month')" class="select-trigger" id="month-trigger">
+                <span>June</span> <i data-lucide="chevron-down" class="w-4 h-4 ml-2 text-[#8B89A0]"></i>
+              </button>
+              <div id="dropdown-month" class="select-dropdown">
+                <div class="select-option" onclick="selectDropdownVal('month', 'January')">January</div>
+                <div class="select-option" onclick="selectDropdownVal('month', 'February')">February</div>
+                <div class="select-option" onclick="selectDropdownVal('month', 'March')">March</div>
+                <div class="select-option" onclick="selectDropdownVal('month', 'April')">April</div>
+                <div class="select-option" onclick="selectDropdownVal('month', 'May')">May</div>
+                <div class="select-option" onclick="selectDropdownVal('month', 'June')">June</div>
+              </div>
+            </div>
+            <div class="relative">
+              <button onclick="toggleDropdown('dropdown-year')" class="select-trigger" id="year-trigger">
+                <span>2026</span> <i data-lucide="chevron-down" class="w-4 h-4 ml-2 text-[#8B89A0]"></i>
+              </button>
+              <div id="dropdown-year" class="select-dropdown">
+                <div class="select-option" onclick="selectDropdownVal('year', '2026')">2026</div>
+                <div class="select-option" onclick="selectDropdownVal('year', '2025')">2025</div>
+                <div class="select-option" onclick="selectDropdownVal('year', '2024')">2024</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-2" style="animation: fadeInUp 0.35s ease both; animation-delay: 0.08s;">
+          <!-- Indicator Summary -->
+          <div class="fp-card p-6">
+            <div class="section-header">
+              <div class="section-header-icon">
+                <i data-lucide="trending-up" class="w-4 h-4"></i>
+              </div>
+              <h2 class="text-[15px] font-bold text-[#0F0E17]">Indicator Summary</h2>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="stat-card !p-5" data-accent="emerald">
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-7 h-7 rounded-[8px] bg-emerald-50 flex items-center justify-center">
+                    <i data-lucide="trending-up" class="w-3.5 h-3.5 text-emerald-600"></i>
+                  </div>
+                  <span class="text-[11px] font-bold text-[#8B89A0] uppercase tracking-wider">Income</span>
+                </div>
+                <p class="text-[20px] font-bold text-[#0F0E17] tabular-nums leading-none">₹1,25,000</p>
+                <p class="text-[11px] text-[#8B89A0] mt-2 font-medium">Total monthly inflow</p>
+              </div>
+              <div class="stat-card !p-5" data-accent="rose">
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-7 h-7 rounded-[8px] bg-red-50 flex items-center justify-center">
+                    <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-red-500"></i>
+                  </div>
+                  <span class="text-[11px] font-bold text-[#8B89A0] uppercase tracking-wider">Expenses</span>
+                </div>
+                <p class="text-[20px] font-bold text-[#0F0E17] tabular-nums leading-none">₹45,000</p>
+                <p class="text-[11px] text-[#8B89A0] mt-2 font-medium">Total monthly outflow</p>
+              </div>
+              <div class="stat-card !p-5" data-accent="brand">
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-7 h-7 rounded-[8px] bg-purple-50 flex items-center justify-center">
+                    <i data-lucide="wallet" class="w-3.5 h-3.5 text-brand-600"></i>
+                  </div>
+                  <span class="text-[11px] font-bold text-[#8B89A0] uppercase tracking-wider">Balance</span>
+                </div>
+                <p class="text-[20px] font-bold text-[#0F0E17] tabular-nums leading-none">₹80,000</p>
+                <p class="text-[11px] text-[#8B89A0] mt-2 font-medium">Current net savings</p>
+              </div>
+              <div class="stat-card !p-5" data-accent="amber">
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-7 h-7 rounded-[8px] bg-amber-50 flex items-center justify-center">
+                    <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-amber-600"></i>
+                  </div>
+                  <span class="text-[11px] font-bold text-[#8B89A0] uppercase tracking-wider">Savings Rate</span>
+                </div>
+                <p class="text-[20px] font-bold text-[#0F0E17] tabular-nums leading-none">64.0%</p>
+                <p class="text-[11px] text-[#8B89A0] mt-2 font-medium">Percentage rate saved</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Breakdown -->
+          <div class="fp-card p-6">
+            <div class="section-header">
+              <div class="section-header-icon">
+                <i data-lucide="pie-chart" class="w-4 h-4"></i>
+              </div>
+              <h2 class="text-[15px] font-bold text-[#0F0E17]">Category Breakdown</h2>
+            </div>
+            <div class="space-y-5" id="analytics-category-progress"></div>
+          </div>
+        </div>
+
+        <!-- 6-Month Area Chart -->
+        <div class="fp-card p-6" style="animation: fadeInUp 0.35s ease both; animation-delay: 0.16s;">
+          <div class="section-header">
+            <div class="section-header-icon">
+              <i data-lucide="trending-up" class="w-4 h-4"></i>
+            </div>
+            <h2 class="text-[15px] font-bold text-[#0F0E17]">6-Month Income vs Expenses</h2>
+          </div>
+          
+          <div class="h-80 relative chart-container flex items-end p-6">
+            <!-- Reference lines -->
+            <div class="absolute inset-x-0 bottom-[25%] border-t border-dashed border-[rgba(0,0,0,0.08)]">
+              <span class="absolute left-3 -top-3 text-[10px] font-bold text-[#B8B5C9] uppercase tracking-wider">₹30k</span>
+            </div>
+            <div class="absolute inset-x-0 bottom-[50%] border-t border-dashed border-[rgba(0,0,0,0.08)]">
+              <span class="absolute left-3 -top-3 text-[10px] font-bold text-[#B8B5C9] uppercase tracking-wider">₹60k</span>
+            </div>
+            <div class="absolute inset-x-0 bottom-[75%] border-t border-dashed border-[rgba(0,0,0,0.08)]">
+              <span class="absolute left-3 -top-3 text-[10px] font-bold text-[#B8B5C9] uppercase tracking-wider">₹90k</span>
+            </div>
+
+            <svg class="w-full h-[85%] absolute inset-x-0 bottom-10 px-8" viewBox="0 0 600 200" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.20" />
+                  <stop offset="50%" stop-color="#7C3AED" stop-opacity="0.08" />
+                  <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.01" />
+                </linearGradient>
+                <linearGradient id="chartLineGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#A78BFA" />
+                  <stop offset="100%" stop-color="#7C3AED" />
+                </linearGradient>
+              </defs>
+              <!-- Income filled area -->
+              <path d="M 0,200 L 0,140 Q 60,110 120,130 Q 180,150 240,110 Q 300,70 360,90 Q 420,110 480,75 Q 540,40 600,60 L 600,200 Z" fill="url(#chartGrad)"></path>
+              <!-- Income line -->
+              <path d="M 0,140 Q 60,110 120,130 Q 180,150 240,110 Q 300,70 360,90 Q 420,110 480,75 Q 540,40 600,60" fill="none" stroke="url(#chartLineGrad)" stroke-width="3" stroke-linecap="round"></path>
+              <!-- Expense line -->
+              <path d="M 0,180 Q 60,170 120,165 Q 180,170 240,150 Q 300,140 360,135 Q 420,140 480,110 Q 540,120 600,105" fill="none" stroke="#FB7185" stroke-width="2.5" stroke-dasharray="6 3" stroke-linecap="round"></path>
+              
+              <!-- Data points -->
+              <circle cx="120" cy="130" r="5" fill="white" stroke="#7C3AED" stroke-width="2.5" />
+              <circle cx="240" cy="110" r="5" fill="white" stroke="#7C3AED" stroke-width="2.5" />
+              <circle cx="360" cy="90" r="5" fill="white" stroke="#7C3AED" stroke-width="2.5" />
+              <circle cx="480" cy="75" r="5" fill="white" stroke="#7C3AED" stroke-width="2.5" />
+            </svg>
+            
+            <!-- Legend -->
+            <div class="absolute top-4 right-6 flex items-center gap-5">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-1 rounded-full bg-[#7C3AED]"></div>
+                <span class="text-[11px] font-bold text-[#4B4963]">Income</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-1 rounded-full bg-[#FB7185]" style="background: repeating-linear-gradient(90deg, #FB7185, #FB7185 4px, transparent 4px, transparent 7px);"></div>
+                <span class="text-[11px] font-bold text-[#4B4963]">Expenses</span>
+              </div>
+            </div>
+            
+            <div class="absolute bottom-2 inset-x-8 flex justify-between text-[12px] text-[#8B89A0] font-bold uppercase tracking-wider">
+              <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Yearly Bar Chart -->
+        <div class="fp-card p-6" style="animation: fadeInUp 0.35s ease both; animation-delay: 0.24s;">
+          <div class="section-header">
+            <div class="section-header-icon">
+              <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+            </div>
+            <h2 class="text-[15px] font-bold text-[#0F0E17]">Yearly Expense Trend (2026)</h2>
+          </div>
+          
+          <div class="h-72 relative chart-container flex items-end p-6 pr-14">
+            <!-- Y Axis -->
+            <div class="absolute right-3 bottom-10 top-6 flex flex-col justify-between text-[11px] text-[#8B89A0] font-bold">
+              <span>₹100k</span>
+              <span>₹50k</span>
+              <span>₹0</span>
+            </div>
+
+            <div class="flex-1 h-[82%] flex justify-between items-end gap-2 px-3">
+              <div class="flex-1 flex flex-col items-center justify-end h-full group relative">
+                <div class="w-full bg-gradient-to-t from-[#DDD6FE] to-[#C4B5FD] hover:from-[#C4B5FD] hover:to-[#A78BFA] transition-all rounded-t-[8px] shadow-sm" style="height: 38%;"></div>
+                <span class="text-[10px] text-[#8B89A0] font-bold mt-2">Jan</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-end h-full group relative">
+                <div class="w-full bg-gradient-to-t from-[#DDD6FE] to-[#C4B5FD] hover:from-[#C4B5FD] hover:to-[#A78BFA] transition-all rounded-t-[8px] shadow-sm" style="height: 48%;"></div>
+                <span class="text-[10px] text-[#8B89A0] font-bold mt-2">Feb</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-end h-full group relative">
+                <div class="w-full bg-gradient-to-t from-[#DDD6FE] to-[#C4B5FD] hover:from-[#C4B5FD] hover:to-[#A78BFA] transition-all rounded-t-[8px] shadow-sm" style="height: 58%;"></div>
+                <span class="text-[10px] text-[#8B89A0] font-bold mt-2">Mar</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-end h-full group relative">
+                <div class="w-full bg-gradient-to-t from-[#DDD6FE] to-[#C4B5FD] hover:from-[#C4B5FD] hover:to-[#A78BFA] transition-all rounded-t-[8px] shadow-sm" style="height: 42%;"></div>
+                <span class="text-[10px] text-[#8B89A0] font-bold mt-2">Apr</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-end h-full group relative">
+                <div class="w-full bg-gradient-to-t from-[#DDD6FE] to-[#C4B5FD] hover:from-[#C4B5FD] hover:to-[#A78BFA] transition-all rounded-t-[8px] shadow-sm" style="height: 52%;"></div>
+                <span class="text-[10px] text-[#8B89A0] font-bold mt-2">May</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-end h-full group relative">
+                <div class="w-full bg-gradient-to-t from-[#7C3AED] to-[#A78BFA] hover:from-[#6D28D9] hover:to-[#7C3AED] transition-all rounded-t-[8px] shadow-md shadow-purple-200" style="height: 45%;"></div>
+                <span class="text-[10px] text-brand-600 font-bold mt-2">Jun</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-end h-full group relative">
+                <div class="w-full bg-[#F1F0F6] rounded-t-[8px]" style="height: 0%;"></div>
+                <span class="text-[10px] text-[#C4C2D4] font-bold mt-2">Jul</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-end h-full group relative">
+                <div class="w-full bg-[#F1F0F6] rounded-t-[8px]" style="height: 0%;"></div>
+                <span class="text-[10px] text-[#C4C2D4] font-bold mt-2">Aug</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-end h-full group relative">
+                <div class="w-full bg-[#F1F0F6] rounded-t-[8px]" style="height: 0%;"></div>
+                <span class="text-[10px] text-[#C4C2D4] font-bold mt-2">Sep</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-end h-full group relative">
+                <div class="w-full bg-[#F1F0F6] rounded-t-[8px]" style="height: 0%;"></div>
+                <span class="text-[10px] text-[#C4C2D4] font-bold mt-2">Oct</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-end h-full group relative">
+                <div class="w-full bg-[#F1F0F6] rounded-t-[8px]" style="height: 0%;"></div>
+                <span class="text-[10px] text-[#C4C2D4] font-bold mt-2">Nov</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-end h-full group relative">
+                <div class="w-full bg-[#F1F0F6] rounded-t-[8px]" style="height: 0%;"></div>
+                <span class="text-[10px] text-[#C4C2D4] font-bold mt-2">Dec</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Spending Heatmap -->
+        <div class="fp-card p-6" style="animation: fadeInUp 0.35s ease both; animation-delay: 0.32s;">
+          <div class="section-header">
+            <div class="section-header-icon">
+              <i data-lucide="calendar" class="w-4 h-4"></i>
+            </div>
+            <h2 class="text-[15px] font-bold text-[#0F0E17]">Daily Spending Heatmap</h2>
+          </div>
+          
+          <div class="flex flex-col items-start gap-5">
+            <div class="relative w-fit">
+              <div class="grid grid-cols-7 gap-2 text-[11px] font-bold tracking-wider uppercase text-[#8B89A0] mb-3 text-center">
+                <div class="w-[32px] h-[32px] flex items-center justify-center">S</div>
+                <div class="w-[32px] h-[32px] flex items-center justify-center">M</div>
+                <div class="w-[32px] h-[32px] flex items-center justify-center">T</div>
+                <div class="w-[32px] h-[32px] flex items-center justify-center">W</div>
+                <div class="w-[32px] h-[32px] flex items-center justify-center">T</div>
+                <div class="w-[32px] h-[32px] flex items-center justify-center">F</div>
+                <div class="w-[32px] h-[32px] flex items-center justify-center">S</div>
+              </div>
+              
+              <div class="grid grid-cols-7 gap-2 relative" id="heatmap-grid-container"></div>
+              
+              <!-- Tooltip -->
+              <div id="heatmap-tooltip" class="absolute z-10 px-3 py-2 bg-white rounded-xl shadow-elevated border border-[rgba(0,0,0,0.08)] -translate-x-1/2 -translate-y-full pointer-events-none whitespace-nowrap hidden" style="box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+                <span id="tooltip-date" class="text-[11px] font-bold text-brand-600"></span>
+                <span class="mx-1.5 text-[#DDD6FE]">·</span>
+                <span id="tooltip-amount" class="tabular-nums text-[11px] font-bold text-[#0F0E17]"></span>
+              </div>
+            </div>
+
+            <!-- Heatmap Legend -->
+            <div class="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-wider text-[#B8B5C9]">
+              <span>Less</span>
+              <div class="w-5 h-5 rounded-[6px] bg-[#F5F3FF] border border-[#EDE9FE]"></div>
+              <div class="w-5 h-5 rounded-[6px] bg-[#EDE9FE]"></div>
+              <div class="w-5 h-5 rounded-[6px] bg-[#DDD6FE]"></div>
+              <div class="w-5 h-5 rounded-[6px] bg-[#C4B5FD]"></div>
+              <div class="w-5 h-5 rounded-[6px] bg-[#A78BFA]"></div>
+              <div class="w-5 h-5 rounded-[6px] bg-gradient-to-br from-[#7C3AED] to-[#6D28D9]"></div>
+              <span>More</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           6. AI ADVISOR CHAT PAGE
+           ========================================== -->
+      <section id="page-ai-advisor" class="page-section space-y-6">
+        <div class="flex flex-col h-[calc(100vh-8rem)] max-w-4xl mx-auto" style="animation: fadeIn 0.4s ease both;">
+          <!-- Chat Header -->
+          <div class="fp-card px-6 py-5 mb-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="relative">
+                <div class="w-12 h-12 rounded-[16px] bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center shadow-sm">
+                  <i data-lucide="brain-circuit" class="w-6 h-6 text-brand-600"></i>
+                </div>
+                <span class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-400 rounded-full border-[2.5px] border-white shadow-sm"></span>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h1 class="font-bold text-[17px] leading-tight text-[#0F0E17]">FinPilot AI Advisor</h1>
+                  <i data-lucide="sparkles" class="w-4 h-4 text-brand-500"></i>
+                </div>
+                <p class="text-[11px] font-bold tracking-[0.06em] uppercase text-emerald-600 flex items-center gap-1.5 mt-0.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Online · Premium Support
+                </p>
+              </div>
+            </div>
+            <button onclick="clearChat()" class="btn-secondary !h-9 !text-[12px] !text-red-500 hover:!text-red-600 hover:!border-red-200">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear
+            </button>
+          </div>
+
+          <!-- Chat Messages -->
+          <div id="ai-chat-body" class="flex-1 overflow-y-auto fp-card p-5 sm:p-7 space-y-5 !shadow-sm"></div>
+
+          <!-- Input Area -->
+          <div class="fp-card p-5 mt-4 space-y-4 !shadow-sm">
+            <!-- Suggestion Chips -->
+            <div class="flex gap-2 overflow-x-auto whitespace-nowrap pb-1 scrollbar-hide">
+              <button onclick="sendSuggestion('Where am I overspending?')" class="suggestion-chip">
+                <i data-lucide="search" class="w-3 h-3 mr-1.5 text-[#8B89A0]"></i> Where am I overspending?
+              </button>
+              <button onclick="sendSuggestion('Give me a monthly summary')" class="suggestion-chip">
+                <i data-lucide="file-text" class="w-3 h-3 mr-1.5 text-[#8B89A0]"></i> Monthly summary
+              </button>
+              <button onclick="sendSuggestion('Explain SIP vs FD for me')" class="suggestion-chip">
+                <i data-lucide="trending-up" class="w-3 h-3 mr-1.5 text-[#8B89A0]"></i> SIP vs FD
+              </button>
+            </div>
+
+            <div class="flex gap-3 items-end">
+              <div class="flex-1 flex items-start gap-3 bg-[rgba(0,0,0,0.03)] rounded-[16px] px-4 py-3.5 relative border border-[rgba(0,0,0,0.06)] focus-within:border-brand-600 focus-within:bg-white focus-within:shadow-[0_0_0_4px_rgba(124,58,237,0.10)] transition-all">
+                <i data-lucide="message-square" class="w-[18px] h-[18px] mt-0.5 text-[#B8B5C9]"></i>
+                <textarea id="ai-input" placeholder="Ask about mutual funds, salary savings, budgets..." rows="1" class="flex-1 bg-transparent text-[14px] outline-none placeholder:text-[#A5A3B8] min-w-0 resize-none max-h-[120px] text-[#0F0E17] font-medium leading-relaxed"></textarea>
+              </div>
+              <button onclick="handleSendMsg()" class="w-12 h-12 rounded-[14px] bg-gradient-to-br from-[#8B5CF6] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#6D28D9] text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-purple-200 hover:shadow-xl hover:shadow-purple-300 transition-all hover:-translate-y-0.5 active:scale-95">
+                <i data-lucide="send" class="w-[18px] h-[18px]"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           7. SETTINGS PAGE
+           ========================================== -->
+      <section id="page-settings" class="page-section space-y-8 max-w-3xl" style="animation: fadeInUp 0.35s ease both;">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-[18px] flex items-center justify-center text-[16px] font-bold text-brand-700 bg-gradient-to-br from-brand-50 to-brand-100 shadow-sm border border-brand-200/50" id="settings-avatar-initials">SY</div>
+            <div>
+              <h1 class="text-[26px] font-bold text-[#0F0E17] leading-tight tracking-tight">Account Settings</h1>
+              <p class="text-[14px] text-[#8B89A0] mt-0.5 font-medium">Edit dashboard preferences</p>
+            </div>
+          </div>
+          <button onclick="saveSettings()" class="btn-primary">
+            <i data-lucide="save" class="w-4 h-4"></i> Save Settings
+          </button>
+        </div>
+
+        <div class="space-y-5">
+          <!-- Profile Card -->
+          <div class="fp-card p-6">
+            <div class="flex items-center gap-3 mb-6 pb-5 border-b border-[rgba(0,0,0,0.06)]">
+              <div class="section-header-icon !mb-0">
+                <i data-lucide="user" class="w-[18px] h-[18px]"></i>
+              </div>
+              <div>
+                <h2 class="text-[15px] font-bold text-[#0F0E17]">Profile</h2>
+                <p class="text-[12px] text-[#8B89A0] font-medium">Your display credentials</p>
+              </div>
+            </div>
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label for="settings-name-input" class="label-premium">Display Name</label>
+                <input id="settings-name-input" type="text" value="Shameek Yogi" class="custom-input">
+              </div>
+              <div>
+                <label class="label-premium">Email Address</label>
+                <input type="email" disabled value="shameek@example.com" class="custom-input opacity-50 cursor-not-allowed">
+              </div>
+            </div>
+          </div>
+
+          <!-- Preferences Card -->
+          <div class="fp-card p-6">
+            <div class="flex items-center gap-3 mb-6 pb-5 border-b border-[rgba(0,0,0,0.06)]">
+              <div class="section-header-icon !mb-0">
+                <i data-lucide="sliders-horizontal" class="w-[18px] h-[18px]"></i>
+              </div>
+              <div>
+                <h2 class="text-[15px] font-bold text-[#0F0E17]">Preferences</h2>
+                <p class="text-[12px] text-[#8B89A0] font-medium">Manage advisor features</p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between rounded-[14px] px-5 py-4 bg-gradient-to-r from-[rgba(0,0,0,0.02)] to-transparent border border-[rgba(0,0,0,0.06)]">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-[12px] bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center">
+                    <i data-lucide="brain-circuit" class="w-5 h-5 text-brand-600"></i>
+                  </div>
+                  <div>
+                    <p class="text-[14px] font-bold text-[#0F0E17]">AI Advisor Insights</p>
+                    <p class="text-[12px] text-[#8B89A0] font-medium">Wealth recommendations on dashboard</p>
+                  </div>
+                </div>
+                <button onclick="toggleSwitch('ai-switch')" id="ai-switch" class="toggle-switch active">
+                  <span class="toggle-switch-thumb"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="fp-card p-6 border-red-200 bg-gradient-to-br from-red-50/30 to-transparent">
+            <div class="flex items-center gap-3 mb-6 pb-5 border-b border-red-100">
+              <div class="w-9 h-9 rounded-[10px] bg-red-50 flex items-center justify-center">
+                <i data-lucide="alert-octagon" class="w-[18px] h-[18px] text-red-600"></i>
+              </div>
+              <div>
+                <h2 class="text-[15px] font-bold text-red-700">Danger Zone</h2>
+                <p class="text-[12px] text-red-500/70 font-medium">Irreversible data actions</p>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="showToast('Backup', 'Configuration exported successfully!', 'success')" class="btn-secondary">
+                <i data-lucide="download" class="w-4 h-4"></i> Export Backup
+              </button>
+              <button onclick="resetMockData()" class="flex items-center gap-2 h-10 px-5 rounded-[12px] bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white text-[13px] font-bold shadow-lg shadow-red-200 transition-all hover:-translate-y-0.5">
+                <i data-lucide="trash-2" class="w-4 h-4"></i> Delete All Data
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+  <!-- Script Logic -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // ═══════════════════════════════════════════
+    // INITIAL MOCK DATA
+    // ═══════════════════════════════════════════
+    let defaultTransactions = [
+      { id: 1, amount: 450, category: 'food', type: 'expense', date: '2026-06-02', note: 'Swiggy Dinner' },
+      { id: 2, amount: 1200, category: 'shopping', type: 'expense', date: '2026-06-02', note: 'Zara Shirt' },
+      { id: 3, amount: 8000, category: 'rent', type: 'expense', date: '2026-06-01', note: 'Monthly Maintenance' },
+      { id: 4, amount: 125000, category: 'salary', type: 'income', date: '2026-06-01', note: 'FinTech Corp Salary' },
+      { id: 5, amount: 3500, category: 'bills', type: 'expense', date: '2026-05-30', note: 'Broadband Internet' },
+      { id: 6, amount: 800, category: 'transport', type: 'expense', date: '2026-05-29', note: 'Uber Ride' },
+    ];
+
+    let defaultBudgets = [
+      { id: 'b1', category: 'food', limit: 12000, spent: 4500 },
+      { id: 'b2', category: 'shopping', limit: 15000, spent: 1200 },
+      { id: 'b3', category: 'transport', limit: 5000, spent: 800 },
+      { id: 'b4', category: 'rent', limit: 10000, spent: 8000 },
+      { id: 'b5', category: 'bills', limit: 10000, spent: 3500 },
+    ];
+
+    let defaultGoals = [
+      { id: 'g1', name: 'Emergency SIP', target: 150000, current: 75000, deadline: '2026-12-31' },
+      { id: 'g2', name: 'MacBook Pro M4', target: 200000, current: 120000, deadline: '2026-09-30' },
+      { id: 'g3', name: 'Europe Holiday', target: 300000, current: 60000, deadline: '2027-05-15' },
+    ];
+
+    let transactions = JSON.parse(localStorage.getItem('fp_mock_tx')) || defaultTransactions;
+    let budgets = JSON.parse(localStorage.getItem('fp_mock_budgets')) || defaultBudgets;
+    let goals = JSON.parse(localStorage.getItem('fp_mock_goals')) || defaultGoals;
+    let activeTxType = 'expense';
+    let isAiSwitchOn = true;
+
+    const categoryEmojis = {
+      food: "🍽️", transport: "🚗", shopping: "🛍️", bills: "🧾",
+      subscriptions: "📱", entertainment: "🎬", rent: "🏠",
+      salary: "💼", freelance: "💻", business: "🏢", miscellaneous: "📦",
+    };
+
+    const categoryLabels = {
+      food: 'Food & Dining', transport: 'Transport', shopping: 'Shopping', bills: 'Bills & Utilities',
+      subscriptions: 'Subscriptions', entertainment: 'Entertainment', rent: 'Rent & Housing',
+      salary: 'Salary', freelance: 'Freelance', business: 'Business', miscellaneous: 'Miscellaneous',
+    };
+
+    const categoryColors = ['#7C3AED', '#059669', '#D97706', '#06B6D4', '#EC4899', '#8B5CF6', '#10B981', '#F59E0B'];
+
+    function formatCurrency(amount) {
+      return '\u20B9' + amount.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    }
+
+    // ═══════════════════════════════════════════
+    // PREMIUM TOAST NOTIFICATIONS
+    // ═══════════════════════════════════════════
+    function showToast(title, description, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast-box';
+      
+      const iconColor = type === 'success' 
+        ? 'text-emerald-600 bg-gradient-to-br from-emerald-50 to-emerald-100' 
+        : 'text-red-600 bg-gradient-to-br from-red-50 to-red-100';
+      const icon = type === 'success' ? 'check-circle' : 'alert-circle';
+
+      toast.innerHTML = `
+        <div class="p-2 rounded-[10px] ${iconColor} flex-shrink-0">
+          <i data-lucide="${icon}" class="w-[18px] h-[18px]"></i>
+        </div>
+        <div class="flex-1 min-w-0 pt-0.5">
+          <p class="text-[13px] font-bold text-[#0F0E17]">${title}</p>
+          <p class="text-[12px] text-[#8B89A0] mt-0.5 font-medium">${description}</p>
+        </div>
+      `;
+      
+      container.appendChild(toast);
+      lucide.createIcons();
+      
+      setTimeout(() => toast.classList.add('show'), 30);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 350);
+      }, 3200);
+    }
+
+    // ═══════════════════════════════════════════
+    // DROPDOWN HANDLERS
+    // ═══════════════════════════════════════════
+    function toggleDropdown(id) {
+      const el = document.getElementById(id);
+      const isOpen = el.style.display === 'flex';
+      document.querySelectorAll('.select-dropdown').forEach(drop => drop.style.display = 'none');
+      el.style.display = isOpen ? 'none' : 'flex';
+    }
+
+    function selectDropdownVal(type, val) {
+      const trigger = document.getElementById(`${type}-trigger`);
+      trigger.querySelector('span').textContent = val;
+      document.querySelectorAll('.select-dropdown').forEach(drop => drop.style.display = 'none');
+      showToast('Filters updated', `Analytics for ${val}`, 'success');
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.relative')) {
+        document.querySelectorAll('.select-dropdown').forEach(drop => drop.style.display = 'none');
+      }
+    });
+
+    // ═══════════════════════════════════════════
+    // PAGE ROUTING
+    // ═══════════════════════════════════════════
+    function switchPage(pageId) {
+      document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      const targetSection = document.getElementById(`page-${pageId}`);
+      if (targetSection) targetSection.classList.add('active');
+
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.toggle('active', item.getAttribute('data-page') === pageId);
+      });
+
+      document.querySelectorAll('.mobile-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.getAttribute('data-mobile-page') === pageId);
+      });
+
+      window.scrollTo(0, 0);
+
+      if (pageId === 'dashboard') renderDashboard();
+      if (pageId === 'transactions') renderTransactions();
+      if (pageId === 'budgets') renderBudgets();
+      if (pageId === 'goals') renderGoals();
+      if (pageId === 'analytics') renderAnalytics();
+      if (pageId === 'ai-advisor') setupChat();
+    }
+
+    // ═══════════════════════════════════════════
+    // DASHBOARD RENDER
+    // ═══════════════════════════════════════════
+    function renderDashboard() {
+      let incomeSum = 0, expenseSum = 0;
+      transactions.forEach(t => {
+        if (t.date.startsWith('2026-06')) {
+          if (t.type === 'income') incomeSum += t.amount;
+          else expenseSum += t.amount;
+        }
+      });
+
+      const net = incomeSum - expenseSum;
+      const rate = incomeSum > 0 ? ((net / incomeSum) * 100).toFixed(1) : '0.0';
+
+      document.getElementById('stat-income').textContent = formatCurrency(incomeSum);
+      document.getElementById('stat-expense').textContent = formatCurrency(expenseSum);
+      document.getElementById('stat-net').textContent = formatCurrency(net);
+      document.getElementById('stat-savings-rate').textContent = `${rate}%`;
+
+      // Category progress
+      const progressContainer = document.getElementById('dash-category-progress');
+      progressContainer.innerHTML = '';
+      
+      const categories = {};
+      transactions.filter(t => t.type === 'expense').forEach(t => {
+        categories[t.category] = (categories[t.category] || 0) + t.amount;
+      });
+
+      const catEntries = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+      
+      catEntries.slice(0, 4).forEach(([cat, amt], i) => {
+        const pct = expenseSum > 0 ? Math.round((amt / expenseSum) * 100) : 0;
+        const color = categoryColors[i % categoryColors.length];
+        const row = document.createElement('div');
+        row.className = 'space-y-2';
+        row.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background: ${color};"></span>
+              <span class="text-[13px] font-bold text-[#0F0E17] capitalize">${categoryLabels[cat] || cat}</span>
+            </div>
+            <span class="text-[13px] font-bold text-[#4B4963] tabular-nums">${formatCurrency(amt)} <span class="text-[#B8B5C9] font-medium">(${pct}%)</span></span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width: ${pct}%; background: linear-gradient(90deg, ${color}88, ${color});"></div>
+          </div>
+        `;
+        progressContainer.appendChild(row);
+      });
+
+      // Recent transactions
+      const container = document.getElementById('dashboard-tx-list');
+      container.innerHTML = '';
+      
+      transactions.slice(0, 5).forEach((t, idx) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-4 py-3 px-3 rounded-[12px] transition-all hover:bg-[rgba(0,0,0,0.02)] cursor-default group';
+        row.style.animation = `fadeInUp 0.3s ease both`;
+        row.style.animationDelay = `${idx * 0.05}s`;
+        const isIncome = t.type === 'income';
+        const emoji = categoryEmojis[t.category] || '💳';
+        row.innerHTML = `
+          <div class="w-11 h-11 rounded-[12px] flex items-center justify-center text-base flex-shrink-0 ${isIncome ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-600' : 'bg-gradient-to-br from-red-50 to-red-100 text-red-500'} shadow-sm">
+            ${emoji}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-[13px] font-bold text-[#0F0E17] capitalize">${categoryLabels[t.category] || t.category}</span>
+            </div>
+            ${t.note ? `<p class="text-[11px] text-[#8B89A0] font-medium truncate">${t.note}</p>` : `<p class="text-[11px] text-[#C4C2D4] font-medium">${t.date}</p>`}
+          </div>
+          <p class="text-[14px] font-bold tabular-nums ${isIncome ? 'text-emerald-600' : 'text-red-500'}">
+            ${isIncome ? '+' : '-'}${formatCurrency(t.amount)}
+          </p>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    // ═══════════════════════════════════════════
+    // TRANSACTIONS RENDER
+    // ═══════════════════════════════════════════
+    function setTxType(type) {
+      activeTxType = type;
+      const slideBg = document.getElementById('toggle-slide-bg');
+      if (type === 'expense') {
+        slideBg.style.left = '6px';
+        slideBg.style.background = 'linear-gradient(135deg, #FEF2F2, #FFFFFF)';
+      } else {
+        slideBg.style.left = 'calc(50%)';
+        slideBg.style.background = 'linear-gradient(135deg, #ECFDF5, #FFFFFF)';
+      }
+    }
+
+    function renderTransactions(filterQuery = '') {
+      const container = document.getElementById('tx-history-list');
+      container.innerHTML = '';
+
+      let list = transactions;
+      if (filterQuery) {
+        list = list.filter(t => 
+          t.category.toLowerCase().includes(filterQuery.toLowerCase()) ||
+          (t.note && t.note.toLowerCase().includes(filterQuery.toLowerCase()))
+        );
+      }
+
+      list.forEach((t, idx) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-4 py-3 px-3 rounded-[12px] transition-all hover:bg-[rgba(0,0,0,0.02)] group cursor-default';
+        const isIncome = t.type === 'income';
+        const emoji = categoryEmojis[t.category] || '💳';
+        row.innerHTML = `
+          <div class="w-10 h-10 rounded-[11px] flex items-center justify-center text-[15px] flex-shrink-0 ${isIncome ? 'bg-gradient-to-br from-emerald-50 to-emerald-100' : 'bg-gradient-to-br from-red-50 to-red-100'}">
+            ${emoji}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-[13px] font-bold text-[#0F0E17] capitalize">${categoryLabels[t.category] || t.category}</span>
+              <span class="text-[10px] font-bold text-[#B8B5C9] bg-[rgba(0,0,0,0.04)] px-1.5 py-0.5 rounded-md">${t.date}</span>
+            </div>
+            ${t.note ? `<p class="text-[11px] text-[#8B89A0] font-medium truncate">${t.note}</p>` : ''}
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[14px] font-bold tabular-nums ${isIncome ? 'text-emerald-600' : 'text-red-500'}">
+              ${isIncome ? '+' : '-'}${formatCurrency(t.amount)}
+            </span>
+            <button onclick="deleteTransaction(${t.id})" class="w-8 h-8 rounded-[8px] flex items-center justify-center text-[#C4C2D4] hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+      lucide.createIcons();
+    }
+
+    function handleAddTx(e) {
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById('form-amount').value);
+      const date = document.getElementById('form-date').value;
+      const category = document.getElementById('form-category').value;
+      const note = document.getElementById('form-note').value;
+      if (!amount || !date || !category) return;
+
+      const newTx = { id: Date.now(), amount, category, type: activeTxType, date, note };
+      transactions.unshift(newTx);
+      
+      let bud = budgets.find(b => b.category === category);
+      if (bud && activeTxType === 'expense') bud.spent += amount;
+
+      saveState();
+      document.getElementById('form-amount').value = '';
+      document.getElementById('form-note').value = '';
+
+      renderTransactions();
+      renderDashboard();
+      showToast('Transaction Added', `${activeTxType === 'income' ? '+' : '-'}${formatCurrency(amount)} in ${categoryLabels[category] || category}`, 'success');
+    }
+
+    function deleteTransaction(id) {
+      const tx = transactions.find(t => t.id === id);
+      if (!tx) return;
+      if (tx.type === 'expense') {
+        let bud = budgets.find(b => b.category === tx.category);
+        if (bud) bud.spent = Math.max(0, bud.spent - tx.amount);
+      }
+      transactions = transactions.filter(t => t.id !== id);
+      saveState();
+      renderTransactions();
+      renderDashboard();
+      showToast('Deleted', 'Transaction removed successfully', 'success');
+    }
+
+    function searchTransactions() {
+      renderTransactions(document.getElementById('tx-search').value);
+    }
+
+    // ═══════════════════════════════════════════
+    // BUDGETS RENDER
+    // ═══════════════════════════════════════════
+    function openBudgetModal() { document.getElementById('budget-modal').classList.remove('hidden'); }
+    function closeBudgetModal() { document.getElementById('budget-modal').classList.add('hidden'); }
+
+    function handleCreateBudget(e) {
+      e.preventDefault();
+      const category = document.getElementById('bm-category').value;
+      const limit = parseFloat(document.getElementById('bm-limit').value);
+      if (!category || !limit) return;
+
+      const existing = budgets.find(b => b.category === category);
+      if (existing) existing.limit = limit;
+      else budgets.push({ id: Date.now(), category, limit, spent: 0 });
+
+      saveState();
+      closeBudgetModal();
+      renderBudgets();
+      showToast('Budget Set', `${categoryLabels[category] || category}: ${formatCurrency(limit)}`, 'success');
+    }
+
+    function renderBudgets() {
+      let totalBudgeted = 0, totalSpent = 0;
+      budgets.forEach(b => { totalBudgeted += b.limit; totalSpent += b.spent; });
+
+      document.getElementById('budget-summary-total').textContent = formatCurrency(totalBudgeted);
+      document.getElementById('budget-summary-avail').textContent = formatCurrency(125000 - totalBudgeted);
+
+      const container = document.getElementById('budget-card-container');
+      container.innerHTML = '';
+
+      budgets.forEach((b, idx) => {
+        const pct = b.limit > 0 ? Math.min(100, Math.round((b.spent / b.limit) * 100)) : 0;
+        const color = pct >= 100 ? '#DC2626' : pct >= 75 ? '#D97706' : '#7C3AED';
+        const emoji = categoryEmojis[b.category] || '💳';
+        const card = document.createElement('div');
+        card.className = 'fp-card p-6';
+        card.style.animation = `fadeInUp 0.3s ease both`;
+        card.style.animationDelay = `${idx * 0.05}s`;
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">${emoji}</span>
+              <div>
+                <span class="text-[14px] font-bold text-[#0F0E17] capitalize block">${categoryLabels[b.category] || b.category}</span>
+                <span class="text-[11px] font-bold text-[#8B89A0] uppercase tracking-wider">${pct}% utilized</span>
+              </div>
+            </div>
+            <span class="text-[13px] font-bold px-3 py-1.5 rounded-full" style="background: ${color}12; color: ${color};">
+              ${formatCurrency(b.spent)} / ${formatCurrency(b.limit)}
+            </span>
+          </div>
+          <div class="progress-track !h-2.5">
+            <div class="progress-fill" style="width: ${pct}%; background: linear-gradient(90deg, ${color}88, ${color});"></div>
+          </div>
+          <div class="flex justify-between mt-3">
+            <span class="text-[12px] font-bold text-[#8B89A0]">${pct}% Spent</span>
+            <span class="text-[12px] font-bold tabular-nums ${b.spent > b.limit ? 'text-red-500' : 'text-[#4B4963]'}">
+              ${b.spent > b.limit ? 'Over by ' + formatCurrency(b.spent - b.limit) : formatCurrency(b.limit - b.spent) + ' left'}
+            </span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      // Unbudgeted
+      const unbudgetedContainer = document.getElementById('unbudgeted-container');
+      unbudgetedContainer.innerHTML = '';
+      const budgetedCategories = budgets.map(b => b.category);
+      const spentCategories = {};
+      transactions.filter(t => t.type === 'expense' && !budgetedCategories.includes(t.category)).forEach(t => {
+        spentCategories[t.category] = (spentCategories[t.category] || 0) + t.amount;
+      });
+
+      const unbudgetedEntries = Object.entries(spentCategories);
+      if (unbudgetedEntries.length === 0) {
+        document.getElementById('unbudgeted-section').classList.add('hidden');
+      } else {
+        document.getElementById('unbudgeted-section').classList.remove('hidden');
+        unbudgetedEntries.forEach(([cat, amt]) => {
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between gap-4 py-3 px-4 rounded-[12px] hover:bg-[rgba(0,0,0,0.02)] transition-colors';
+          row.innerHTML = `
+            <div class="flex items-center gap-3">
+              <span class="text-base">${categoryEmojis[cat] || '💳'}</span>
+              <span class="capitalize text-[13px] font-bold text-[#0F0E17]">${categoryLabels[cat] || cat}</span>
+              <span class="text-[12px] font-bold text-[#8B89A0]">${formatCurrency(amt)} spent</span>
+            </div>
+            <button onclick="document.getElementById('bm-category').value = '${cat}'; openBudgetModal();" class="text-[12px] font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 px-4 py-2 rounded-[8px] transition-colors">
+              + Add Budget
+            </button>
+          `;
+          unbudgetedContainer.appendChild(row);
+        });
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    // GOALS RENDER
+    // ═══════════════════════════════════════════
+    function openGoalModal() { document.getElementById('goal-modal').classList.remove('hidden'); }
+    function closeGoalModal() { document.getElementById('goal-modal').classList.add('hidden'); }
+    function openFundsModal(goalId) {
+      document.getElementById('fm-goal-id').value = goalId;
+      document.getElementById('funds-modal').classList.remove('hidden');
+    }
+    function closeFundsModal() { document.getElementById('funds-modal').classList.add('hidden'); }
+
+    function handleCreateGoal(e) {
+      e.preventDefault();
+      const name = document.getElementById('gm-name').value;
+      const target = parseFloat(document.getElementById('gm-target').value);
+      const saved = parseFloat(document.getElementById('gm-saved').value) || 0;
+      const deadline = document.getElementById('gm-date').value || null;
+      if (!name || !target) return;
+
+      goals.push({ id: 'g_' + Date.now(), name, target, current: saved, deadline });
+      saveState();
+      closeGoalModal();
+      renderGoals();
+      
+      document.getElementById('gm-name').value = '';
+      document.getElementById('gm-target').value = '';
+      document.getElementById('gm-saved').value = '';
+      document.getElementById('gm-date').value = '';
+      showToast('Goal Created', `Target: ${formatCurrency(target)}`, 'success');
+    }
+
+    function handleSaveFunds(e) {
+      e.preventDefault();
+      const goalId = document.getElementById('fm-goal-id').value;
+      const amount = parseFloat(document.getElementById('fm-amount').value);
+      if (!goalId || !amount) return;
+
+      let goal = goals.find(g => g.id === goalId);
+      if (goal) {
+        goal.current = Math.min(goal.target, goal.current + amount);
+        saveState();
+        closeFundsModal();
+        renderGoals();
+        document.getElementById('fm-amount').value = '';
+        showToast('Funds Added', `${formatCurrency(amount)} added to ${goal.name}`, 'success');
+      }
+    }
+
+    function renderGoals() {
+      const container = document.getElementById('goals-grid-container');
+      container.innerHTML = '';
+
+      let totalTarget = 0, totalSaved = 0;
+      goals.forEach(g => { totalTarget += g.target; totalSaved += g.current; });
+
+      const overallPct = totalTarget > 0 ? ((totalSaved / totalTarget) * 100).toFixed(1) : '0.0';
+      document.getElementById('goal-count-label').textContent = goals.length;
+      document.getElementById('goal-saved-label').textContent = formatCurrency(totalSaved);
+      document.getElementById('goal-target-label').textContent = formatCurrency(totalTarget);
+      document.getElementById('goal-progress-label').textContent = `${overallPct}%`;
+
+      goals.forEach((g, idx) => {
+        const pct = g.target > 0 ? Math.min(100, Math.round((g.current / g.target) * 100)) : 0;
+        const r = 44;
+        const circ = 2 * Math.PI * r;
+        const strokeOffset = circ * (1 - pct / 100);
+
+        const card = document.createElement('div');
+        card.className = 'fp-card p-6 flex flex-col justify-between min-h-[220px] group';
+        card.style.animation = `fadeInUp 0.35s ease both`;
+        card.style.animationDelay = `${idx * 0.08}s`;
+        card.innerHTML = `
+          <div>
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <div class="relative w-[72px] h-[72px] flex-shrink-0">
+                  <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="${r}" fill="none" stroke="rgba(124,58,237,0.06)" stroke-width="7" />
+                    <circle cx="50" cy="50" r="${r}" fill="none" stroke="url(#goalGrad)" stroke-width="7" 
+                            stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${strokeOffset}" 
+                            class="goal-ring-circle" />
+                    <defs>
+                      <linearGradient id="goalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#A78BFA" />
+                        <stop offset="100%" stop-color="#7C3AED" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="text-[16px] font-bold text-[#0F0E17] leading-none">${pct}%</span>
+                    <span class="text-[9px] font-bold text-[#8B89A0] uppercase tracking-wider mt-0.5">done</span>
+                  </div>
+                </div>
+                <div class="flex-1 min-w-0 pt-1">
+                  <div class="flex items-center gap-2">
+                    <h3 class="font-bold text-[15px] leading-tight text-[#0F0E17] truncate">${g.name}</h3>
+                    <button onclick="deleteGoal('${g.id}')" class="w-7 h-7 rounded-[6px] flex items-center justify-center text-[#C4C2D4] hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                  <p class="text-[13px] font-bold text-[#4B4963] mt-1.5 tabular-nums">
+                    ${formatCurrency(g.current)} <span class="text-[#B8B5C9] font-medium">/ ${formatCurrency(g.target)}</span>
+                  </p>
+                  ${g.deadline ? `<p class="text-[10px] font-bold text-amber-600 uppercase tracking-wider mt-2 flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> ${g.deadline}</p>` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-[rgba(0,0,0,0.06)] pt-4 mt-auto">
+            <button onclick="openFundsModal('${g.id}')" class="w-full h-10 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.02)] hover:bg-brand-50 hover:border-brand-200 text-[12px] font-bold uppercase tracking-wider text-[#4B4963] hover:text-brand-600 transition-all flex items-center justify-center gap-2">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Funds
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function deleteGoal(goalId) {
+      goals = goals.filter(g => g.id !== goalId);
+      saveState();
+      renderGoals();
+      showToast('Goal Deleted', 'Target removed successfully', 'success');
+    }
+
+    // ═══════════════════════════════════════════
+    // ANALYTICS RENDER
+    // ═══════════════════════════════════════════
+    function renderAnalytics() {
+      let totalExpense = 0;
+      const categories = {};
+      transactions.filter(t => t.type === 'expense').forEach(t => {
+        categories[t.category] = (categories[t.category] || 0) + t.amount;
+        totalExpense += t.amount;
+      });
+
+      const catEntries = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+      const containerProgress = document.getElementById('analytics-category-progress');
+      containerProgress.innerHTML = '';
+      
+      catEntries.forEach(([cat, amt], i) => {
+        const pct = totalExpense > 0 ? Math.round((amt / totalExpense) * 100) : 0;
+        const color = categoryColors[i % categoryColors.length];
+        const row = document.createElement('div');
+        row.className = 'space-y-2';
+        row.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background: ${color};"></span>
+              <span class="text-[13px] font-bold text-[#4B4963] capitalize">${categoryLabels[cat] || cat}</span>
+            </div>
+            <span class="text-[13px] font-bold text-[#4B4963] tabular-nums">${pct}% <span class="text-[#B8B5C9] font-medium">(${formatCurrency(amt)})</span></span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width: ${pct}%; background: linear-gradient(90deg, ${color}88, ${color});"></div>
+          </div>
+        `;
+        containerProgress.appendChild(row);
+      });
+
+      // Heatmap
+      const containerHeat = document.getElementById('heatmap-grid-container');
+      containerHeat.innerHTML = '';
+
+      const offset = 1;
+      for (let i = 0; i < offset; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'w-[32px] h-[32px]';
+        containerHeat.appendChild(empty);
+      }
+
+      const mockDaily = [
+        { day: 1, amount: 1200 }, { day: 2, amount: 1650 }, { day: 3, amount: 0 },
+        { day: 4, amount: 8500 }, { day: 5, amount: 450 }, { day: 6, amount: 0 },
+        { day: 7, amount: 3200 }, { day: 8, amount: 950 }, { day: 9, amount: 1100 },
+        { day: 10, amount: 200 }, { day: 11, amount: 12000 }, { day: 12, amount: 0 },
+        { day: 13, amount: 4500 }, { day: 14, amount: 800 }, { day: 15, amount: 3500 },
+        { day: 16, amount: 0 }, { day: 17, amount: 1500 }, { day: 18, amount: 900 },
+        { day: 19, amount: 450 }, { day: 20, amount: 0 }, { day: 21, amount: 2500 },
+        { day: 22, amount: 3100 }, { day: 23, amount: 5000 }, { day: 24, amount: 0 },
+        { day: 25, amount: 1200 }, { day: 26, amount: 900 }, { day: 27, amount: 450 },
+        { day: 28, amount: 200 }, { day: 29, amount: 1500 }, { day: 30, amount: 800 }
+      ];
+
+      const maxDailySpend = 12000;
+      const tooltip = document.getElementById('heatmap-tooltip');
+      const tooltipDate = document.getElementById('tooltip-date');
+      const tooltipAmount = document.getElementById('tooltip-amount');
+
+      mockDaily.forEach((d) => {
+        const cell = document.createElement('div');
+        cell.className = 'heatmap-cell';
+        cell.style.backgroundColor = getHeatmapColor(d.amount, maxDailySpend);
+        cell.innerHTML = `<span class="opacity-70">${d.day}</span>`;
+        
+        cell.addEventListener('mouseenter', (e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const parentRect = e.currentTarget.parentElement.getBoundingClientRect();
+          tooltipDate.textContent = `June ${d.day}, 2026`;
+          tooltipAmount.textContent = formatCurrency(d.amount);
+          tooltip.style.left = (rect.left - parentRect.left + rect.width / 2) + 'px';
+          tooltip.style.top = (rect.top - parentRect.top - 10) + 'px';
+          tooltip.style.display = 'block';
+        });
+        cell.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+        containerHeat.appendChild(cell);
+      });
+    }
+
+    function getHeatmapColor(amount, max) {
+      if (amount === 0) return '#F5F3FF';
+      const ratio = amount / max;
+      if (ratio < 0.1) return '#EDE9FE';
+      if (ratio < 0.25) return '#DDD6FE';
+      if (ratio < 0.45) return '#C4B5FD';
+      if (ratio < 0.65) return '#A78BFA';
+      return '#7C3AED';
+    }
+
+    // ═══════════════════════════════════════════
+    // AI ADVISOR CHAT
+    // ═══════════════════════════════════════════
+    let initialAIWelcome = false;
+    function setupChat() {
+      if (initialAIWelcome) return;
+      const body = document.getElementById('ai-chat-body');
+      body.innerHTML = '';
+      
+      appendMsg('assistant', "Namaste! I'm FinPilot, your elite personal wealth advisor. I have full context of your transactions, budgets, and financial goals. Ask me anything about your savings, mutual funds, tax filing, or investment plans.");
+      initialAIWelcome = true;
+    }
+
+    function appendMsg(role, text) {
+      const body = document.getElementById('ai-chat-body');
+      const isUser = role === 'user';
+      const bubble = document.createElement('div');
+      bubble.className = `flex gap-3 max-w-[85%] ${isUser ? 'ml-auto flex-row-reverse' : ''}`;
+      bubble.style.animation = 'fadeInUp 0.3s ease';
+      
+      const avatar = isUser ? `
+        <div class="w-8 h-8 rounded-[10px] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0 shadow-sm">
+          <i data-lucide="user" class="w-4 h-4 text-[#4B4963]"></i>
+        </div>
+      ` : `
+        <div class="w-8 h-8 rounded-[10px] bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center flex-shrink-0 shadow-sm">
+          <i data-lucide="brain-circuit" class="w-4 h-4 text-brand-600"></i>
+        </div>
+      `;
+
+      bubble.innerHTML = `
+        ${avatar}
+        <div class="flex flex-col gap-1 ${isUser ? 'items-end' : ''}">
+          <div class="px-5 py-3.5 text-[13.5px] leading-relaxed font-medium ${isUser ? 'chat-bubble-user' : 'chat-bubble-assistant'}">
+            ${text}
+          </div>
+        </div>
+      `;
+      body.appendChild(bubble);
+      body.scrollTop = body.scrollHeight;
+      lucide.createIcons();
+    }
+
+    function sendSuggestion(text) {
+      appendMsg('user', text);
+      triggerAIResponse(text);
+    }
+
+    function handleSendMsg() {
+      const input = document.getElementById('ai-input');
+      const val = input.value.trim();
+      if (!val) return;
+      appendMsg('user', val);
+      input.value = '';
+      triggerAIResponse(val);
+    }
+
+    // Enter key sends message
+    document.addEventListener('DOMContentLoaded', () => {
+      const aiInput = document.getElementById('ai-input');
+      if (aiInput) {
+        aiInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMsg();
+          }
+        });
+      }
+    });
+
+    function triggerAIResponse(query) {
+      const body = document.getElementById('ai-chat-body');
+      const typing = document.createElement('div');
+      typing.id = 'ai-typing';
+      typing.className = 'flex gap-3 items-center max-w-[80%]';
+      typing.style.animation = 'fadeIn 0.2s ease';
+      typing.innerHTML = `
+        <div class="w-8 h-8 rounded-[10px] bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="brain-circuit" class="w-4 h-4 text-brand-600"></i>
+        </div>
+        <div class="chat-bubble-assistant px-5 py-3.5 flex gap-1.5 items-center">
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+        </div>
+      `;
+      body.appendChild(typing);
+      body.scrollTop = body.scrollHeight;
+      lucide.createIcons();
+
+      setTimeout(() => {
+        const typEl = document.getElementById('ai-typing');
+        if (typEl) typEl.remove();
+
+        let response = "I've analyzed your query. To optimize your personal cashflow, I recommend checking your set Budgets page and keeping your expenses below the set thresholds.";
+        const lowercaseQ = query.toLowerCase();
+        
+        if (lowercaseQ.includes('overspending') || lowercaseQ.includes('expense')) {
+          response = "Looking at your ledger, you are overspending on <strong>Food & Dining</strong> (\u20B918,500 spent). You have already crossed 91% of your threshold. I suggest limiting Swiggy/Zomato orders for the remaining month.";
+        } else if (lowercaseQ.includes('summary')) {
+          response = "Here's your June 2026 Financial Summary:<br><br>\u2022 <strong>Income</strong>: \u20B91,25,000<br>\u2022 <strong>Expenses</strong>: \u20B945,000<br>\u2022 <strong>Net Balance</strong>: \u20B980,000<br>\u2022 <strong>Savings Rate</strong>: 64% (Excellent!)";
+        } else if (lowercaseQ.includes('sip') || lowercaseQ.includes('invest')) {
+          response = "Since you have \u20B980,000 surplus balance this month, I suggest setting up a SIP (Systematic Investment Plan) in a diversified Nifty 50 Index Fund. Over 5 years, this could yield ~12% compounded annually compared to just 3.5% in a regular Savings Account.";
+        }
+
+        appendMsg('assistant', response);
+      }, 1200);
+    }
+
+    function clearChat() {
+      initialAIWelcome = false;
+      setupChat();
+    }
+
+    // ═══════════════════════════════════════════
+    // SETTINGS
+    // ═══════════════════════════════════════════
+    function toggleSwitch(id) {
+      isAiSwitchOn = !isAiSwitchOn;
+      const el = document.getElementById(id);
+      el.classList.toggle('active', isAiSwitchOn);
+    }
+
+    function saveSettings() {
+      const name = document.getElementById('settings-name-input').value.trim();
+      if (!name) return;
+
+      localStorage.setItem('fp_mock_user_name', name);
+      
+      document.getElementById('user-display-name').textContent = name;
+      document.getElementById('dash-greeting-name').textContent = name;
+      
+      const initials = name.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+      document.getElementById('user-initials').textContent = initials;
+      document.getElementById('settings-avatar-initials').textContent = initials;
+
+      showToast('Settings Saved', 'Display name updated successfully', 'success');
+    }
+
+    function resetMockData() {
+      if (confirm('Are you sure you want to delete all data? This cannot be undone.')) {
+        localStorage.clear();
+        transactions = defaultTransactions;
+        budgets = defaultBudgets;
+        goals = defaultGoals;
+        
+        document.getElementById('settings-name-input').value = 'Shameek Yogi';
+        saveSettings();
+        
+        switchPage('dashboard');
+        showToast('Data Reset', 'All data restored to defaults', 'success');
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem('fp_mock_tx', JSON.stringify(transactions));
+      localStorage.setItem('fp_mock_budgets', JSON.stringify(budgets));
+      localStorage.setItem('fp_mock_goals', JSON.stringify(goals));
+    }
+
+    // ═══════════════════════════════════════════
+    // PAGE INIT
+    // ═══════════════════════════════════════════
+    window.addEventListener('DOMContentLoaded', () => {
+      const todayDate = new Date();
+      document.getElementById('form-date').value = todayDate.toISOString().split('T')[0];
+      
+      const options = { month: 'long', year: 'numeric' };
+      document.getElementById('dash-date').textContent = todayDate.toLocaleDateString('en-IN', options);
+      document.getElementById('today-date-str').textContent = todayDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric'});
+
+      const storedName = localStorage.getItem('fp_mock_user_name');
+      if (storedName) {
+        document.getElementById('settings-name-input').value = storedName;
+        document.getElementById('user-display-name').textContent = storedName;
+        document.getElementById('dash-greeting-name').textContent = storedName;
+        const initials = storedName.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+        document.getElementById('user-initials').textContent = initials;
+        document.getElementById('settings-avatar-initials').textContent = initials;
+      }
+
+      // Set initial toggle slide position
+      setTxType('expense');
+      
+      // Initial Render
+      renderDashboard();
+    });
+
+    function simulateRefresh() {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        renderDashboard();
+        showToast('Refreshed', 'Dashboard data updated', 'success');
+      }, 800);
+    }
+  </script>
+</body>
+</html>

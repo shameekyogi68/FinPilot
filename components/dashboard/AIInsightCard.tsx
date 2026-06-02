@@ -21,30 +21,24 @@ const insightConfig = [
   {
     icon: CheckCircle2,
     label: "Positive",
-    bg: "rgba(5,150,105,0.07)",
-    borderColor: "#059669",
-    iconColor: "#059669",
-    textColor: "#065F46",
+    className: "insight-positive",
+    iconColor: "text-emerald-600",
     actionIcon: TrendingUp,
     actionLabel: "View Details",
   },
   {
     icon: AlertTriangle,
     label: "Warning",
-    bg: "rgba(217,119,6,0.07)",
-    borderColor: "#D97706",
-    iconColor: "#D97706",
-    textColor: "#92400E",
+    className: "insight-warning",
+    iconColor: "text-amber-600",
     actionIcon: Target,
     actionLabel: "Adjust Budget",
   },
   {
     icon: Lightbulb,
     label: "Tip",
-    bg: "rgba(124,58,237,0.06)",
-    borderColor: "#C4B5FD",
-    iconColor: "#7C3AED",
-    textColor: "#e4e4e7",
+    className: "insight-tip",
+    iconColor: "text-brand-600",
     actionIcon: Settings,
     actionLabel: "Take Action",
   },
@@ -121,7 +115,7 @@ export function AIInsightCard({ month }: AIInsightCardProps) {
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2.5">
           <Sparkles size={16} strokeWidth={1.5} className="text-[#7C3AED]" aria-hidden="true" />
-          <h2 className="text-[15px] font-medium text-[#fafafa]">AI Insights</h2>
+          <h2 className="text-[15px] font-medium text-[#0F0E17]">AI Insights</h2>
           {!loading && (
             <span className="fp-chip fp-chip-brand">
               92% confidence
@@ -132,7 +126,7 @@ export function AIInsightCard({ month }: AIInsightCardProps) {
           onClick={() => fetchInsights(true)}
           disabled={loading}
           aria-label="Refresh AI insights"
-          className="flex items-center gap-1.5 h-8 px-3 rounded-[8px] border border-[rgba(255,255,255,0.08)] bg-[rgba(20,20,25,0.6)] text-[12px] text-[#e4e4e7] font-medium hover:border-[rgba(255,255,255,0.14)] hover:text-[#fafafa] transition-all duration-150 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2"
+          className="flex items-center gap-1.5 h-8 px-3 rounded-[8px] border border-[rgba(0,0,0,0.06)] bg-white/70 text-[12px] text-[#4B4963] font-medium hover:border-[rgba(0,0,0,0.14)] hover:text-[#0F0E17] transition-all duration-150 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2"
         >
           <RefreshCw
             size={13}
@@ -150,16 +144,16 @@ export function AIInsightCard({ month }: AIInsightCardProps) {
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="rounded-[10px] bg-[rgba(255,255,255,0.05)] p-4 animate-pulse"
+              className="rounded-[10px] bg-[#F8F7FF] p-4 animate-pulse"
               style={{ animationDelay: `${i * 100}ms` }}
             >
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-4 h-4 rounded-full bg-[rgba(255,255,255,0.06)]" />
-                <div className="h-3 w-20 rounded-full bg-[rgba(255,255,255,0.06)]" />
+                <div className="w-4 h-4 rounded-full bg-[rgba(0,0,0,0.06)]" />
+                <div className="h-3 w-20 rounded-full bg-[rgba(0,0,0,0.06)]" />
               </div>
               <div className="space-y-2">
-                <div className="h-3 w-full rounded-full bg-[rgba(255,255,255,0.06)]" />
-                <div className="h-3 w-3/4 rounded-full bg-[rgba(255,255,255,0.06)]" />
+                <div className="h-3 w-full rounded-full bg-[rgba(0,0,0,0.06)]" />
+                <div className="h-3 w-3/4 rounded-full bg-[rgba(0,0,0,0.06)]" />
               </div>
             </div>
           ))}
@@ -167,7 +161,7 @@ export function AIInsightCard({ month }: AIInsightCardProps) {
             <span className="typing-dot" />
             <span className="typing-dot" />
             <span className="typing-dot" />
-            <span className="text-[13px] text-[#a1a1aa] ml-1">FinPilot is analyzing your finances</span>
+            <span className="text-[13px] text-[#8B89A0] ml-1">FinPilot is analyzing your finances</span>
           </div>
         </div>
       )}
@@ -193,40 +187,34 @@ export function AIInsightCard({ month }: AIInsightCardProps) {
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.08, duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-                  className="rounded-[10px] p-4"
-                  style={{
-                    background: item.bg,
-                    borderLeft: `3px solid ${item.borderColor}`,
-                  }}
+                  className={`insight-card ${item.className}`}
                 >
-                  <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex items-start justify-between gap-2 mb-2 relative z-10">
                     <div className="flex items-center gap-2">
                       <Icon
                         size={15}
-                        strokeWidth={1.5}
-                        className="flex-shrink-0"
-                        style={{ color: item.iconColor }}
+                        strokeWidth={2}
+                        className={`flex-shrink-0 ${item.iconColor}`}
                         aria-hidden="true"
                       />
                       <span
-                        className="label-xs"
-                        style={{ color: item.iconColor }}
+                        className={`text-[11px] font-bold tracking-[0.08em] uppercase ${item.iconColor}`}
                       >
                         {item.label}
                       </span>
                     </div>
                     <button
-                      className="flex items-center gap-1 text-[11px] text-[#a1a1aa] hover:text-[#fafafa] transition-colors duration-150 flex-shrink-0 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 rounded-[4px] px-1"
+                      className="flex items-center gap-1 text-[11px] text-[#8B89A0] hover:text-[#0F0E17] transition-colors duration-150 flex-shrink-0 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 rounded-[4px] px-1"
                     >
                       <ActionIcon size={11} strokeWidth={1.5} aria-hidden="true" />
                       {item.actionLabel}
                     </button>
                   </div>
-                  <p className="text-[14px] leading-[1.6] text-[#fafafa]">
+                  <p className="text-[14px] leading-[1.6] text-[#0F0E17] relative z-10 font-medium">
                     {item.value ? (
                       <TypingText text={item.value} active={justRefreshed} />
                     ) : (
-                      <span className="text-[#a1a1aa] italic">No data available</span>
+                      <span className="text-[#8B89A0] italic">No data available</span>
                     )}
                   </p>
                 </motion.div>

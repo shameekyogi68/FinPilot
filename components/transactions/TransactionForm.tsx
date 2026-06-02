@@ -1,5 +1,6 @@
 "use client"
 
+import { motion } from "framer-motion"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -121,57 +122,59 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
   }
 
   return (
-    <div className="fp-card p-5">
+    <div className="fp-card p-6 space-y-6">
       {/* ── Type Toggle ── */}
       <div
-        className="flex mb-5 p-1 rounded-[999px] border border-[rgba(255,255,255,0.06)]"
-        style={{ background: "rgba(255,255,255,0.05)" }}
+        className="flex p-1.5 rounded-full border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.03)] relative"
         role="group"
         aria-label="Transaction type"
       >
+        {transactionType === "expense" ? (
+          <motion.div
+            layoutId="tx-toggle-bg"
+            className="absolute top-1.5 bottom-1.5 left-1.5 bg-white shadow-md border border-[rgba(0,0,0,0.04)] rounded-full z-0"
+            style={{ width: "calc(50% - 6px)" }}
+            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+          />
+        ) : (
+          <motion.div
+            layoutId="tx-toggle-bg"
+            className="absolute top-1.5 bottom-1.5 right-1.5 bg-white shadow-md border border-[rgba(0,0,0,0.04)] rounded-full z-0"
+            style={{ width: "calc(50% - 6px)" }}
+            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+          />
+        )}
         <button
           type="button"
-          id="toggle-expense"
           onClick={() => { setValue("type", "expense"); setValue("category", expenseCategories[0]) }}
-          aria-pressed={transactionType === "expense"}
-          className={`flex-1 flex items-center justify-center gap-2 h-9 rounded-[999px] text-[14px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-1 ${
-            transactionType === "expense"
-              ? "bg-[rgba(20,20,25,0.6)] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_0_0_1px_rgba(255,255,255,0.06)] text-[#fafafa]"
-              : "text-[#a1a1aa] hover:text-[#e4e4e7]"
+          className={`flex-1 flex items-center justify-center gap-2 h-10 rounded-full text-[14px] font-bold z-10 relative transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-1 ${
+            transactionType === "expense" ? "text-[#0F0E17]" : "text-[#8B89A0]"
           }`}
         >
-          <TrendingDown size={14} strokeWidth={1.5} aria-hidden="true" />
+          <TrendingDown size={15} strokeWidth={2.5} aria-hidden="true" />
           Expense
         </button>
         <button
           type="button"
-          id="toggle-income"
           onClick={() => { setValue("type", "income"); setValue("category", incomeCategories[0]) }}
-          aria-pressed={transactionType === "income"}
-          className={`flex-1 flex items-center justify-center gap-2 h-9 rounded-[999px] text-[14px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-1 ${
-            transactionType === "income"
-              ? "bg-[rgba(20,20,25,0.6)] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_0_0_1px_rgba(255,255,255,0.06)] text-[#fafafa]"
-              : "text-[#a1a1aa] hover:text-[#e4e4e7]"
+          className={`flex-1 flex items-center justify-center gap-2 h-10 rounded-full text-[14px] font-bold z-10 relative transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-1 ${
+            transactionType === "income" ? "text-[#0F0E17]" : "text-[#8B89A0]"
           }`}
         >
-          <TrendingUp size={14} strokeWidth={1.5} aria-hidden="true" />
+          <TrendingUp size={15} strokeWidth={2.5} aria-hidden="true" />
           Income
         </button>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
         {/* ── Amount ── */}
         <div>
-          <label
-            htmlFor="tx-amount"
-            className="block text-[12px] font-medium text-[#e4e4e7] mb-1.5"
-          >
+          <label htmlFor="tx-amount" className="label-premium">
             Amount
           </label>
-          <div className="flex rounded-[10px] border border-[rgba(0,0,0,0.10)] overflow-hidden focus-within:border-[#7C3AED] focus-within:ring-[3px] focus-within:ring-[rgba(124,58,237,0.18)] transition-all duration-150">
+          <div className="flex rounded-[14px] border-[1.5px] border-[rgba(0,0,0,0.10)] overflow-hidden focus-within:border-[#7C3AED] focus-within:shadow-[0_0_0_4px_rgba(124,58,237,0.12)] transition-all bg-[rgba(255,255,255,0.70)]">
             <div
-              className="w-12 flex items-center justify-center text-[18px] font-medium text-[#e4e4e7] border-r border-[rgba(255,255,255,0.08)] flex-shrink-0"
-              style={{ background: "rgba(255,255,255,0.05)" }}
+              className="w-14 flex items-center justify-center text-[20px] font-bold text-[#8B89A0] border-r border-[rgba(0,0,0,0.06)] bg-[rgba(0,0,0,0.02)] flex-shrink-0"
               aria-hidden="true"
             >
               ₹
@@ -183,14 +186,13 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
               min="0"
               placeholder="0"
               {...register("amount", { valueAsNumber: true })}
-              className="flex-1 h-[52px] px-4 text-[22px] font-medium text-[#fafafa] tabular-nums bg-[rgba(20,20,25,0.6)] outline-none border-0 focus:ring-0 focus:outline-none"
+              className="flex-1 h-[56px] px-5 text-[24px] font-bold text-[#0F0E17] tabular-nums bg-transparent outline-none border-0 focus:ring-0 focus:outline-none"
               aria-invalid={!!errors.amount}
               aria-describedby={errors.amount ? "tx-amount-error" : undefined}
-              style={{ fontVariantNumeric: "tabular-nums" }}
             />
           </div>
           {errors.amount?.message && (
-            <p id="tx-amount-error" className="text-[11px] text-[#ef4444] mt-1">
+            <p id="tx-amount-error" className="text-[11px] text-[#ef4444] mt-1 font-medium">
               {errors.amount.message}
             </p>
           )}
@@ -199,24 +201,24 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
         <div className="grid gap-4 sm:grid-cols-2">
           {/* ── Date ── */}
           <div>
-            <label htmlFor="tx-date" className="block text-[12px] font-medium text-[#e4e4e7] mb-1.5">
+            <label htmlFor="tx-date" className="label-premium">
               Date
             </label>
             <input
               id="tx-date"
               type="date"
               {...register("date", { valueAsDate: true })}
-              className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#fafafa] bg-[rgba(20,20,25,0.6)] outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
+              className="w-full h-12 px-3.5 rounded-[12px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#0F0E17] bg-white/70 outline-none transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
               aria-invalid={!!errors.date}
             />
             {errors.date?.message && (
-              <p className="text-[11px] text-[#ef4444] mt-1">{errors.date.message}</p>
+              <p className="text-[11px] text-[#ef4444] mt-1 font-medium">{errors.date.message}</p>
             )}
           </div>
 
           {/* ── Category ── */}
           <div>
-            <label htmlFor="tx-category" className="block text-[12px] font-medium text-[#e4e4e7] mb-1.5">
+            <label htmlFor="tx-category" className="label-premium">
               Category
             </label>
             <Controller
@@ -227,7 +229,7 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
                   id="tx-category"
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Select or type..."
+                  placeholder="Select..."
                   options={categoryOptions.map((cat) => ({
                     value: cat,
                     label: cat,
@@ -237,22 +239,22 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
               )}
             />
             {errors.category?.message && (
-              <p className="text-[11px] text-[#ef4444] mt-1">{errors.category.message}</p>
+              <p className="text-[11px] text-[#ef4444] mt-1 font-medium">{errors.category.message}</p>
             )}
           </div>
         </div>
 
         {/* ── Note ── */}
         <div>
-          <label htmlFor="tx-note" className="block text-[12px] font-medium text-[#e4e4e7] mb-1.5">
-            Note <span className="text-[#a1a1aa] font-normal">(Optional)</span>
+          <label htmlFor="tx-note" className="label-premium">
+            Note <span className="text-[#8B89A0] font-normal">(Optional)</span>
           </label>
           <input
             id="tx-note"
             type="text"
             placeholder="e.g. Monthly rent, Swiggy order..."
             {...register("note")}
-            className="w-full h-11 px-3.5 rounded-[10px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#fafafa] bg-[rgba(20,20,25,0.6)] outline-none placeholder:text-[#C4C2D4] transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
+            className="w-full h-12 px-3.5 rounded-[12px] border border-[rgba(0,0,0,0.10)] text-[15px] text-[#0F0E17] bg-white/70 outline-none placeholder:text-[#C4C2D4] transition-all duration-150 focus:border-[#7C3AED] focus:ring-[3px] focus:ring-[rgba(124,58,237,0.18)]"
           />
         </div>
 
@@ -260,7 +262,7 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full h-12 rounded-[10px] bg-[#7C3AED] text-white text-[15px] font-medium transition-all duration-150 hover:bg-[#6D28D9] active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2"
+          className="w-full h-12 rounded-[12px] btn-primary flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2"
         >
           {isSubmitting ? (
             <>
