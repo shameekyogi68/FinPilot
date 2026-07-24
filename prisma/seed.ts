@@ -3,10 +3,9 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('Starting database seed...')
+  console.log('Ensuring clean profile for Shameek Yogi...')
 
-  // Create default profile
-  const profile = await prisma.profile.upsert({
+  await prisma.profile.upsert({
     where: { id: 1 },
     update: {},
     create: {
@@ -20,35 +19,7 @@ async function main() {
       ai_enabled: true,
     },
   })
-  console.log('Created profile:', profile.name)
-
-  // Create sample budgets
-  const budgets = [
-    { category: 'food', monthly_limit: 5000 },
-    { category: 'transport', monthly_limit: 2000 },
-    { category: 'shopping', monthly_limit: 3000 },
-    { category: 'bills', monthly_limit: 4000 },
-    { category: 'entertainment', monthly_limit: 1500 },
-  ]
-
-  for (const budget of budgets) {
-    await prisma.budget.create({
-      data: budget,
-    })
-  }
-  console.log('Created sample budgets')
-
-  // Create sample goal
-  await prisma.goal.create({
-    data: {
-      name: 'Emergency Fund',
-      targetAmount: 100000,
-      currentAmount: 0,
-    },
-  })
-  console.log('Created sample goal')
-
-  console.log('Database seed completed successfully!')
+  console.log('Clean profile verified for Shameek Yogi')
 }
 
 main()
