@@ -69,7 +69,7 @@ model AICache {
 
 model Profile {
   id                     Int      @id @default(1)
-  name                   String   @default("You")
+  name                   String   @default("Shameek Yogi")
   email                  String?
   currency               String   @default("INR")
   monthly_income         Float    @default(0)
