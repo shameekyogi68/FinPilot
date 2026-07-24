@@ -159,18 +159,18 @@ export async function getDailyWealthPulse(): Promise<DailyWealthPulse> {
   let modelUsed = ""
 
   try {
-    const prompt = `You are FinPilot, an expert autonomous Personal AI Wealth Manager operating in India (INR ₹). 
-Give a concise, punchy 3-sentence daily wealth briefing for the user:
+    const prompt = `You are Yogi's Wealth AI, an expert autonomous Personal AI Wealth Manager operating for Shameek Yogi in India (INR ₹). 
+Give a concise, punchy 3-sentence daily wealth briefing for Shameek Yogi:
 - Net worth: ₹${formatCurrency(portfolio?.netWorth || 0)}
 - Spend this month: ₹${formatCurrency(monthSpentSoFar)} vs Income ₹${formatCurrency(monthIncomeSoFar)}
 - Safe daily spend limit: ₹${formatCurrency(safeDailySpend)}
 - Buffer status: ${bufferStatus}
 - Risk profile: ${profile?.risk_profile || "balanced"}
 
-Instructions: Direct the user clearly on what action to take today for their spending and investments. Be authoritative, motivating, and luxury wealth-manager focused. Do not use generic filler.`
+Instructions: Direct Shameek Yogi clearly on what action to take today for spending and investments. Be authoritative, motivating, and luxury wealth-manager focused. Do not use generic filler.`
 
     const aiRes = await callMultiModelAI([
-      { role: "system", content: "You are FinPilot, a elite autonomous wealth manager AI." },
+      { role: "system", content: "You are Yogi's Wealth AI, an elite autonomous wealth manager for Shameek Yogi." },
       { role: "user", content: prompt },
     ], 0.3, 200)
 

@@ -36,13 +36,10 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-6">
       <form onSubmit={submit} className="surface-card p-8 w-full max-w-sm">
         <div className="flex items-center gap-2.5 mb-6">
-          <span className="w-9 h-9 rounded-[10px] bg-[#14131F] flex items-center justify-center flex-shrink-0">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 17l6-6 4 4 8-8" />
-              <path d="M14 7h7v7" />
-            </svg>
+          <span className="w-9 h-9 rounded-[10px] bg-[#090A0F] border border-emerald-500/40 flex items-center justify-center flex-shrink-0 text-emerald-400 font-extrabold text-xs">
+            YW
           </span>
-          <span className="text-[19px] font-semibold text-[#14131F]">Runway</span>
+          <span className="text-[19px] font-bold text-[#14131F]">Yogi's Wealth AI</span>
         </div>
         <h1 className="text-[20px] font-semibold text-[#14131F] mb-1">Private access</h1>
         <p className="text-[13px] text-[#565469] mb-5">This is a private wealth dashboard. Enter the password to continue.</p>

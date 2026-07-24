@@ -12,7 +12,7 @@ export default async function AIAdvisorPage() {
       id: "welcome",
       role: "assistant" as const,
       content:
-        "Hi! I'm your Runway advisor. I have full context of your real transactions, budgets, and goals — ask me anything about your spending, saving strategy, or how to plan around your irregular income.",
+        "Greetings Shameek Yogi! I am your Yogi's Wealth AI advisor. I have full context of your real transactions, budgets, goals, and mutual fund portfolio — ask me anything about your spending control, investment strategy, or wealth accumulation.",
       createdAt: new Date().toISOString(),
     },
   ]

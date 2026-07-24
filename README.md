@@ -1,6 +1,6 @@
-# FinPilot - Personal Finance Dashboard
+# Yogi's Wealth AI — Shameek Yogi's Autonomous AI Wealth Manager
 
-A modern, industry-standard personal finance dashboard built with Next.js 16, TypeScript, Prisma, and Tailwind CSS v4.
+A world-class, autonomous personal AI wealth manager built for Shameek Yogi with Next.js 16, TypeScript, Prisma, and Tailwind CSS. Features real-time Indian Mutual Funds NAV & CAGR tracking (`api.mfapi.in`), daily spending velocity control, multi-model AI consensus ensemble, and 4-step monthly execution planning.
 
 ## Features
 

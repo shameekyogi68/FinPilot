@@ -38,8 +38,8 @@ export async function callMultiModelAI(
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-          "HTTP-Referer": "https://finpilot.local",
-          "X-Title": "FinPilot Autonomous Wealth Manager",
+          "HTTP-Referer": "https://yogiswealthai.local",
+          "X-Title": "Yogi's Wealth AI — Shameek Yogi Autonomous Wealth Manager",
         },
         body: JSON.stringify({
           model,

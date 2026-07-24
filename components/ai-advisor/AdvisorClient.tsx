@@ -91,7 +91,7 @@ export function AdvisorClient({
             <Sparkles size={18} strokeWidth={2} className="text-white" />
           </div>
           <div className="flex-1">
-            <p className="text-[14px] font-semibold text-[#14131F]">Runway Advisor</p>
+            <p className="text-[14px] font-semibold text-[#14131F]">Yogi's Wealth AI Advisor</p>
             <p className="text-[11.5px] text-[#8C8AA0] mt-0.5">Grounded in your real transactions, budgets, and goals</p>
           </div>
         </div>
