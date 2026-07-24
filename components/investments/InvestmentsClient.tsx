@@ -12,6 +12,7 @@ import type { Holding, PortfolioSummary } from "@/lib/queries/investmentQueries"
 import type { OverspendHistory } from "@/lib/queries/queries"
 import { sipFutureValue, sipRequiredForTarget, swpMonthsRemaining } from "@/lib/utils/finance"
 import { toast } from "sonner"
+import { MutualFundIntelligence } from "@/components/wealth/MutualFundIntelligence"
 
 const TYPE_META: Record<string, { label: string; icon: React.ElementType; category: string }> = {
   stock: { label: "Stock", icon: TrendingUp, category: "equity" },
@@ -219,6 +220,9 @@ function PortfolioView({
 
   return (
     <div className="space-y-6">
+      {/* Live Mutual Funds Market Intelligence */}
+      <MutualFundIntelligence />
+
       {/* Summary tiles */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="stat-tile">
@@ -388,9 +392,101 @@ function CalculatorsView({ summary, overspend }: { summary: PortfolioSummary; ov
       {overspend.monthsConsidered > 0 && overspend.avgMonthlyOverspend > 0 && (
         <OverspendCostCard overspend={overspend} />
       )}
+      <FundPerformanceLookup />
       <SipCalculator />
       <SwpCalculator />
       <DrawdownCalculator summary={summary} />
+    </div>
+  )
+}
+
+type FundPerformance = {
+  schemeName: string
+  fundHouse: string
+  category: string
+  latestNav: number
+  asOf: string
+  cagr1y: number | null
+  cagr3y: number | null
+  cagr5y: number | null
+}
+
+function FundPerformanceLookup() {
+  const [schemeCode, setSchemeCode] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<FundPerformance | null>(null)
+
+  const lookup = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!schemeCode.trim()) return
+    setLoading(true)
+    setResult(null)
+    try {
+      const res = await fetch(`/api/investments/fund-performance?schemeCode=${encodeURIComponent(schemeCode.trim())}`)
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        toast.error(json.error || "Unable to look up that scheme code")
+        return
+      }
+      setResult(json)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="surface-card p-6 lg:col-span-2">
+      <h3 className="text-[15px] font-semibold text-[#14131F] mb-1">Fund performance lookup</h3>
+      <p className="text-[12.5px] text-[#8C8AA0] mb-5">
+        Real historical returns for any Indian mutual fund, computed from actual NAV history via mfapi.in — not a
+        recommendation, just the numbers. Find a scheme code at{" "}
+        <span className="font-medium text-[#14131F]">mfapi.in</span> or AMFI.
+      </p>
+      <form onSubmit={lookup} className="flex items-center gap-2 mb-5">
+        <input
+          value={schemeCode}
+          onChange={(e) => setSchemeCode(e.target.value)}
+          placeholder="AMFI scheme code, e.g. 120503"
+          className="field flex-1"
+        />
+        <button type="submit" disabled={loading || !schemeCode.trim()} className="btn-primary flex-shrink-0">
+          {loading ? "Looking up…" : "Look up"}
+        </button>
+      </form>
+
+      {result && (
+        <div className="p-4 rounded-2xl bg-[#F4F1FB] border border-[rgba(109,85,227,0.14)]">
+          <p className="text-[13.5px] font-semibold text-[#14131F]">{result.schemeName}</p>
+          <p className="text-[11.5px] text-[#8C8AA0] mt-0.5">
+            {result.fundHouse} · {result.category} · NAV {inr(result.latestNav)} as of{" "}
+            {new Date(result.asOf).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+          </p>
+          <div className="grid grid-cols-3 gap-3 mt-4">
+            <CagrTile label="1 year" value={result.cagr1y} />
+            <CagrTile label="3 years" value={result.cagr3y} />
+            <CagrTile label="5 years" value={result.cagr5y} />
+          </div>
+          <p className="text-[11px] text-[#8C8AA0] mt-4">
+            Past performance is historical fact, not a predictor of future returns.
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CagrTile({ label, value }: { label: string; value: number | null }) {
+  return (
+    <div className="p-3 rounded-xl bg-white border border-[rgba(20,19,31,0.06)] text-center">
+      <p className="text-[10.5px] uppercase tracking-wide text-[#8C8AA0] font-semibold mb-1">{label}</p>
+      {value === null ? (
+        <p className="text-[15px] font-semibold text-[#C4C2D4]">—</p>
+      ) : (
+        <p className={`text-[15px] font-semibold tabular-nums ${value >= 0 ? "text-[#0E8A5F]" : "text-[#A02727]"}`}>
+          {value >= 0 ? "+" : ""}
+          {value.toFixed(1)}%
+        </p>
+      )}
     </div>
   )
 }

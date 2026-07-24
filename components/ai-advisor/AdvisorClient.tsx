@@ -6,6 +6,7 @@ import { Send, Sparkles, Bot, User as UserIcon } from "lucide-react"
 import { inr } from "@/lib/utils/format"
 import type { DashboardMetrics } from "@/lib/queries/dashboardQueries"
 import type { RunwayMetrics } from "@/lib/queries/runwayQueries"
+import { AiMarkdown } from "@/components/ui/ai-markdown"
 import { toast } from "sonner"
 
 export type ChatMessage = {
@@ -16,10 +17,11 @@ export type ChatMessage = {
 }
 
 const SUGGESTIONS = [
-  "How can I save more this month?",
-  "Am I on track with my budgets?",
-  "Am I saving enough given how irregular my income is?",
-  "What's my safety buffer situation?",
+  "What is my safe daily spending limit today?",
+  "Which Mutual Funds should I invest in this month?",
+  "How should I rebalance my Equity vs Debt allocation?",
+  "Generate my step-by-step monthly wealth allocation plan.",
+  "Am I on track with my safety buffer and emergency fund?",
 ]
 
 export function AdvisorClient({
@@ -110,7 +112,11 @@ export function AdvisorClient({
                 </div>
               )}
               <div className={`${m.role === "user" ? "chat-user" : "chat-ai"}`}>
-                <p className="text-[13.5px] leading-relaxed whitespace-pre-wrap">{m.content}</p>
+                {m.role === "assistant" ? (
+                  <AiMarkdown content={m.content} className="text-[13.5px] leading-relaxed" />
+                ) : (
+                  <p className="text-[13.5px] leading-relaxed whitespace-pre-wrap">{m.content}</p>
+                )}
               </div>
               {m.role === "user" && (
                 <div className="w-8 h-8 rounded-lg bg-[#14131F] flex items-center justify-center flex-shrink-0">

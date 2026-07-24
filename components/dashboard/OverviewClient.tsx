@@ -26,6 +26,13 @@ import type {
   DayCashFlow,
 } from "@/lib/queries/dashboardQueries"
 import type { RunwayMetrics } from "@/lib/queries/runwayQueries"
+import { AiMarkdown } from "@/components/ui/ai-markdown"
+import { useState } from "react"
+import { DailyWealthPulseBanner } from "@/components/wealth/DailyWealthPulseBanner"
+import { MonthlyWealthWizard } from "@/components/wealth/MonthlyWealthWizard"
+import { MutualFundIntelligence } from "@/components/wealth/MutualFundIntelligence"
+import { FloatingAIWealthOfficer } from "@/components/wealth/FloatingAIWealthOfficer"
+import { Sliders } from "lucide-react"
 
 type Props = {
   metrics: DashboardMetrics
@@ -67,6 +74,8 @@ export function OverviewClient({
   monthlyReview,
   monthlyReviewLabel,
 }: Props) {
+  const [wizardOpen, setWizardOpen] = useState(false)
+
   const greeting = (() => {
     const h = new Date().getHours()
     if (h < 12) return "Good morning"
@@ -89,6 +98,9 @@ export function OverviewClient({
 
   return (
     <div className="space-y-8">
+      {/* ── Monthly Wealth Plan Modal ── */}
+      <MonthlyWealthWizard isOpen={wizardOpen} onClose={() => setWizardOpen(false)} />
+
       {/* ── Page header ── */}
       <motion.div
         initial={fadeUp.initial}
@@ -112,17 +124,23 @@ export function OverviewClient({
             )}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Link href="/transactions" className="btn-ghost">
-            <ArrowUpRight size={14} strokeWidth={1.75} />
-            View all
-          </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setWizardOpen(true)}
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold text-[13px] flex items-center gap-2 hover:opacity-95 shadow-md shadow-emerald-500/20"
+          >
+            <Sliders size={15} strokeWidth={2} />
+            Monthly Wealth Execution Wizard
+          </button>
           <Link href="/transactions" className="btn-primary">
             <Plus size={14} strokeWidth={2} />
             New transaction
           </Link>
         </div>
       </motion.div>
+
+      {/* ── Autonomous Daily Wealth Manager Banner ── */}
+      <DailyWealthPulseBanner />
 
       {/* ── Hero balance card ── */}
       <motion.div
@@ -360,12 +378,21 @@ export function OverviewClient({
             {monthlyReview.map((line, idx) => (
               <li key={idx} className="text-[13px] text-[#565469] leading-relaxed flex gap-2">
                 <span className="text-[#A48FF6] flex-shrink-0">•</span>
-                {line}
+                <AiMarkdown content={line} block={false} />
               </li>
             ))}
           </ul>
         </motion.section>
       )}
+
+      {/* ── Live Mutual Fund Market Intelligence ── */}
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.26, ease: [0.25, 0.46, 0.45, 0.94] }}
+      >
+        <MutualFundIntelligence />
+      </motion.section>
 
       {/* ── AI Insights ── */}
       {insights.length > 0 && (
@@ -393,12 +420,15 @@ export function OverviewClient({
           <div className="grid sm:grid-cols-3 gap-3">
             {insights.map((insight, idx) => (
               <div key={idx} className="insight insight-tip">
-                <p className="text-[12.5px] text-[#565469] leading-relaxed">{insight}</p>
+                <AiMarkdown content={insight} block={false} className="text-[12.5px] text-[#565469] leading-relaxed" />
               </div>
             ))}
           </div>
         </motion.section>
       )}
+
+      {/* ── Floating Luxury AI Wealth Officer Copilot ── */}
+      <FloatingAIWealthOfficer />
     </div>
   )
 }

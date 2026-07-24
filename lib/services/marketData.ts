@@ -57,6 +57,43 @@ export async function fetchStockPrice(symbol: string): Promise<PriceQuote> {
   }
 }
 
+export type FundHistoryPoint = { date: Date; nav: number }
+export type FundHistory = {
+  schemeCode: string
+  schemeName: string
+  fundHouse: string
+  category: string
+  history: FundHistoryPoint[] // newest first
+}
+
+function parseMfapiDate(ddmmyyyy: string): Date {
+  const [d, m, y] = ddmmyyyy.split("-").map(Number)
+  return new Date(y, m - 1, d)
+}
+
+/** Full NAV history for a mutual fund, oldest-first isn't guaranteed by the API — we return newest-first as given. */
+export async function fetchMutualFundHistory(schemeCode: string): Promise<FundHistory> {
+  const res = await fetchWithTimeout(`https://api.mfapi.in/mf/${encodeURIComponent(schemeCode)}`)
+  if (!res.ok) {
+    throw new Error(`mfapi.in request failed (${res.status})`)
+  }
+  const json = await res.json().catch(() => null)
+  const rows: Array<{ date: string; nav: string }> = json?.data ?? []
+  if (rows.length === 0) {
+    throw new Error("No historical data returned for this scheme code")
+  }
+
+  return {
+    schemeCode,
+    schemeName: json?.meta?.scheme_name ?? "Unknown scheme",
+    fundHouse: json?.meta?.fund_house ?? "Unknown",
+    category: json?.meta?.scheme_category ?? "Unknown",
+    history: rows
+      .map((r) => ({ date: parseMfapiDate(r.date), nav: Number(r.nav) }))
+      .filter((r) => !Number.isNaN(r.nav)),
+  }
+}
+
 export async function fetchLatestPrice(type: string, symbol: string): Promise<PriceQuote> {
   if (type === "equity_mf" || type === "debt_mf") {
     return fetchMutualFundNav(symbol)

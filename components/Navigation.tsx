@@ -98,16 +98,18 @@ export function Navigation() {
       >
         {/* Logo */}
         <div className="h-16 flex items-center px-5 flex-shrink-0">
-          <Link href="/" className="flex items-center gap-2.5 group" aria-label="Runway home">
-            <span className="w-8 h-8 rounded-[10px] bg-[#14131F] flex items-center justify-center shadow-[0_2px_8px_rgba(20,19,31,0.18)] group-hover:scale-105 transition-transform">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 17l6-6 4 4 8-8" />
-                <path d="M14 7h7v7" />
-              </svg>
+          <Link href="/" className="flex items-center gap-2.5 group" aria-label="FinPilot home">
+            <span className="w-8 h-8 rounded-[10px] bg-[#090A0F] border border-emerald-500/30 flex items-center justify-center shadow-[0_2px_8px_rgba(16,185,129,0.2)] group-hover:scale-105 transition-transform text-emerald-400 font-extrabold text-sm">
+              FP
             </span>
-            <span className="text-[18px] font-semibold tracking-tight text-[#14131F]">
-              Runway
-            </span>
+            <div>
+              <span className="text-[17px] font-bold tracking-tight text-[#14131F] block leading-tight">
+                FinPilot
+              </span>
+              <span className="text-[9.5px] uppercase font-semibold text-emerald-600 tracking-wider block">
+                AI Wealth Manager
+              </span>
+            </div>
           </Link>
         </div>
 
