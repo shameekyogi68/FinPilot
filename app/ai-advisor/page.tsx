@@ -1,14 +1,21 @@
-import { ChatInterface } from "@/components/ai-advisor/ChatInterface"
-import { ErrorBoundary } from "@/components/ErrorBoundary"
+import { AdvisorClient } from "@/components/ai-advisor/AdvisorClient"
+import { getDashboardMetrics } from "@/lib/queries/dashboardQueries"
+import { getRunwayMetrics } from "@/lib/queries/runwayQueries"
 
-export default function AIAdvisorPage() {
-  return (
-    <ErrorBoundary>
-      <main className="min-h-screen bg-[hsl(var(--background))] py-8 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
-          <ChatInterface />
-        </div>
-      </main>
-    </ErrorBoundary>
-  )
+export const dynamic = "force-dynamic"
+
+export default async function AIAdvisorPage() {
+  const [metrics, runway] = await Promise.all([getDashboardMetrics(), getRunwayMetrics()])
+
+  const initialMessages = [
+    {
+      id: "welcome",
+      role: "assistant" as const,
+      content:
+        "Hi! I'm your Runway advisor. I have full context of your real transactions, budgets, and goals — ask me anything about your spending, saving strategy, or how to plan around your irregular income.",
+      createdAt: new Date().toISOString(),
+    },
+  ]
+
+  return <AdvisorClient initialMessages={initialMessages} metrics={metrics} runway={runway} />
 }

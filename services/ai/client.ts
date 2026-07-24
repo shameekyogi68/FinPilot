@@ -1,5 +1,6 @@
-const OPENROUTER_URL = "https://api.openrouter.ai/v1/chat/completions"
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "google/gemini-2.5-flash"
 const REQUEST_TIMEOUT_MS = 30_000
 const MAX_RETRIES = 2
 
@@ -38,7 +39,7 @@ export async function callOpenRouterChat(messages: OpenRouterMessage[]): Promise
           Authorization: `Bearer ${OPENROUTER_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: OPENROUTER_MODEL,
           messages,
           temperature: 0.3,
           max_tokens: 800,

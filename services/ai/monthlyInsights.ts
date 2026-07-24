@@ -50,12 +50,16 @@ const normalizeInsights = (text: string) => {
   return fragments.slice(0, 3).concat(Array(3 - fragments.length).fill(""))
 }
 
-function getFallbackInsights(totalIncome: number, totalExpenses: number, topCategory: string) {
+function getFallbackInsights(totalIncome: number, totalExpenses: number, topCategory: string | null) {
   const savingsRate = totalIncome > 0 ? ((totalIncome - totalExpenses) / totalIncome) * 100 : 0
 
   return [
-    `Your savings rate is ${savingsRate.toFixed(1)}% this month.`,
-    `${topCategory} is your highest expense category. Consider reviewing these costs.`,
+    totalIncome > 0
+      ? `Your savings rate is ${savingsRate.toFixed(1)}% this month.`
+      : `No income logged yet this month — add a transaction to see your savings rate.`,
+    topCategory
+      ? `${topCategory} is your highest expense category so far. Consider reviewing these costs.`
+      : `No expenses logged yet this month. Add a few transactions to unlock category insights.`,
     `Track your daily spending for one week to identify small leaks.`,
   ]
 }
@@ -254,8 +258,8 @@ Be concise, highly analytical, and data-driven. Don't repeat information.`
     if (insights.every((line) => line === "")) {
       throw new Error("AI returned empty insights")
     }
-  } catch (error) {
-    const topCategory = topCategories[0]?.split(" (")[0] ?? "your top category"
+  } catch {
+    const topCategory = topCategories[0]?.split(" (")[0] ?? null
     insights = getFallbackInsights(totalIncome, totalExpenses, topCategory)
   }
 

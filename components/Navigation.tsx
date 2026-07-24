@@ -1,8 +1,8 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { motion } from "framer-motion"
+import { usePathname, useRouter } from "next/navigation"
 import {
   LayoutDashboard,
   Target,
@@ -11,28 +11,63 @@ import {
   Settings,
   BrainCircuit,
   Receipt,
+  Compass,
+  TrendingUp,
+  LogOut,
 } from "lucide-react"
 
 const mainLinks = [
-  { href: "/",           label: "Dashboard",  icon: LayoutDashboard },
+  { href: "/",            label: "Overview",     icon: LayoutDashboard },
   { href: "/transactions", label: "Transactions", icon: Receipt },
-  { href: "/budgets",    label: "Budgets",    icon: Wallet },
-  { href: "/goals",      label: "Goals",      icon: Target },
-  { href: "/analytics",  label: "Analytics",  icon: PieChart },
+  { href: "/budgets",     label: "Budgets",      icon: Wallet },
+  { href: "/investments", label: "Investments",  icon: TrendingUp },
+  { href: "/goals",       label: "Goals",        icon: Target },
+  { href: "/analytics",   label: "Analytics",    icon: PieChart },
 ]
 
 const intelligenceLinks = [
-  { href: "/ai-advisor", label: "AI Advisor", icon: BrainCircuit },
+  { href: "/ai-advisor",  label: "AI Advisor",   icon: BrainCircuit },
 ]
 
 const allLinks = [
   ...mainLinks,
   ...intelligenceLinks,
-  { href: "/settings",   label: "Settings",   icon: Settings },
+  { href: "/settings",    label: "Settings",     icon: Settings },
 ]
+
+type RunwaySnapshot = { runwayMonths: number | null; safetyBufferTargetMonths: number; bufferGap: number }
 
 export function Navigation() {
   const pathname = usePathname()
+  const router = useRouter()
+  const [profileName, setProfileName] = useState("You")
+  const [runway, setRunway] = useState<RunwaySnapshot | null>(null)
+
+  useEffect(() => {
+    if (pathname === "/login") return
+
+    fetch("/api/settings/profile")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.name) setProfileName(data.name)
+      })
+      .catch(() => {})
+
+    fetch("/api/dashboard/runway")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data) setRunway(data)
+      })
+      .catch(() => {})
+  }, [pathname])
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" })
+    router.push("/login")
+    router.refresh()
+  }
+
+  if (pathname === "/login") return null
 
   const renderNavItem = (link: typeof allLinks[0]) => {
     const Icon = link.icon
@@ -41,133 +76,121 @@ export function Navigation() {
       (pathname.startsWith(link.href) && link.href !== "/")
 
     return (
-      <motion.div
+      <Link
         key={link.href}
-        whileHover={{ x: 3 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        href={link.href}
+        aria-label={link.label}
+        aria-current={isActive ? "page" : undefined}
+        className={`nav-item ${isActive ? "active" : ""}`}
       >
-        <Link
-          href={link.href}
-          aria-label={link.label}
-          aria-current={isActive ? "page" : undefined}
-          className={`nav-item w-full${isActive ? " active" : ""}`}
-        >
-          {isActive && (
-            <motion.div
-              layoutId="nav-active"
-              className="absolute inset-0 rounded-[10px] -z-10"
-              style={{
-                background: "linear-gradient(135deg, rgba(124,58,237,0.10), rgba(139,92,246,0.06))",
-              }}
-              initial={false}
-              transition={{ type: "spring", stiffness: 420, damping: 32 }}
-            />
-          )}
-          {isActive && (
-            <motion.span
-              className="absolute left-[-8px] top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-[4px]"
-              style={{
-                background: "linear-gradient(180deg, #A78BFA 0%, #7C3AED 50%, #6D28D9 100%)",
-              }}
-              layoutId="nav-accent-bar"
-              initial={{ opacity: 0, scaleY: 0.5 }}
-              animate={{ opacity: 1, scaleY: 1 }}
-              transition={{ type: "spring", stiffness: 420, damping: 32 }}
-            />
-          )}
-          <Icon
-            size={18}
-            strokeWidth={2}
-            className={isActive ? "text-[#7C3AED]" : "text-[#8B89A0]"}
-            aria-hidden="true"
-          />
-          <span className="leading-none">{link.label}</span>
-        </Link>
-      </motion.div>
+        <Icon size={17} strokeWidth={1.75} aria-hidden="true" />
+        <span>{link.label}</span>
+      </Link>
     )
   }
 
   return (
     <>
-      {/* ─── Desktop: Fixed Left Sidebar ─── */}
+      {/* ─── Desktop Sidebar ─── */}
       <aside
-        className="fp-sidebar hidden lg:flex"
+        className="hidden lg:flex fixed top-0 left-0 bottom-0 w-[244px] bg-white border-r border-[rgba(20,19,31,0.06)] z-40 flex-col"
         aria-label="Main navigation"
       >
-        {/* Logo Banner */}
+        {/* Logo */}
         <div className="h-16 flex items-center px-5 flex-shrink-0">
-          <span
-            className="flex items-center gap-2.5 text-[18px] font-bold text-[#0F0E17] tracking-tight select-none"
-            aria-label="FinPilot"
-          >
-            <span className="inline-flex w-8 h-8 rounded-[10px] items-center justify-center flex-shrink-0 bg-gradient-to-br from-[#A78BFA] to-[#6D28D9] shadow-[0_4px_12px_rgba(124,58,237,0.30)]">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2v20M2 12h20M17 7l-5-5-5 5M17 17l-5 5-5-5"/>
+          <Link href="/" className="flex items-center gap-2.5 group" aria-label="Runway home">
+            <span className="w-8 h-8 rounded-[10px] bg-[#14131F] flex items-center justify-center shadow-[0_2px_8px_rgba(20,19,31,0.18)] group-hover:scale-105 transition-transform">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 17l6-6 4 4 8-8" />
+                <path d="M14 7h7v7" />
               </svg>
             </span>
-            <span className="text-gradient">FinPilot</span>
-          </span>
+            <span className="text-[18px] font-semibold tracking-tight text-[#14131F]">
+              Runway
+            </span>
+          </Link>
         </div>
 
-        {/* Navigation Groups */}
-        <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
-          {/* Main Section */}
-          <div className="px-4 pb-2 pt-1">
-            <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#B8B5C9]">Main</span>
+        {/* Nav groups */}
+        <nav className="flex-1 overflow-y-auto py-2">
+          <div className="px-5 pt-3 pb-1.5">
+            <span className="section-title">Workspace</span>
           </div>
           {mainLinks.map(renderNavItem)}
 
-          {/* Intelligence Section */}
-          <div className="px-4 pb-2 pt-4">
-            <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#B8B5C9]">Intelligence</span>
+          <div className="px-5 pt-5 pb-1.5">
+            <span className="section-title">Intelligence</span>
           </div>
           {intelligenceLinks.map(renderNavItem)}
         </nav>
 
-        {/* Bottom User Profile & Settings */}
-        <div className="px-3 pb-5 pt-3 border-t border-dashed border-[rgba(0,0,0,0.06)]">
-          {/* Settings */}
-          {renderNavItem({ href: "/settings", label: "Settings", icon: Settings })}
+        {/* Runway widget */}
+        <div className="px-3 pb-4 pt-3 border-t border-dashed border-[rgba(20,19,31,0.08)]">
+          <Link
+            href="/"
+            className="block mx-1.5 p-4 rounded-2xl bg-gradient-to-br from-[#14131F] to-[#2A2740] relative overflow-hidden hover:scale-[1.01] transition-transform"
+          >
+            <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-[#6D55E3] opacity-20 blur-2xl" />
+            <p className="text-[11px] uppercase tracking-[0.1em] text-white/60 font-semibold mb-1.5 relative flex items-center gap-1.5">
+              <Compass size={11} strokeWidth={2} />
+              Runway
+            </p>
+            <p className="text-[20px] font-semibold text-white leading-tight relative">
+              {runway?.runwayMonths !== null && runway?.runwayMonths !== undefined
+                ? `${runway.runwayMonths.toFixed(1)} months`
+                : "—"}
+            </p>
+            <p className="text-[11.5px] text-white/60 leading-snug mt-1 relative">
+              {runway
+                ? runway.bufferGap > 0
+                  ? `${(runway.bufferGap / 1000).toFixed(0)}k short of your ${runway.safetyBufferTargetMonths}-month buffer target`
+                  : "Your safety buffer target is fully covered"
+                : "Loading your buffer…"}
+            </p>
+          </Link>
 
-          {/* User Account Card */}
-          <div className="flex items-center gap-3 px-3 py-3 mt-2 rounded-[14px] bg-gradient-to-r from-[rgba(124,58,237,0.05)] to-transparent border border-[rgba(124,58,237,0.08)]">
-            <div className="relative w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-[#EDE9FE] to-[#DDD6FE] shadow-[0_0_0_2px_rgba(124,58,237,0.15),0_2px_8px_rgba(124,58,237,0.15)]">
-              <span className="text-[11px] font-bold text-[#6D28D9] leading-none select-none">SY</span>
+          {/* User row */}
+          <div className="flex items-center gap-3 px-2 py-3 mt-2 rounded-xl">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#A48FF6] to-[#6D55E3] flex items-center justify-center text-white text-[12px] font-semibold">
+              {profileName.slice(0, 2).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold text-[#0F0E17] truncate leading-tight">Shameek Yogi</p>
-              <p className="text-[11px] text-[#8B89A0] leading-tight">Premium Member</p>
+              <p className="text-[13px] font-medium text-[#14131F] truncate">{profileName}</p>
             </div>
-            <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]" />
+            <Link
+              href="/settings"
+              aria-label="Settings"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-[#8C8AA0] hover:bg-[#F4F1FB] hover:text-[#14131F] transition-colors"
+            >
+              <Settings size={15} strokeWidth={1.75} />
+            </Link>
+            <button
+              onClick={handleLogout}
+              aria-label="Log out"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-[#8C8AA0] hover:bg-[#FCEEEC] hover:text-[#A02727] transition-colors"
+            >
+              <LogOut size={15} strokeWidth={1.75} />
+            </button>
           </div>
         </div>
       </aside>
 
-      {/* ─── Mobile: Bottom Tab Bar ─── */}
-      <nav
-        className="fp-bottom-nav lg:hidden"
-        aria-label="Main navigation"
-      >
-        {allLinks.map((link) => {
+      {/* ─── Mobile Bottom Tab Bar ─── */}
+      <nav className="bottom-nav lg:hidden" aria-label="Main navigation">
+        {allLinks.slice(0, 6).map((link) => {
           const Icon = link.icon
           const isActive =
             pathname === link.href ||
             (pathname.startsWith(link.href) && link.href !== "/")
-
           return (
             <Link
               key={link.href}
               href={link.href}
               aria-label={link.label}
               aria-current={isActive ? "page" : undefined}
-              className={`mobile-tab${isActive ? " active" : ""}`}
+              className={`mobile-tab ${isActive ? "active" : ""}`}
             >
-              <Icon
-                size={20}
-                strokeWidth={2}
-                className={isActive ? "text-[#7C3AED]" : "text-[#8B89A0]"}
-                aria-hidden="true"
-              />
+              <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
             </Link>
           )
         })}

@@ -29,6 +29,7 @@ model Budget {
   id           String   @id @default(cuid())
   category     String
   monthly_limit Float
+  essential    Boolean  @default(true)
   createdAt    DateTime @default(now())
 }
 
@@ -39,6 +40,21 @@ model Goal {
   currentAmount Float   @default(0)
   deadline     DateTime?
   createdAt    DateTime @default(now())
+}
+
+model Investment {
+  id             String    @id @default(cuid())
+  name           String
+  type           String    // "stock" | "equity_mf" | "debt_mf" | "fd" | "ppf" | "gold" | "other"
+  category       String    // "equity" | "debt" | "gold" | "cash" | "other" — used for allocation rollup
+  investedAmount Float
+  currentValue   Float
+  units          Float?
+  symbol         String?   // Yahoo ticker (stock, e.g. "RELIANCE.NS") or mfapi.in scheme code (mutual fund)
+  purchaseDate   DateTime?
+  notes          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model AICache {
@@ -52,15 +68,23 @@ model AICache {
 }
 
 model Profile {
-  id                 Int      @id @default(1)
-  name               String   @default("You")
-  email              String?
-  currency           String   @default("INR")
-  monthly_income     Float    @default(0)
-  savings_target     Float    @default(0)
-  theme              String   @default("dark")
-  default_month_view String   @default("current")
-  ai_enabled         Boolean  @default(true)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id                     Int      @id @default(1)
+  name                   String   @default("You")
+  email                  String?
+  currency               String   @default("INR")
+  monthly_income         Float    @default(0)
+  savings_target         Float    @default(0)
+  theme                  String   @default("dark")
+  default_month_view     String   @default("current")
+  ai_enabled             Boolean  @default(true)
+  income_averaging_months Int     @default(3)
+  safety_buffer_months   Float    @default(3)
+  target_equity_pct      Float    @default(0)
+  target_debt_pct        Float    @default(0)
+  target_gold_pct        Float    @default(0)
+  target_cash_pct        Float    @default(0)
+  risk_profile           String   @default("balanced") // "conservative" | "balanced" | "aggressive"
+  rebalance_threshold_pct Float   @default(5)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 }

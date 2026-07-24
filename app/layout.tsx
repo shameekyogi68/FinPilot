@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Navigation } from "@/components/Navigation";
@@ -7,7 +7,14 @@ import { Navigation } from "@/components/Navigation";
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
-  axes: ["opsz"],
+  display: "swap",
+  preload: true,
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: "400",
   display: "swap",
   preload: true,
 });
@@ -15,33 +22,22 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000"),
   title: {
-    default: "FinPilot — Shameek Yogi's Personal Wealth Manager",
-    template: "%s | FinPilot",
+    default: "Runway — Your Personal Wealth Manager",
+    template: "%s · Runway",
   },
   description:
-    "Shameek Yogi's AI-powered personal finance advisor. Track spending, manage budgets, set goals and receive elite wealth management insights — tailored to the Indian financial ecosystem.",
-  keywords: ["personal finance", "wealth management", "budgeting", "INR", "India", "financial advisor", "SIP", "investments", "AI finance"],
-  authors: [{ name: "Shameek Yogi" }],
-  robots: { index: false, follow: false },
+    "A personal wealth manager built for floating income. Track cash flow, know your runway, and budget around what actually comes in — not a fixed monthly number.",
+  keywords: ["personal finance", "wealth", "budgeting", "irregular income", "freelance finance", "dashboard"],
+  authors: [{ name: "Runway" }],
   openGraph: {
-    title: "FinPilot — Shameek Yogi's Personal Wealth Manager",
-    description: "Shameek Yogi's AI-powered personal finance advisor tailored to the Indian financial ecosystem.",
+    title: "Runway — Your Personal Wealth Manager",
+    description: "A personal wealth manager built for floating income.",
     type: "website",
-    locale: "en_IN",
-    siteName: "FinPilot",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "FinPilot - Shameek Yogi's Personal Wealth Manager",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FinPilot — Shameek Yogi's Personal Wealth Manager",
-    description: "Shameek Yogi's AI-powered personal finance advisor tailored to the Indian financial ecosystem.",
+    title: "Runway",
+    description: "A personal wealth manager built for floating income.",
   },
 };
 
@@ -50,37 +46,27 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F8F7FF" },
-    { media: "(prefers-color-scheme: dark)",  color: "#F8F7FF" },
+    { media: "(prefers-color-scheme: light)", color: "#FAFAF7" },
   ],
   viewportFit: "cover",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="en-IN"
+      lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} h-full`}
+      className={`${inter.variable} ${instrumentSerif.variable}`}
     >
-      <head>
-        <meta name="view-transition" content="same-origin" />
-      </head>
-      <body
-        className="min-h-full antialiased page-bg"
-        style={{ color: "#0F0E17" }}
-      >
-        {/* Desktop: content shifted by sidebar; Mobile: content + bottom nav */}
+      <body className="min-h-full antialiased page-bg">
         <Navigation />
         <main
-          className="lg:ml-[240px] pb-20 lg:pb-0"
+          className="lg:pl-[244px] pb-[88px] lg:pb-10"
           style={{ minHeight: "100vh" }}
         >
-          <div className="lg:px-10 lg:py-8 px-4 py-6 max-w-[1280px]">
+          <div className="px-5 sm:px-8 lg:px-12 py-8 lg:py-10 max-w-[1280px] mx-auto">
             {children}
           </div>
         </main>

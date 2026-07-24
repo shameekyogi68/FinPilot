@@ -3,5 +3,8 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["hkg1"]
+  "regions": ["hkg1"],
+  "crons": [
+    { "path": "/api/cron/monthly-review", "schedule": "0 6 1 * *" }
+  ]
 }

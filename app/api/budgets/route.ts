@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { prisma } from "@/lib/prisma"
-import { getCurrentMonthExpenses } from "@/lib/queries/queries"
+import { getBudgetsWithSpend, getCurrentMonthExpenses } from "@/lib/queries/queries"
 import { authenticateRequest, checkRateLimit, safeErrorResponse } from "@/lib/middleware"
 
 export const dynamic = 'force-dynamic'
@@ -12,6 +12,7 @@ const budgetSchema = z.object({
     .preprocess((value) => (typeof value === "string" ? Number(value) : value), z.number())
     .refine((value) => !Number.isNaN(value), { message: "Monthly limit is required" })
     .refine((value) => value >= 0, { message: "Monthly limit must be a positive number" }),
+  essential: z.boolean().optional(),
 })
 
 export async function GET(request: Request) {
@@ -22,16 +23,10 @@ export async function GET(request: Request) {
   if (rateLimitError) return rateLimitError
 
   try {
-    const budgets = await prisma.budget.findMany({
-      select: { id: true, category: true, monthly_limit: true },
-    })
-
-    const { rawExpenses, groupedByCategory, currentMonthIncome } = await getCurrentMonthExpenses()
-
-    const budgetsWithSpend = (budgets ?? []).map((budget) => ({
-      ...budget,
-      spent_this_month: groupedByCategory[budget.category] ?? 0,
-    }))
+    const [budgetsWithSpend, { rawExpenses, currentMonthIncome }] = await Promise.all([
+      getBudgetsWithSpend(),
+      getCurrentMonthExpenses(),
+    ])
 
     return NextResponse.json({ budgets: budgetsWithSpend, currentMonthExpenses: rawExpenses, currentMonthIncome })
   } catch (error) {
@@ -56,13 +51,13 @@ export async function POST(request: Request) {
     )
   }
 
-  const { category, monthly_limit } = parseResult.data
+  const { category, monthly_limit, essential } = parseResult.data
 
   try {
-    await prisma.budget.create({
-      data: { category, monthly_limit },
+    const budget = await prisma.budget.create({
+      data: { category, monthly_limit, essential: essential ?? true },
     })
-    return NextResponse.json({ status: "ok" })
+    return NextResponse.json({ status: "ok", budget })
   } catch (error) {
     return safeErrorResponse(error, "Failed to create budget")
   }
@@ -92,15 +87,37 @@ export async function PATCH(request: Request) {
     )
   }
 
-  const { category, monthly_limit } = parseResult.data
+  const { category, monthly_limit, essential } = parseResult.data
 
   try {
     await prisma.budget.update({
       where: { id },
-      data: { category, monthly_limit },
+      data: { category, monthly_limit, ...(essential !== undefined ? { essential } : {}) },
     })
     return NextResponse.json({ status: "ok" })
   } catch (error) {
     return safeErrorResponse(error, "Failed to update budget")
+  }
+}
+
+export async function DELETE(request: Request) {
+  const authError = authenticateRequest(request)
+  if (authError) return authError
+
+  const rateLimitError = checkRateLimit(request, 20, 60_000)
+  if (rateLimitError) return rateLimitError
+
+  const url = new URL(request.url)
+  const id = url.searchParams.get("id")
+
+  if (!id) {
+    return NextResponse.json({ error: "Missing budget id" }, { status: 400 })
+  }
+
+  try {
+    await prisma.budget.delete({ where: { id } })
+    return NextResponse.json({ status: "ok" })
+  } catch (error) {
+    return safeErrorResponse(error, "Failed to delete budget")
   }
 }

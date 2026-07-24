@@ -93,7 +93,7 @@ export default function ExportData() {
       const ext = formatOpt === 'json' ? 'json' : formatOpt === 'csv' ? 'csv' : 'pdf'
       const a = document.createElement('a')
       a.href = url
-      a.download = `finpilot-export.${ext}`
+      a.download = `runway-export.${ext}`
       document.body.appendChild(a)
       a.click()
       a.remove()

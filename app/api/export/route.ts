@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       return new Response(JSON.stringify({ error: 'No transactions found for selected range' }), { status: 400 })
     }
 
-    const filenameBase = `finpilot-export-${formatDateForExport(new Date())}`
+    const filenameBase = `runway-export-${formatDateForExport(new Date())}`
 
     if (format === 'json') {
       const headers = new Headers({

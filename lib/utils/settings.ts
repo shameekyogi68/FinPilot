@@ -34,9 +34,9 @@ export function updateCurrencyInAllAmounts(currency: CurrencyCode) {
   }
 
   try {
-    localStorage.setItem("finpilot-currency", currency)
+    localStorage.setItem("runway-currency", currency)
     window.dispatchEvent(
-      new CustomEvent("finpilot:currency-changed", {
+      new CustomEvent("runway:currency-changed", {
         detail: { currency },
       })
     )
