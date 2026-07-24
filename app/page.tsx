@@ -42,7 +42,11 @@ export default async function Home() {
       runway={runway}
       netWorth={portfolio.netWorth}
       investedValue={portfolio.totalCurrentValue}
-      profileName={profile?.name || "there"}
+      profileName={
+        profile?.name && profile.name !== "Yogeesh" && profile.name !== "You"
+          ? profile.name
+          : "Shameek Yogi"
+      }
       insights={insightsResult.insights}
       monthlyReview={reviewResult?.review ?? null}
       monthlyReviewLabel={period}

@@ -33,12 +33,12 @@ export async function GET(request: Request) {
   if (rateLimitError) return rateLimitError
 
   try {
-    const profile = await prisma.profile.upsert({
+    let profile = await prisma.profile.upsert({
       where: { id: 1 },
       update: {},
       create: {
         id: 1,
-        name: "You",
+        name: "Shameek Yogi",
         currency: "INR",
         monthly_income: 0,
         savings_target: 0,
@@ -47,6 +47,14 @@ export async function GET(request: Request) {
         ai_enabled: true,
       },
     })
+
+    if (profile.name === "Yogeesh" || profile.name === "You" || !profile.name) {
+      profile = await prisma.profile.update({
+        where: { id: 1 },
+        data: { name: "Shameek Yogi" },
+      })
+    }
+
     return NextResponse.json(profile)
   } catch (error) {
     return safeErrorResponse(error, "Failed to load profile")

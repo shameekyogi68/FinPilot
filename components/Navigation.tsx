@@ -40,7 +40,7 @@ type RunwaySnapshot = { runwayMonths: number | null; safetyBufferTargetMonths: n
 export function Navigation() {
   const pathname = usePathname()
   const router = useRouter()
-  const [profileName, setProfileName] = useState("You")
+  const [profileName, setProfileName] = useState("Shameek Yogi")
   const [runway, setRunway] = useState<RunwaySnapshot | null>(null)
 
   useEffect(() => {
@@ -49,7 +49,11 @@ export function Navigation() {
     fetch("/api/settings/profile")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (data?.name) setProfileName(data.name)
+        if (data?.name && data.name !== "Yogeesh" && data.name !== "You") {
+          setProfileName(data.name)
+        } else {
+          setProfileName("Shameek Yogi")
+        }
       })
       .catch(() => {})
 
