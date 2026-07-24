@@ -112,14 +112,14 @@ export default function ExportData() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="flex items-center justify-center gap-2 h-10 px-5 rounded-[12px] border border-[rgba(0,0,0,0.08)] bg-white/70 hover:bg-white text-[13px] font-bold text-[#4B4963] hover:text-[#0F0E17] transition-all hover:-translate-y-0.5 active:scale-95 shadow-sm">
+        <button className="flex items-center justify-center gap-2 h-10 px-5 rounded-[12px] border border-white/10 bg-white/5 hover:bg-white/10 text-[13px] font-bold text-slate-300 hover:text-white transition-all hover:-translate-y-0.5 active:scale-95 shadow-sm">
           <Download className="h-4 w-4" /> Filtered Export
         </button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="bg-[#12151E] border border-white/10 text-white sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Export Your Data</DialogTitle>
-          <DialogDescription>Choose format and date range for your export.</DialogDescription>
+          <DialogTitle className="text-white">Export Your Data</DialogTitle>
+          <DialogDescription className="text-slate-400">Choose format and date range for your export.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">

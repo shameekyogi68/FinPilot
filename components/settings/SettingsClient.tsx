@@ -185,14 +185,14 @@ export function SettingsClient({ initialProfile }: { initialProfile: Profile }) 
         className="flex items-center justify-between"
       >
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#A48FF6] to-[#6D55E3] flex items-center justify-center text-white text-[16px] font-semibold shadow-md">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-black text-[18px] font-extrabold shadow-lg shadow-emerald-500/20">
             {initials || "?"}
           </div>
           <div>
-            <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#14131F] leading-[1.1]">
+            <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-white leading-[1.1]">
               <span className="font-display italic text-gradient">Settings</span>
             </h1>
-            <p className="text-[13.5px] text-[#565469] mt-1">Tune Runway to match how you work.</p>
+            <p className="text-[13.5px] text-slate-300 mt-1">Tune Yogi&apos;s Wealth AI to match how you work.</p>
           </div>
         </div>
         <button type="submit" disabled={saving} className="btn-primary">
@@ -216,7 +216,7 @@ export function SettingsClient({ initialProfile }: { initialProfile: Profile }) 
       </motion.div>
 
       {/* Profile */}
-      <Section icon={<User size={15} strokeWidth={1.75} />} title="Profile" subtitle="How you appear in Runway">
+      <Section icon={<User size={15} strokeWidth={1.75} />} title="Profile" subtitle="How you appear in Yogi's Wealth AI">
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Display name">
             <input
@@ -244,16 +244,16 @@ export function SettingsClient({ initialProfile }: { initialProfile: Profile }) 
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value as Currency)}
-              className="field appearance-none bg-no-repeat pr-9"
+              className="field appearance-none bg-no-repeat pr-9 text-white bg-[#12151E]"
               style={{
                 backgroundImage:
-                  "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238C8AA0' stroke-width='2'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3e%3c/svg%3e\")",
+                  "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8' stroke-width='2'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3e%3c/svg%3e\")",
                 backgroundSize: "16px",
                 backgroundPosition: "right 14px center",
               }}
             >
               {CURRENCIES.map((c) => (
-                <option key={c.value} value={c.value}>
+                <option key={c.value} value={c.value} className="bg-[#12151E] text-white">
                   {c.flag} {c.label}
                 </option>
               ))}
@@ -280,9 +280,9 @@ export function SettingsClient({ initialProfile }: { initialProfile: Profile }) 
         </div>
 
         {parseFloat(monthlyIncome) > 0 && (
-          <div className="mt-4 flex items-center gap-3 p-4 rounded-2xl bg-[#F4F1FB] border border-[rgba(109,85,227,0.14)]">
-            <IndianRupee size={16} strokeWidth={1.75} className="text-[#6D55E3] flex-shrink-0" />
-            <p className="text-[12.5px] text-[#4A30A8] flex-1">
+          <div className="mt-4 flex items-center gap-3 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30">
+            <IndianRupee size={16} strokeWidth={1.75} className="text-emerald-400 flex-shrink-0" />
+            <p className="text-[12.5px] text-emerald-300 flex-1">
               Saving <span className="font-semibold">{inr(parseFloat(savingsTarget) || 0)}</span> from a baseline of{" "}
               <span className="font-semibold">{inr(parseFloat(monthlyIncome) || 0)}</span> — that&apos;s{" "}
               <span className="font-semibold">{savingsRate.toFixed(0)}%</span>. Since your income floats, the dashboard's
@@ -296,23 +296,23 @@ export function SettingsClient({ initialProfile }: { initialProfile: Profile }) 
       <Section
         icon={<Compass size={15} strokeWidth={1.75} />}
         title="Floating income"
-        subtitle="How Runway calculates your buffer and burn rate"
+        subtitle="How Yogi's Wealth AI calculates your buffer and burn rate"
       >
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Average income over">
             <select
               value={averagingMonths}
               onChange={(e) => setAveragingMonths(Number(e.target.value))}
-              className="field appearance-none bg-no-repeat pr-9"
+              className="field appearance-none bg-no-repeat pr-9 text-white bg-[#12151E]"
               style={{
                 backgroundImage:
-                  "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238C8AA0' stroke-width='2'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3e%3c/svg%3e\")",
+                  "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8' stroke-width='2'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3e%3c/svg%3e\")",
                 backgroundSize: "16px",
                 backgroundPosition: "right 14px center",
               }}
             >
               {[1, 2, 3, 6, 12].map((m) => (
-                <option key={m} value={m}>Trailing {m} {m === 1 ? "month" : "months"}</option>
+                <option key={m} value={m} className="bg-[#12151E] text-white">Trailing {m} {m === 1 ? "month" : "months"}</option>
               ))}
             </select>
           </Field>
@@ -320,22 +320,22 @@ export function SettingsClient({ initialProfile }: { initialProfile: Profile }) 
             <select
               value={bufferMonths}
               onChange={(e) => setBufferMonths(Number(e.target.value))}
-              className="field appearance-none bg-no-repeat pr-9"
+              className="field appearance-none bg-no-repeat pr-9 text-white bg-[#12151E]"
               style={{
                 backgroundImage:
-                  "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238C8AA0' stroke-width='2'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3e%3c/svg%3e\")",
+                  "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8' stroke-width='2'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3e%3c/svg%3e\")",
                 backgroundSize: "16px",
                 backgroundPosition: "right 14px center",
               }}
             >
               {[1, 2, 3, 6, 12].map((m) => (
-                <option key={m} value={m}>{m} {m === 1 ? "month" : "months"} of expenses</option>
+                <option key={m} value={m} className="bg-[#12151E] text-white">{m} {m === 1 ? "month" : "months"} of expenses</option>
               ))}
             </select>
           </Field>
         </div>
-        <p className="text-[12px] text-[#8C8AA0] mt-3">
-          Runway averages your income and expenses over the window above (skipping the current, still-incomplete month)
+        <p className="text-[12px] text-slate-400 mt-3">
+          Yogi&apos;s Wealth AI averages your income and expenses over the window above (skipping the current, still-incomplete month)
           to smooth out irregular pay cycles, and flags whether your balance covers your safety buffer target.
         </p>
       </Section>
@@ -356,22 +356,22 @@ export function SettingsClient({ initialProfile }: { initialProfile: Profile }) 
                 type="button"
                 onClick={() => applyPreset(key)}
                 className={`text-left p-4 rounded-2xl border transition-all ${
-                  active ? "border-[#14131F] bg-[#F4F1FB]" : "border-[rgba(20,19,31,0.08)] hover:border-[#4A30A8]"
+                  active ? "border-emerald-500/50 bg-emerald-500/10 text-white shadow-lg shadow-emerald-500/10" : "border-white/10 bg-white/5 hover:border-emerald-500/40 text-slate-300"
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <Icon size={15} strokeWidth={1.75} className={active ? "text-[#4A30A8]" : "text-[#8C8AA0]"} />
-                  <span className="text-[13.5px] font-semibold text-[#14131F]">{preset.label}</span>
+                  <Icon size={15} strokeWidth={1.75} className={active ? "text-emerald-400" : "text-slate-400"} />
+                  <span className="text-[13.5px] font-bold text-white">{preset.label}</span>
                 </div>
-                <p className="text-[11.5px] text-[#8C8AA0] leading-snug mb-2">{preset.blurb}</p>
-                <p className="text-[11px] text-[#565469] tabular-nums">
+                <p className="text-[11.5px] text-slate-400 leading-snug mb-2">{preset.blurb}</p>
+                <p className="text-[11px] text-slate-300 tabular-nums">
                   {preset.equity}% equity · {preset.debt}% debt · {preset.gold}% gold
                 </p>
               </button>
             )
           })}
         </div>
-        <p className="text-[12px] text-[#8C8AA0] mt-4">
+        <p className="text-[12px] text-slate-400 mt-4">
           This only fills in the numbers below and the rebalance threshold — it's a label for your own reference, not
           something the AI uses to decide anything on its own. No target changes anything automatically.
         </p>
@@ -405,8 +405,8 @@ export function SettingsClient({ initialProfile }: { initialProfile: Profile }) 
             className="field tabular-nums max-w-[160px]"
           />
         </Field>
-        <p className="text-[12px] text-[#8C8AA0] mt-3">
-          These are your own targets, not a recommendation from Runway — a common approach is splitting equity/debt based on
+        <p className="text-[12px] text-slate-400 mt-3">
+          These are your own targets, not a recommendation from Yogi&apos;s Wealth AI — a common approach is splitting equity/debt based on
           your age and risk comfort. Leave at 0 to skip target tracking. The threshold controls how far a category has to
           drift before Investments flags it as "over/under target."
         </p>
@@ -414,14 +414,14 @@ export function SettingsClient({ initialProfile }: { initialProfile: Profile }) 
 
       {/* Preferences */}
       <Section icon={<SlidersHorizontal size={15} strokeWidth={1.75} />} title="Preferences" subtitle="AI insights and defaults">
-        <div className="flex items-center justify-between p-4 rounded-2xl border border-[rgba(20,19,31,0.06)]">
+        <div className="flex items-center justify-between p-4 rounded-2xl border border-white/10 bg-white/5">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#F4F1FB] flex items-center justify-center">
-              <BrainCircuit size={15} strokeWidth={1.75} className="text-[#6D55E3]" />
+            <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+              <BrainCircuit size={15} strokeWidth={1.75} className="text-emerald-400" />
             </div>
             <div>
-              <p className="text-[13.5px] font-medium text-[#14131F]">AI advisor insights</p>
-              <p className="text-[12px] text-[#8C8AA0]">Personalized signals on the dashboard</p>
+              <p className="text-[13.5px] font-bold text-white">AI advisor insights</p>
+              <p className="text-[12px] text-slate-400">Personalized signals on the dashboard</p>
             </div>
           </div>
           <button
@@ -432,24 +432,24 @@ export function SettingsClient({ initialProfile }: { initialProfile: Profile }) 
           />
         </div>
 
-        <div className="flex items-center justify-between p-4 rounded-2xl border border-[rgba(20,19,31,0.06)]">
+        <div className="flex items-center justify-between p-4 rounded-2xl border border-white/10 bg-white/5 mt-3">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#F4F1FB] flex items-center justify-center">
-              <SlidersHorizontal size={15} strokeWidth={1.75} className="text-[#6D55E3]" />
+            <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+              <SlidersHorizontal size={15} strokeWidth={1.75} className="text-emerald-400" />
             </div>
             <div>
-              <p className="text-[13.5px] font-medium text-[#14131F]">Default month</p>
-              <p className="text-[12px] text-[#8C8AA0]">Which month loads first</p>
+              <p className="text-[13.5px] font-bold text-white">Default month</p>
+              <p className="text-[12px] text-slate-400">Which month loads first</p>
             </div>
           </div>
-          <div className="flex items-center gap-1 p-1 bg-[#F2F1F6] rounded-xl">
+          <div className="flex items-center gap-1 p-1 bg-white/5 rounded-xl border border-white/10">
             {(["current", "last"] as const).map((m) => (
               <button
                 key={m}
                 type="button"
                 onClick={() => setMonthView(m)}
-                className={`h-7 px-3 text-[12px] font-medium rounded-lg transition-all ${
-                  monthView === m ? "bg-white text-[#14131F] shadow-sm" : "text-[#565469]"
+                className={`h-7 px-3 text-[12px] font-semibold rounded-lg transition-all ${
+                  monthView === m ? "bg-emerald-500 text-black shadow-md" : "text-slate-400 hover:text-white"
                 }`}
               >
                 {m === "current" ? "This month" : "Last month"}
@@ -461,7 +461,7 @@ export function SettingsClient({ initialProfile }: { initialProfile: Profile }) 
 
       {/* Danger zone */}
       <Section
-        icon={<AlertOctagon size={15} strokeWidth={1.75} className="text-[#A02727]" />}
+        icon={<AlertOctagon size={15} strokeWidth={1.75} className="text-rose-400" />}
         title="Data"
         subtitle="Export, backup, or reset"
         tone="danger"
@@ -498,15 +498,15 @@ function Section({
     >
       <div className="flex items-center gap-3 mb-5">
         <div
-          className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-            tone === "danger" ? "bg-[#FCEEEC]" : "bg-[#F4F1FB]"
+          className={`w-9 h-9 rounded-xl flex items-center justify-center border ${
+            tone === "danger" ? "bg-rose-500/10 border-rose-500/30 text-rose-400" : "bg-white/5 border-white/10 text-emerald-400"
           }`}
         >
           {icon}
         </div>
         <div>
-          <h2 className="text-[15px] font-semibold text-[#14131F]">{title}</h2>
-          {subtitle && <p className="text-[12px] text-[#8C8AA0] mt-0.5">{subtitle}</p>}
+          <h2 className="text-[15.5px] font-bold text-white">{title}</h2>
+          {subtitle && <p className="text-[12px] text-slate-400 mt-0.5">{subtitle}</p>}
         </div>
       </div>
       {children}
@@ -517,7 +517,7 @@ function Section({
 function Field({ label, children, full = false }: { label: string; children: React.ReactNode; full?: boolean }) {
   return (
     <div className={full ? "sm:col-span-2" : ""}>
-      <label className="section-title block mb-2">{label}</label>
+      <label className="section-title block mb-2 text-slate-400 font-semibold">{label}</label>
       {children}
     </div>
   )
