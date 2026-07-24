@@ -86,13 +86,13 @@ export function AdvisorClient({
       {/* Chat panel */}
       <div className="surface-card flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-5 border-b border-[rgba(20,19,31,0.06)] flex items-center gap-3 flex-shrink-0">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A48FF6] to-[#6D55E3] flex items-center justify-center">
-            <Sparkles size={18} strokeWidth={2} className="text-white" />
+        <div className="px-6 py-5 border-b border-white/10 flex items-center gap-3 flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md shadow-emerald-500/20">
+            <Sparkles size={18} strokeWidth={2} className="text-black" />
           </div>
           <div className="flex-1">
-            <p className="text-[14px] font-bold text-white">Yogi's Wealth AI Advisor</p>
-            <p className="text-[11.5px] text-slate-400 mt-0.5">Grounded in your real transactions, budgets, and goals</p>
+            <p className="text-[14.5px] font-extrabold text-white">Yogi&apos;s Wealth AI Advisor</p>
+            <p className="text-[11.5px] text-slate-400 mt-0.5">Shameek Yogi&apos;s Autonomous Private Wealth Intelligence Engine</p>
           </div>
         </div>
 
@@ -107,8 +107,8 @@ export function AdvisorClient({
               className={`flex gap-3 ${m.role === "user" ? "justify-end" : "justify-start"}`}
             >
               {m.role === "assistant" && (
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#A48FF6] to-[#6D55E3] flex items-center justify-center flex-shrink-0">
-                  <Bot size={14} strokeWidth={2} className="text-white" />
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center flex-shrink-0 shadow-md">
+                  <Bot size={14} strokeWidth={2} className="text-black font-bold" />
                 </div>
               )}
               <div className={`${m.role === "user" ? "chat-user" : "chat-ai"}`}>
@@ -119,8 +119,8 @@ export function AdvisorClient({
                 )}
               </div>
               {m.role === "user" && (
-                <div className="w-8 h-8 rounded-lg bg-[#14131F] flex items-center justify-center flex-shrink-0">
-                  <UserIcon size={14} strokeWidth={2} className="text-white" />
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+                  <UserIcon size={14} strokeWidth={2} className="text-emerald-400" />
                 </div>
               )}
             </motion.div>
@@ -128,13 +128,13 @@ export function AdvisorClient({
 
           {sending && (
             <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#A48FF6] to-[#6D55E3] flex items-center justify-center flex-shrink-0">
-                <Bot size={14} strokeWidth={2} className="text-white" />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center flex-shrink-0 shadow-md">
+                <Bot size={14} strokeWidth={2} className="text-black font-bold" />
               </div>
               <div className="chat-ai flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#6D55E3] animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#6D55E3] animate-bounce" style={{ animationDelay: "150ms" }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#6D55E3] animate-bounce" style={{ animationDelay: "300ms" }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "0ms" }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "150ms" }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "300ms" }} />
               </div>
             </div>
           )}
