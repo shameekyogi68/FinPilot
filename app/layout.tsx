@@ -22,22 +22,22 @@ const instrumentSerif = Instrument_Serif({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000"),
   title: {
-    default: "Runway — Your Personal Wealth Manager",
-    template: "%s · Runway",
+    default: "Yogi's Wealth AI — Shameek Yogi's Autonomous Wealth Manager",
+    template: "%s · Yogi's Wealth AI",
   },
   description:
-    "A personal wealth manager built for floating income. Track cash flow, know your runway, and budget around what actually comes in — not a fixed monthly number.",
-  keywords: ["personal finance", "wealth", "budgeting", "irregular income", "freelance finance", "dashboard"],
-  authors: [{ name: "Runway" }],
+    "Shameek Yogi's Autonomous Personal AI Wealth Manager. Real-time Indian Mutual Funds NAV intelligence, daily spending velocity control, multi-model AI consensus, and 4-step monthly wealth wizard.",
+  keywords: ["Yogi's Wealth AI", "Shameek Yogi", "wealth manager", "AI advisor", "mutual funds", "SIP tracker"],
+  authors: [{ name: "Shameek Yogi" }],
   openGraph: {
-    title: "Runway — Your Personal Wealth Manager",
-    description: "A personal wealth manager built for floating income.",
+    title: "Yogi's Wealth AI — Shameek Yogi's Autonomous Wealth Manager",
+    description: "Autonomous Personal AI Wealth Manager & Private Wealth Intelligence Platform.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Runway",
-    description: "A personal wealth manager built for floating income.",
+    title: "Yogi's Wealth AI",
+    description: "Autonomous Personal AI Wealth Manager & Private Wealth Intelligence Platform.",
   },
 };
 
