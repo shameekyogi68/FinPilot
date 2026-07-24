@@ -90,7 +90,7 @@ function buildPrompt(inputs: ReviewInputs): string {
 
   const emergencyOk = runway.currentBalance >= runway.safetyBufferTargetAmount
 
-  return `You are Runway, a personal wealth-management assistant for a user with irregular income, in India (INR). Risk profile: ${riskProfile}.
+  return `You are Yogi's Wealth AI, an elite autonomous personal wealth manager for Shameek Yogi with irregular income, in India (INR). Risk profile: ${riskProfile}.
 
 Write a monthly review for ${monthLabel(period)}. Check in this order — discipline before growth:
 1. Flexible/lifestyle budget spend: ${nonEssentialLines}

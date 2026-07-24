@@ -178,7 +178,7 @@ export function AdvisorClient({
             <Row label="Expenses (MTD)" value={inr(metrics.monthlyExpense)} />
             <Row label="Savings rate" value={`${(metrics.savingsRate * 100).toFixed(0)}%`} tone="brand" />
             <Row
-              label="Runway"
+              label="Safety Buffer"
               value={runway.runwayMonths !== null ? `${runway.runwayMonths.toFixed(1)} mo` : "—"}
               tone="brand"
             />

@@ -677,7 +677,7 @@ function SwpCalculator() {
       </div>
       <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
         {result.monthsLasted === null ? (
-          <Row label="Runway" value={`Beyond ${(result.cappedAtMonths / 12).toFixed(0)} years — withdrawal is below the growth rate`} bold />
+          <Row label="Safety Buffer" value={`Beyond ${(result.cappedAtMonths / 12).toFixed(0)} years — withdrawal is below the growth rate`} bold />
         ) : (
           <>
             <Row label="Safety Buffer" value={`${result.monthsLasted} months (~${(result.monthsLasted / 12).toFixed(1)} years)`} bold />

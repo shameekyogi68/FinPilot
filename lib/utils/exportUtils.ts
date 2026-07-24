@@ -48,7 +48,7 @@ export function convertToJSON(transactions: Transaction[]): string {
 
 export async function generatePDF(transactions: Transaction[], options?: { startDate?: string; endDate?: string }): Promise<ArrayBuffer> {
   const doc = new jsPDF({ unit: 'pt' })
-  const title = 'Runway Export'
+  const title = "Yogi's Wealth AI Export"
   doc.setFontSize(18)
   doc.text(title, 40, 40)
 
