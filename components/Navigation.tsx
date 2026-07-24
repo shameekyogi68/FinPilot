@@ -11,9 +11,9 @@ import {
   Settings,
   BrainCircuit,
   Receipt,
-  Compass,
   TrendingUp,
   LogOut,
+  Shield,
 } from "lucide-react"
 
 const mainLinks = [
@@ -130,7 +130,7 @@ export function Navigation() {
           {intelligenceLinks.map(renderNavItem)}
         </nav>
 
-        {/* Runway widget */}
+        {/* Safety Buffer widget */}
         <div className="px-3 pb-4 pt-3 border-t border-white/10">
           <Link
             href="/"
@@ -138,8 +138,8 @@ export function Navigation() {
           >
             <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-emerald-500/10 blur-2xl" />
             <p className="text-[11px] uppercase tracking-[0.1em] text-emerald-400 font-bold mb-1.5 relative flex items-center gap-1.5">
-              <Compass size={11} strokeWidth={2} />
-              Runway Buffer
+              <Shield size={11} strokeWidth={2} />
+              Safety Buffer
             </p>
             <p className="text-[20px] font-semibold text-white leading-tight relative">
               {runway?.runwayMonths !== null && runway?.runwayMonths !== undefined

@@ -8,8 +8,8 @@ import {
   Plus,
   Sparkles,
   Calendar,
-  Compass,
   CalendarClock,
+  Shield,
 } from "lucide-react"
 import {
   Area,
@@ -169,10 +169,10 @@ export function OverviewClient({
             {inr(metrics.currentBalance)}
           </h2>
           <p className="text-white/55 text-[13px] mt-2 flex items-center gap-1.5">
-            <Compass size={13} strokeWidth={1.75} />
+            <Shield size={13} strokeWidth={1.75} />
             {runway.runwayMonths !== null
-              ? `${runway.runwayMonths.toFixed(1)} months of runway at your current burn rate`
-              : "Runway will show once you log expenses"}
+              ? `${runway.runwayMonths.toFixed(1)} months of safety buffer at your current burn rate`
+              : "Safety buffer will show once you log expenses"}
           </p>
 
           {/* Weekly cash flow chart */}
@@ -262,7 +262,7 @@ export function OverviewClient({
           <p className="mt-2 text-[11.5px] font-medium text-[#8C8AA0]">of budgeted limits spent</p>
         </div>
         <div className="stat-tile col-span-2 lg:col-span-1">
-          <p className="section-title mb-2">Runway</p>
+          <p className="section-title mb-2">Safety Buffer</p>
           <p className="text-[20px] sm:text-[22px] font-semibold text-[#14131F] tracking-tight tabular-nums leading-tight">
             {runway.runwayMonths !== null ? `${runway.runwayMonths.toFixed(1)} mo` : "—"}
           </p>
