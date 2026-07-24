@@ -125,8 +125,8 @@ export async function getDailyWealthPulse(): Promise<DailyWealthPulse> {
       type: "warning",
       category: "buffer",
       amount: gap,
-      actionLabel: "View Runway",
-      actionUrl: "/",
+      actionLabel: "Analyze Safety Buffer",
+      actionUrl: "/buffer-analysis",
     })
   }
 
