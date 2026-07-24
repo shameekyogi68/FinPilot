@@ -23,19 +23,21 @@ export function MonthlyWealthWizard({
   onClose: () => void
 }) {
   const [step, setStep] = useState(1)
-  const [incomeInput, setIncomeInput] = useState("100000")
+  const [incomeInput, setIncomeInput] = useState("")
   const [plan, setPlan] = useState<MonthlyPlanWizardData | null>(null)
   const [loading, setLoading] = useState(false)
 
   if (!isOpen) return null
 
   const handleGeneratePlan = async () => {
+    const parsedIncome = parseFloat(incomeInput)
+    if (!parsedIncome || parsedIncome <= 0) return
     setLoading(true)
     try {
       const res = await fetch("/api/wealth-manager/monthly-wizard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ income: parseFloat(incomeInput) || 100000 }),
+        body: JSON.stringify({ income: parsedIncome }),
       })
 
       if (res.ok) {
@@ -91,7 +93,7 @@ export function MonthlyWealthWizard({
                   type="number"
                   value={incomeInput}
                   onChange={(e) => setIncomeInput(e.target.value)}
-                  placeholder="100000"
+                  placeholder="Enter monthly inflow (e.g. ₹1,50,000)…"
                   className="w-full pl-9 pr-4 py-3 bg-black/50 border border-emerald-500/40 rounded-xl text-[20px] font-bold text-white focus:outline-none focus:border-emerald-400"
                 />
               </div>

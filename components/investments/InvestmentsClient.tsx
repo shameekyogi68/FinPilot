@@ -589,11 +589,11 @@ function DrawdownCalculator({ summary }: { summary: PortfolioSummary }) {
 }
 
 function SipCalculator() {
-  const [monthly, setMonthly] = useState("10000")
+  const [monthly, setMonthly] = useState("")
   const [rate, setRate] = useState("12")
   const [years, setYears] = useState("10")
   const [mode, setMode] = useState<"forward" | "reverse">("forward")
-  const [targetCorpus, setTargetCorpus] = useState("5000000")
+  const [targetCorpus, setTargetCorpus] = useState("")
 
   const m = parseFloat(monthly) || 0
   const r = parseFloat(rate) || 0
@@ -655,8 +655,8 @@ function SipCalculator() {
 }
 
 function SwpCalculator() {
-  const [corpus, setCorpus] = useState("2000000")
-  const [withdrawal, setWithdrawal] = useState("15000")
+  const [corpus, setCorpus] = useState("")
+  const [withdrawal, setWithdrawal] = useState("")
   const [rate, setRate] = useState("8")
 
   const c = parseFloat(corpus) || 0

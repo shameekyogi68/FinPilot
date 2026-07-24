@@ -254,25 +254,25 @@ export function DailyWealthPulseBanner() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
                     <span className="text-[11px] uppercase tracking-wider text-slate-400 block font-semibold">
-                      Current Buffer
+                      Current Liquid Reserve
                     </span>
                     <span className="text-[22px] font-bold text-emerald-400 tabular-nums">
-                      ₹{formatCurrency(pulse.netWorth > 0 ? 4987 : 0)}
+                      ₹{formatCurrency(pulse.netWorth)}
                     </span>
                     <span className="text-[11px] text-slate-400 block mt-1">
-                      {pulse.runwayMonths !== null ? `${pulse.runwayMonths.toFixed(1)} Months covered` : "0.5 Months"}
+                      {pulse.runwayMonths !== null ? `${pulse.runwayMonths.toFixed(1)} Months covered` : "0.0 Months covered"}
                     </span>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
                     <span className="text-[11px] uppercase tracking-wider text-slate-400 block font-semibold">
-                      Buffer Target
+                      Buffer Target Goal
                     </span>
                     <span className="text-[22px] font-bold text-amber-400 tabular-nums">
-                      ₹33,000
+                      {pulse.safeDailySpend > 0 ? `₹${formatCurrency(pulse.safeDailySpend * 90)}` : "₹0"}
                     </span>
                     <span className="text-[11px] text-slate-400 block mt-1">
-                      3.0 Months goal
+                      3.0 Months safety goal
                     </span>
                   </div>
                 </div>
@@ -280,20 +280,28 @@ export function DailyWealthPulseBanner() {
                 <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2">
                   <div className="flex items-center gap-2 text-amber-300 font-bold text-[14px]">
                     <Flame className="w-4.5 h-4.5 text-amber-400" />
-                    <span>Buffer Gap & Execution Steps</span>
+                    <span>Buffer Intelligence & Execution</span>
                   </div>
                   <ul className="space-y-2 text-[12.5px] text-amber-100/90">
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                      <span>Current liquid reserve is ₹28,013 short of full 3-month safety buffer.</span>
+                      <span>
+                        {pulse.netWorth > 0 
+                          ? `Liquid reserve is currently ₹${formatCurrency(pulse.netWorth)}.`
+                          : "Ledger is on a clean slate. No liquid cash recorded yet for August 1."}
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                      <span>Maintain safe daily spend cap at ₹{formatCurrency(pulse.safeDailySpend)}/day.</span>
+                      <span>
+                        {pulse.safeDailySpend > 0 
+                          ? `Daily safe spending cap is locked at ₹${formatCurrency(pulse.safeDailySpend)}/day.`
+                          : "Set your baseline monthly income in Settings to enable daily spending limits."}
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                      <span>Direct 20% of monthly surplus into liquid mutual funds on monthly wizard execution.</span>
+                      <span>Surplus cash flow will be routed to liquid mutual fund reserves during monthly wizard execution.</span>
                     </li>
                   </ul>
                 </div>
