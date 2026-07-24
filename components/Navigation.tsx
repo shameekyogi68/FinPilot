@@ -98,16 +98,16 @@ export function Navigation() {
       >
         {/* Logo */}
         <div className="h-16 flex items-center px-5 flex-shrink-0">
-          <Link href="/" className="flex items-center gap-2.5 group" aria-label="FinPilot home">
-            <span className="w-8 h-8 rounded-[10px] bg-[#090A0F] border border-emerald-500/30 flex items-center justify-center shadow-[0_2px_8px_rgba(16,185,129,0.2)] group-hover:scale-105 transition-transform text-emerald-400 font-extrabold text-sm">
-              FP
+          <Link href="/" className="flex items-center gap-2.5 group" aria-label="Yogi Private Wealth home">
+            <span className="w-8 h-8 rounded-[10px] bg-[#090A0F] border border-emerald-500/40 flex items-center justify-center shadow-[0_2px_10px_rgba(16,185,129,0.3)] group-hover:scale-105 transition-transform text-emerald-400 font-extrabold text-xs">
+              SY
             </span>
             <div>
-              <span className="text-[17px] font-bold tracking-tight text-[#14131F] block leading-tight">
-                FinPilot
+              <span className="text-[16px] font-bold tracking-tight text-[#14131F] block leading-tight">
+                Yogi Private Wealth
               </span>
-              <span className="text-[9.5px] uppercase font-semibold text-emerald-600 tracking-wider block">
-                AI Wealth Manager
+              <span className="text-[9px] uppercase font-bold text-emerald-600 tracking-wider block">
+                Shameek Yogi's AI Manager
               </span>
             </div>
           </Link>
