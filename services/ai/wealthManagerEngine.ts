@@ -75,15 +75,33 @@ export async function getDailyWealthPulse(): Promise<DailyWealthPulse> {
   const currentDay = now.getDate()
   const remainingDays = Math.max(1, daysInMonth - currentDay + 1)
 
-  const defaultMonthlyIncome = profile?.monthly_income || Math.max(monthIncomeSoFar, 50000)
-  const estimatedRemainingBudget = Math.max(0, (totalMonthlyBudget > 0 ? totalMonthlyBudget : defaultMonthlyIncome * 0.5) - monthSpentSoFar)
-  const safeDailySpend = Math.round(estimatedRemainingBudget / remainingDays)
+  const configuredIncome = profile?.monthly_income || 0
+  const effectiveMonthlyIncome = configuredIncome > 0 ? configuredIncome : monthIncomeSoFar
+
+  const estimatedRemainingBudget = totalMonthlyBudget > 0 
+    ? Math.max(0, totalMonthlyBudget - monthSpentSoFar)
+    : effectiveMonthlyIncome > 0
+    ? Math.max(0, (effectiveMonthlyIncome * 0.5) - monthSpentSoFar)
+    : 0
+
+  const safeDailySpend = estimatedRemainingBudget > 0 ? Math.round(estimatedRemainingBudget / remainingDays) : 0
 
   // Directives generator
   const directives: DailyDirective[] = []
 
   // 1. Spend Directive
-  if (totalMonthlyBudget > 0 && monthSpentSoFar > totalMonthlyBudget * 0.8) {
+  if (effectiveMonthlyIncome === 0 && totalMonthlyBudget === 0) {
+    directives.push({
+      id: "spend-setup",
+      title: "Clean Slate: Ready for August 1 Baseline",
+      description: "Your ledger is completely clean. Configure your baseline monthly income in Settings or log your first August income transaction to compute your daily safe spend cap.",
+      type: "action",
+      category: "spend",
+      amount: 0,
+      actionLabel: "Configure Income in Settings",
+      actionUrl: "/settings",
+    })
+  } else if (totalMonthlyBudget > 0 && monthSpentSoFar > totalMonthlyBudget * 0.8) {
     directives.push({
       id: "spend-warn",
       title: "Pacing Warning: Monthly Spending Near Limit",
@@ -116,7 +134,7 @@ export async function getDailyWealthPulse(): Promise<DailyWealthPulse> {
       : "critical"
     : "building"
 
-  if (bufferStatus !== "healthy" && runway) {
+  if (bufferStatus !== "healthy" && runway && runway.safetyBufferTargetAmount > 0) {
     const gap = runway.safetyBufferTargetAmount - runway.currentBalance
     directives.push({
       id: "buffer-topup",
@@ -142,6 +160,16 @@ export async function getDailyWealthPulse(): Promise<DailyWealthPulse> {
       actionLabel: "Rebalance Portfolio",
       actionUrl: "/investments",
     })
+  } else if (!portfolio || portfolio.holdings.length === 0) {
+    directives.push({
+      id: "invest-setup",
+      title: "Clean Portfolio Slate: Add First Holding",
+      description: "No investment holdings recorded yet. Add your mutual funds, stocks, FDs, or gold on the Investments page when ready.",
+      type: "action",
+      category: "invest",
+      actionLabel: "Add Holding",
+      actionUrl: "/investments",
+    })
   } else {
     directives.push({
       id: "invest-sip",
@@ -158,8 +186,12 @@ export async function getDailyWealthPulse(): Promise<DailyWealthPulse> {
   let aiOfficerSummary = ""
   let modelUsed = ""
 
-  try {
-    const prompt = `You are Yogi's Wealth AI, an expert autonomous Personal AI Wealth Manager operating for Shameek Yogi in India (INR ₹). 
+  if (effectiveMonthlyIncome === 0 && monthSpentSoFar === 0 && (!portfolio || portfolio.holdings.length === 0)) {
+    aiOfficerSummary = "Welcome Shameek Yogi. Your ledger is on a clean slate ready for August 1. Set your baseline income in Settings or log your first transaction to initiate real-time AI wealth tracking."
+    modelUsed = "Slate Ready Engine"
+  } else {
+    try {
+      const prompt = `You are Yogi's Wealth AI, an expert autonomous Personal AI Wealth Manager operating for Shameek Yogi in India (INR ₹). 
 Give a concise, punchy 3-sentence daily wealth briefing for Shameek Yogi:
 - Net worth: ₹${formatCurrency(portfolio?.netWorth || 0)}
 - Spend this month: ₹${formatCurrency(monthSpentSoFar)} vs Income ₹${formatCurrency(monthIncomeSoFar)}
@@ -169,15 +201,18 @@ Give a concise, punchy 3-sentence daily wealth briefing for Shameek Yogi:
 
 Instructions: Direct Shameek Yogi clearly on what action to take today for spending and investments. Be authoritative, motivating, and luxury wealth-manager focused. Do not use generic filler.`
 
-    const aiRes = await callMultiModelAI([
-      { role: "system", content: "You are Yogi's Wealth AI, an elite autonomous wealth manager for Shameek Yogi." },
-      { role: "user", content: prompt },
-    ], 0.3, 200)
+      const aiRes = await callMultiModelAI([
+        { role: "system", content: "You are Yogi's Wealth AI, an elite autonomous wealth manager for Shameek Yogi." },
+        { role: "user", content: prompt },
+      ], 0.3, 200)
 
-    aiOfficerSummary = aiRes.text
-    modelUsed = aiRes.modelUsed
-  } catch {
-    aiOfficerSummary = `Your daily safe spending allowance is capped at ₹${formatCurrency(safeDailySpend)}. Maintain your emergency buffer of ${runway?.safetyBufferTargetMonths || 3} months while routing surplus cashflow into mutual fund SIPs to accelerate your net worth.`
+      aiOfficerSummary = aiRes.text
+      modelUsed = aiRes.modelUsed
+    } catch {
+      aiOfficerSummary = safeDailySpend > 0 
+        ? `Your daily safe spending allowance is capped at ₹${formatCurrency(safeDailySpend)}. Maintain your emergency buffer while routing surplus cashflow into mutual fund SIPs.`
+        : "Your ledger is ready. Set your baseline monthly income in Settings to enable daily spending limits."
+    }
   }
 
   return {
