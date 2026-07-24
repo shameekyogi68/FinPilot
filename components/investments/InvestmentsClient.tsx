@@ -436,11 +436,11 @@ function FundPerformanceLookup() {
 
   return (
     <div className="surface-card p-6 lg:col-span-2">
-      <h3 className="text-[15px] font-semibold text-[#14131F] mb-1">Fund performance lookup</h3>
-      <p className="text-[12.5px] text-[#8C8AA0] mb-5">
+      <h3 className="text-[15px] font-bold text-white mb-1">Fund performance lookup</h3>
+      <p className="text-[12.5px] text-slate-400 mb-5">
         Real historical returns for any Indian mutual fund, computed from actual NAV history via mfapi.in — not a
         recommendation, just the numbers. Find a scheme code at{" "}
-        <span className="font-medium text-[#14131F]">mfapi.in</span> or AMFI.
+        <span className="font-medium text-white">mfapi.in</span> or AMFI.
       </p>
       <form onSubmit={lookup} className="flex items-center gap-2 mb-5">
         <input
@@ -455,9 +455,9 @@ function FundPerformanceLookup() {
       </form>
 
       {result && (
-        <div className="p-4 rounded-2xl bg-[#F4F1FB] border border-[rgba(109,85,227,0.14)]">
-          <p className="text-[13.5px] font-semibold text-[#14131F]">{result.schemeName}</p>
-          <p className="text-[11.5px] text-[#8C8AA0] mt-0.5">
+        <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+          <p className="text-[13.5px] font-bold text-white">{result.schemeName}</p>
+          <p className="text-[11.5px] text-slate-400 mt-0.5">
             {result.fundHouse} · {result.category} · NAV {inr(result.latestNav)} as of{" "}
             {new Date(result.asOf).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
           </p>
@@ -466,7 +466,7 @@ function FundPerformanceLookup() {
             <CagrTile label="3 years" value={result.cagr3y} />
             <CagrTile label="5 years" value={result.cagr5y} />
           </div>
-          <p className="text-[11px] text-[#8C8AA0] mt-4">
+          <p className="text-[11px] text-slate-400 mt-4">
             Past performance is historical fact, not a predictor of future returns.
           </p>
         </div>
@@ -477,12 +477,12 @@ function FundPerformanceLookup() {
 
 function CagrTile({ label, value }: { label: string; value: number | null }) {
   return (
-    <div className="p-3 rounded-xl bg-white border border-[rgba(20,19,31,0.06)] text-center">
-      <p className="text-[10.5px] uppercase tracking-wide text-[#8C8AA0] font-semibold mb-1">{label}</p>
+    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+      <p className="text-[10.5px] uppercase tracking-wide text-slate-400 font-semibold mb-1">{label}</p>
       {value === null ? (
-        <p className="text-[15px] font-semibold text-[#C4C2D4]">—</p>
+        <p className="text-[15px] font-semibold text-slate-500">—</p>
       ) : (
-        <p className={`text-[15px] font-semibold tabular-nums ${value >= 0 ? "text-[#0E8A5F]" : "text-[#A02727]"}`}>
+        <p className={`text-[15px] font-bold tabular-nums ${value >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
           {value >= 0 ? "+" : ""}
           {value.toFixed(1)}%
         </p>
@@ -497,22 +497,22 @@ function OverspendCostCard({ overspend }: { overspend: OverspendHistory }) {
   const projected = sipFutureValue(overspend.avgMonthlyOverspend, rate, years)
 
   return (
-    <div className="surface-card p-6 lg:col-span-2 border-l-4 border-l-[#E89B3C]">
-      <h3 className="text-[15px] font-semibold text-[#14131F] mb-1">Cost of overspending your flexible budgets</h3>
-      <p className="text-[12.5px] text-[#8C8AA0] mb-5">
+    <div className="surface-card p-6 lg:col-span-2 border-l-4 border-l-amber-500">
+      <h3 className="text-[15px] font-bold text-white mb-1">Cost of overspending your flexible budgets</h3>
+      <p className="text-[12.5px] text-slate-400 mb-5">
         Based on your actual trailing {overspend.monthsConsidered} month{overspend.monthsConsidered === 1 ? "" : "s"} —
         real spend against your current non-essential budget limits, applied retroactively.
       </p>
       <div className="grid sm:grid-cols-2 gap-3">
-        <div className="p-4 rounded-2xl bg-[#FCF3E1] border border-[rgba(199,122,31,0.20)]">
-          <p className="text-[11px] uppercase tracking-wide text-[#8A5612] font-semibold mb-1.5">Avg overspend / month</p>
-          <p className="text-[18px] font-semibold text-[#8A5612] tabular-nums">{inr(overspend.avgMonthlyOverspend)}</p>
+        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30">
+          <p className="text-[11px] uppercase tracking-wide text-amber-300 font-semibold mb-1.5">Avg overspend / month</p>
+          <p className="text-[18px] font-bold text-amber-400 tabular-nums">{inr(overspend.avgMonthlyOverspend)}</p>
         </div>
-        <div className="p-4 rounded-2xl bg-[#F4F1FB] border border-[rgba(109,85,227,0.14)]">
-          <p className="text-[11px] uppercase tracking-wide text-[#4A30A8] font-semibold mb-1.5">
+        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30">
+          <p className="text-[11px] uppercase tracking-wide text-emerald-300 font-semibold mb-1.5">
             If invested instead, {years}yr @ {rate}%
           </p>
-          <p className="text-[18px] font-semibold text-[#4A30A8] tabular-nums">{inr(projected)}</p>
+          <p className="text-[18px] font-bold text-emerald-400 tabular-nums">{inr(projected)}</p>
         </div>
       </div>
     </div>
@@ -534,8 +534,8 @@ function DrawdownCalculator({ summary }: { summary: PortfolioSummary }) {
 
   return (
     <div className="surface-card p-6 lg:col-span-2">
-      <h3 className="text-[15px] font-semibold text-[#14131F] mb-1">Drawdown stress test</h3>
-      <p className="text-[12.5px] text-[#8C8AA0] mb-5">
+      <h3 className="text-[15px] font-bold text-white mb-1">Drawdown stress test</h3>
+      <p className="text-[12.5px] text-slate-400 mb-5">
         What a market shock to your equity holdings would do to your real numbers today — a "what if," not a forecast.
         Debt, gold, and cash are assumed unaffected.
       </p>
@@ -545,42 +545,42 @@ function DrawdownCalculator({ summary }: { summary: PortfolioSummary }) {
           <button
             key={p}
             onClick={() => setShock(p)}
-            className={`h-8 px-3.5 text-[12.5px] font-medium rounded-lg border transition-all ${
+            className={`h-8 px-3.5 text-[12.5px] font-semibold rounded-lg border transition-all ${
               shock === p
-                ? "bg-[#A02727] text-white border-[#A02727]"
-                : "bg-white text-[#565469] border-[rgba(20,19,31,0.10)] hover:border-[#A02727] hover:text-[#A02727]"
+                ? "bg-rose-500 text-white border-rose-500 shadow-md shadow-rose-500/30"
+                : "bg-white/5 text-slate-300 border-white/10 hover:border-rose-500/50 hover:text-white"
             }`}
           >
             {p}%
           </button>
         ))}
         <div className="flex items-center gap-1.5 ml-1">
-          <span className="text-[12.5px] text-[#8C8AA0]">Custom:</span>
+          <span className="text-[12.5px] text-slate-400">Custom:</span>
           <input
             type="number"
             value={shock}
             onChange={(e) => setShock(Number(e.target.value) || 0)}
-            className="field !w-20 !h-8 tabular-nums text-center"
+            className="field !w-20 !h-8 tabular-nums text-center text-white"
           />
-          <span className="text-[12.5px] text-[#8C8AA0]">%</span>
+          <span className="text-[12.5px] text-slate-400">%</span>
         </div>
       </div>
 
       {summary.totalCurrentValue === 0 ? (
-        <p className="text-[13px] text-[#8C8AA0]">Add holdings first to see how a shock would affect your real numbers.</p>
+        <p className="text-[13px] text-slate-400">Add holdings first to see how a shock would affect your real numbers.</p>
       ) : (
         <div className="grid sm:grid-cols-3 gap-3">
-          <div className="p-4 rounded-2xl bg-[#FCEEEC] border border-[rgba(214,59,59,0.14)]">
-            <p className="text-[11px] uppercase tracking-wide text-[#A02727] font-semibold mb-1.5">Portfolio drop</p>
-            <p className="text-[18px] font-semibold text-[#A02727] tabular-nums">{inr(portfolioLoss)}</p>
+          <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30">
+            <p className="text-[11px] uppercase tracking-wide text-rose-300 font-semibold mb-1.5">Portfolio drop</p>
+            <p className="text-[18px] font-bold text-rose-400 tabular-nums">{inr(portfolioLoss)}</p>
           </div>
-          <div className="p-4 rounded-2xl bg-[#F2F1F6] border border-[rgba(20,19,31,0.06)]">
-            <p className="text-[11px] uppercase tracking-wide text-[#565469] font-semibold mb-1.5">Portfolio after shock</p>
-            <p className="text-[18px] font-semibold text-[#14131F] tabular-nums">{inr(shockedPortfolio)}</p>
+          <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+            <p className="text-[11px] uppercase tracking-wide text-slate-400 font-semibold mb-1.5">Portfolio after shock</p>
+            <p className="text-[18px] font-bold text-white tabular-nums">{inr(shockedPortfolio)}</p>
           </div>
-          <div className="p-4 rounded-2xl bg-[#F2F1F6] border border-[rgba(20,19,31,0.06)]">
-            <p className="text-[11px] uppercase tracking-wide text-[#565469] font-semibold mb-1.5">Net worth after shock</p>
-            <p className="text-[18px] font-semibold text-[#14131F] tabular-nums">{inr(shockedNetWorth)}</p>
+          <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+            <p className="text-[11px] uppercase tracking-wide text-slate-400 font-semibold mb-1.5">Net worth after shock</p>
+            <p className="text-[18px] font-bold text-white tabular-nums">{inr(shockedNetWorth)}</p>
           </div>
         </div>
       )}
@@ -608,14 +608,14 @@ function SipCalculator() {
   return (
     <div className="surface-card p-6">
       <div className="flex items-center justify-between mb-1">
-        <h3 className="text-[15px] font-semibold text-[#14131F]">SIP calculator</h3>
-        <div className="flex items-center gap-1 p-1 bg-[#F2F1F6] rounded-lg">
+        <h3 className="text-[15px] font-bold text-white">SIP calculator</h3>
+        <div className="flex items-center gap-1 p-1 bg-white/5 rounded-xl border border-white/10">
           {(["forward", "reverse"] as const).map((v) => (
             <button
               key={v}
               onClick={() => setMode(v)}
-              className={`h-7 px-2.5 text-[11.5px] font-medium rounded-md transition-all ${
-                mode === v ? "bg-white text-[#14131F] shadow-sm" : "text-[#565469]"
+              className={`h-7 px-3 text-[11.5px] font-semibold rounded-lg transition-all ${
+                mode === v ? "bg-emerald-500 text-black shadow-sm" : "text-slate-400 hover:text-white"
               }`}
             >
               {v === "forward" ? "Corpus" : "Required SIP"}
@@ -623,7 +623,7 @@ function SipCalculator() {
           ))}
         </div>
       </div>
-      <p className="text-[12.5px] text-[#8C8AA0] mb-5">
+      <p className="text-[12.5px] text-slate-400 mb-5">
         Pure compound-interest math — the return rate is an assumption you enter, not a promise.
       </p>
       <div className="grid grid-cols-3 gap-3 mb-5">
@@ -635,7 +635,7 @@ function SipCalculator() {
         <NumberField label="Expected return (% p.a.)" value={rate} onChange={setRate} />
         <NumberField label="Duration (years)" value={years} onChange={setYears} />
       </div>
-      <div className="p-4 rounded-2xl bg-[#F4F1FB] border border-[rgba(109,85,227,0.14)] space-y-2">
+      <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
         {mode === "forward" ? (
           <>
             <Row label="Total invested" value={inr(invested)} />
@@ -666,8 +666,8 @@ function SwpCalculator() {
 
   return (
     <div className="surface-card p-6">
-      <h3 className="text-[15px] font-semibold text-[#14131F] mb-1">SWP drawdown runway</h3>
-      <p className="text-[12.5px] text-[#8C8AA0] mb-5">
+      <h3 className="text-[15px] font-bold text-white mb-1">SWP drawdown runway</h3>
+      <p className="text-[12.5px] text-slate-400 mb-5">
         How long a corpus lasts at a given monthly withdrawal and assumed return.
       </p>
       <div className="grid grid-cols-3 gap-3 mb-5">
@@ -675,12 +675,12 @@ function SwpCalculator() {
         <NumberField label="Monthly withdrawal (₹)" value={withdrawal} onChange={setWithdrawal} />
         <NumberField label="Expected return (% p.a.)" value={rate} onChange={setRate} />
       </div>
-      <div className="p-4 rounded-2xl bg-[#F4F1FB] border border-[rgba(109,85,227,0.14)] space-y-2">
+      <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
         {result.monthsLasted === null ? (
           <Row label="Runway" value={`Beyond ${(result.cappedAtMonths / 12).toFixed(0)} years — withdrawal is below the growth rate`} bold />
         ) : (
           <>
-            <Row label="Runway" value={`${result.monthsLasted} months (~${(result.monthsLasted / 12).toFixed(1)} years)`} bold />
+            <Row label="Safety Buffer" value={`${result.monthsLasted} months (~${(result.monthsLasted / 12).toFixed(1)} years)`} bold />
             <Row label="Total withdrawn" value={inr(w * result.monthsLasted)} />
           </>
         )}
