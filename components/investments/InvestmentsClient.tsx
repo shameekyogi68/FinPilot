@@ -130,19 +130,19 @@ export function InvestmentsClient({
         className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
       >
         <div>
-          <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#14131F] leading-[1.1]">
+          <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-white leading-[1.1]">
             <span className="font-display italic text-gradient">Investments</span>
           </h1>
-          <p className="text-[14px] text-[#565469] mt-2">
+          <p className="text-[14px] text-slate-300 mt-2">
             Your holdings, your allocation, and the math behind SIPs and withdrawals.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 p-1 bg-white rounded-xl border border-[rgba(20,19,31,0.06)]">
+          <div className="flex items-center gap-1 p-1 bg-white/5 rounded-xl border border-white/10">
             <button
               onClick={() => setTab("portfolio")}
-              className={`h-8 px-3.5 text-[12.5px] font-medium rounded-lg transition-all inline-flex items-center gap-1.5 ${
-                tab === "portfolio" ? "bg-[#14131F] text-white" : "text-[#565469] hover:text-[#14131F]"
+              className={`h-8 px-3.5 text-[12.5px] font-semibold rounded-lg transition-all inline-flex items-center gap-1.5 ${
+                tab === "portfolio" ? "bg-emerald-500 text-black shadow-md shadow-emerald-500/30" : "text-slate-400 hover:text-white"
               }`}
             >
               <LayoutGrid size={13} strokeWidth={1.75} />
@@ -150,8 +150,8 @@ export function InvestmentsClient({
             </button>
             <button
               onClick={() => setTab("calculators")}
-              className={`h-8 px-3.5 text-[12.5px] font-medium rounded-lg transition-all inline-flex items-center gap-1.5 ${
-                tab === "calculators" ? "bg-[#14131F] text-white" : "text-[#565469] hover:text-[#14131F]"
+              className={`h-8 px-3.5 text-[12.5px] font-semibold rounded-lg transition-all inline-flex items-center gap-1.5 ${
+                tab === "calculators" ? "bg-emerald-500 text-black shadow-md shadow-emerald-500/30" : "text-slate-400 hover:text-white"
               }`}
             >
               <Calculator size={13} strokeWidth={1.75} />
@@ -706,10 +706,10 @@ function NumberField({ label, value, onChange }: { label: string; value: string;
 function Row({ label, value, bold, tone }: { label: string; value: string; bold?: boolean; tone?: "gain" }) {
   return (
     <div className="flex items-center justify-between text-[13px]">
-      <span className="text-[#565469]">{label}</span>
+      <span className="text-slate-400">{label}</span>
       <span
-        className={`tabular-nums ${bold ? "font-semibold text-[#14131F] text-[15px]" : "font-medium"} ${
-          tone === "gain" ? "text-[#0E8A5F]" : "text-[#14131F]"
+        className={`tabular-nums ${bold ? "font-bold text-white text-[15px]" : "font-medium"} ${
+          tone === "gain" ? "text-emerald-400" : "text-white"
         }`}
       >
         {value}
@@ -727,7 +727,7 @@ function HoldingModal({
   initial: Holding | null
   busy: boolean
   onClose: () => void
-  onSave: (d: {
+  onSave: (data: {
     name: string
     type: string
     investedAmount: number
@@ -762,28 +762,27 @@ function HoldingModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[rgba(20,19,31,0.40)] backdrop-blur-sm" onClick={onClose} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
       <motion.form
-        initial={{ opacity: 0, scale: 0.96, y: 12 }}
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.2 }}
         onSubmit={submit}
-        className="relative bg-white rounded-3xl shadow-2xl p-7 w-full max-w-md border border-[rgba(20,19,31,0.06)]"
+        className="relative bg-[#12151E] rounded-3xl shadow-2xl p-7 w-full max-w-md border border-white/10 text-white"
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center text-[#8C8AA0] hover:bg-[#F4F1FB] hover:text-[#14131F] transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
           aria-label="Close"
         >
           <X size={16} strokeWidth={1.75} />
         </button>
 
-        <h2 className="text-[20px] font-semibold text-[#14131F] tracking-tight">
+        <h2 className="text-[20px] font-bold text-white tracking-tight">
           {initial ? "Edit holding" : "Add holding"}
         </h2>
-        <p className="text-[13px] text-[#565469] mt-1">What you actually hold, entered by hand.</p>
+        <p className="text-[13px] text-slate-400 mt-1">What you actually hold, entered by hand.</p>
 
         <div className="mt-5 space-y-4">
           <div>

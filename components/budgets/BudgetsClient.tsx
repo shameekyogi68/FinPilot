@@ -71,10 +71,10 @@ export function BudgetsClient({ initialBudgets }: { initialBudgets: BudgetWithSp
         className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
       >
         <div>
-          <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#14131F] leading-[1.1]">
+          <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-white leading-[1.1]">
             <span className="font-display italic text-gradient">Budgets</span>
           </h1>
-          <p className="text-[14px] text-[#565469] mt-2">Mark what&apos;s essential — that&apos;s what a lean month still has to cover.</p>
+          <p className="text-[14px] text-slate-300 mt-2">Mark what&apos;s essential — that&apos;s what a lean month still has to cover.</p>
         </div>
         <button
           onClick={() => {
@@ -91,25 +91,25 @@ export function BudgetsClient({ initialBudgets }: { initialBudgets: BudgetWithSp
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
         <SummaryTile
-          icon={<TrendingUp size={16} strokeWidth={1.75} className="text-[#0E8A5F]" />}
+          icon={<TrendingUp size={16} strokeWidth={1.75} className="text-emerald-400" />}
           label="Total budgeted"
           value={inr(totalBudgeted)}
           tone="brand"
         />
         <SummaryTile
-          icon={<Wallet size={16} strokeWidth={1.75} className="text-[#4A30A8]" />}
+          icon={<Wallet size={16} strokeWidth={1.75} className="text-teal-400" />}
           label="Spent so far"
           value={inr(totalSpent)}
           tone="default"
         />
         <SummaryTile
-          icon={<CheckCircle size={16} strokeWidth={1.75} className={remaining < 0 ? "text-[#A02727]" : "text-[#0E8A5F]"} />}
+          icon={<CheckCircle size={16} strokeWidth={1.75} className={remaining < 0 ? "text-rose-400" : "text-emerald-400"} />}
           label="Remaining"
           value={inr(remaining)}
           tone={remaining < 0 ? "loss" : "gain"}
         />
         <SummaryTile
-          icon={<ShieldCheck size={16} strokeWidth={1.75} className="text-[#4A30A8]" />}
+          icon={<ShieldCheck size={16} strokeWidth={1.75} className="text-amber-400" />}
           label="Essential floor"
           value={inr(essentialFloor)}
           tone="brand"
@@ -120,10 +120,10 @@ export function BudgetsClient({ initialBudgets }: { initialBudgets: BudgetWithSp
       {budgets.length > 0 && (
         <div className="surface-card p-6">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[13px] font-medium text-[#14131F]">Overall utilization</p>
-            <p className="text-[13px] font-semibold text-[#14131F] tabular-nums">{overall.toFixed(0)}%</p>
+            <p className="text-[13px] font-medium text-white">Overall utilization</p>
+            <p className="text-[13px] font-semibold text-white tabular-nums">{overall.toFixed(0)}%</p>
           </div>
-          <div className="progress-track !h-3">
+          <div className="progress-track !h-3 bg-white/10">
             <div
               className={`progress-fill ${overall > 100 ? "loss" : overall > 80 ? "warn" : "gain"}`}
               style={{ width: `${Math.min(overall, 100)}%` }}
@@ -132,16 +132,17 @@ export function BudgetsClient({ initialBudgets }: { initialBudgets: BudgetWithSp
         </div>
       )}
 
-      {/* Budget list */}
+      {/* Grid */}
       {budgets.length === 0 ? (
         <EmptyState onAdd={() => setOpen(true)} />
       ) : (
-        <div className="grid lg:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {budgets.map((b, idx) => {
-            const pct = b.monthly_limit > 0 ? (b.spent_this_month / b.monthly_limit) * 100 : 0
+            const pct = (b.spent_this_month / Math.max(b.monthly_limit, 1)) * 100
             const tone = pct > 100 ? "loss" : pct > 80 ? "warn" : "gain"
-            const color = categoryColor(b.category)
             const Icon = getCategoryIcon(b.category)
+            const color = categoryColor(b.category)
+
             return (
               <motion.div
                 key={b.id}
@@ -153,14 +154,14 @@ export function BudgetsClient({ initialBudgets }: { initialBudgets: BudgetWithSp
                 <div className="flex items-start justify-between gap-3 mb-4">
                   <div className="flex items-center gap-3">
                     <div
-                      className="w-11 h-11 rounded-xl flex items-center justify-center"
-                      style={{ background: `${color}14`, color }}
+                      className="w-11 h-11 rounded-xl flex items-center justify-center border border-white/10"
+                      style={{ background: `${color}22`, color }}
                     >
                       <Icon size={18} strokeWidth={1.75} />
                     </div>
                     <div>
-                      <p className="text-[15px] font-semibold text-[#14131F] capitalize">{b.category}</p>
-                      <p className="text-[12px] text-[#8C8AA0] mt-0.5 flex items-center gap-1.5">
+                      <p className="text-[15px] font-bold text-white capitalize">{b.category}</p>
+                      <p className="text-[12px] text-slate-400 mt-0.5 flex items-center gap-1.5">
                         {pct.toFixed(0)}% used
                         {b.essential && (
                           <span className="pill pill-brand !py-0 !px-1.5 !text-[10px]">Essential</span>
@@ -174,7 +175,7 @@ export function BudgetsClient({ initialBudgets }: { initialBudgets: BudgetWithSp
                         setEditing(b)
                         setOpen(true)
                       }}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-[#8C8AA0] hover:bg-[#F4F1FB] hover:text-[#14131F] transition-colors"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
                       aria-label="Edit budget"
                     >
                       <Pencil size={14} strokeWidth={1.75} />
@@ -182,7 +183,7 @@ export function BudgetsClient({ initialBudgets }: { initialBudgets: BudgetWithSp
                     <button
                       onClick={() => handleDelete(b.id)}
                       disabled={busy}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-[#8C8AA0] hover:bg-[#FCEEEC] hover:text-[#A02727] transition-colors"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 transition-colors"
                       aria-label="Delete budget"
                     >
                       <Trash2 size={14} strokeWidth={1.75} />
@@ -191,22 +192,22 @@ export function BudgetsClient({ initialBudgets }: { initialBudgets: BudgetWithSp
                 </div>
 
                 <div className="flex items-baseline justify-between mb-2.5">
-                  <p className="text-[12px] text-[#8C8AA0] tabular-nums">
-                    <span className={`font-semibold ${tone === "loss" ? "text-[#A02727]" : "text-[#14131F]"}`}>{inr(b.spent_this_month)}</span>
+                  <p className="text-[12px] text-slate-400 tabular-nums">
+                    <span className={`font-semibold ${tone === "loss" ? "text-rose-400" : "text-white"}`}>{inr(b.spent_this_month)}</span>
                     <span className="mx-1.5">of</span>
                     <span>{inr(b.monthly_limit)}</span>
                   </p>
-                  <p className={`text-[12px] font-medium tabular-nums ${tone === "loss" ? "text-[#A02727]" : "text-[#0E8A5F]"}`}>
+                  <p className={`text-[12px] font-semibold tabular-nums ${tone === "loss" ? "text-rose-400" : "text-emerald-400"}`}>
                     {pct > 100
                       ? `Over by ${inr(b.spent_this_month - b.monthly_limit)}`
                       : `${inr(b.monthly_limit - b.spent_this_month)} left`}
                   </p>
                 </div>
 
-                <div className="progress-track !h-2.5">
+                <div className="progress-track !h-2.5 bg-white/10">
                   <div
                     className={`progress-fill ${tone}`}
-                    style={{ width: `${Math.min(pct, 100)}%`, background: tone === "loss" ? "linear-gradient(90deg, #ED6F6F, #D63B3B)" : tone === "warn" ? "linear-gradient(90deg, #F2B168, #C77A1F)" : `linear-gradient(90deg, ${color}88, ${color})` }}
+                    style={{ width: `${Math.min(pct, 100)}%`, background: tone === "loss" ? "linear-gradient(90deg, #EF4444, #B91C1C)" : tone === "warn" ? "linear-gradient(90deg, #F59E0B, #D97706)" : `linear-gradient(90deg, ${color}88, ${color})` }}
                   />
                 </div>
               </motion.div>
@@ -242,14 +243,14 @@ function SummaryTile({
   tone: "default" | "brand" | "gain" | "loss"
 }) {
   const valueColor =
-    tone === "loss" ? "text-[#A02727]" : tone === "gain" ? "text-[#0E8A5F]" : "text-[#14131F]"
+    tone === "loss" ? "text-rose-400" : tone === "gain" ? "text-emerald-400" : "text-white"
   return (
     <div className="stat-tile">
       <div className="flex items-center gap-2 mb-2">
         {icon}
-        <p className="section-title">{label}</p>
+        <p className="section-title text-slate-400">{label}</p>
       </div>
-      <p className={`text-[22px] font-semibold tabular-nums leading-tight ${valueColor}`}>{value}</p>
+      <p className={`text-[22px] font-bold tabular-nums leading-tight ${valueColor}`}>{value}</p>
     </div>
   )
 }
@@ -257,11 +258,11 @@ function SummaryTile({
 function EmptyState({ onAdd }: { onAdd: () => void }) {
   return (
     <div className="surface-card p-14 text-center">
-      <div className="w-12 h-12 rounded-2xl bg-[#F4F1FB] flex items-center justify-center mx-auto mb-4">
-        <AlertCircle size={22} strokeWidth={1.5} className="text-[#6D55E3]" />
+      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+        <AlertCircle size={22} strokeWidth={1.5} className="text-emerald-400" />
       </div>
-      <p className="text-[15px] font-semibold text-[#14131F]">No budgets yet</p>
-      <p className="text-[13px] text-[#565469] mt-1 mb-5">Set monthly limits for the categories that matter.</p>
+      <p className="text-[15px] font-bold text-white">No budgets yet</p>
+      <p className="text-[13px] text-slate-400 mt-1 mb-5">Set monthly limits for the categories that matter.</p>
       <button onClick={onAdd} className="btn-primary">
         <Plus size={14} strokeWidth={2} />
         Create your first budget
@@ -279,72 +280,71 @@ function BudgetModal({
   initial: BudgetWithSpend | null
   busy: boolean
   onClose: () => void
-  onSave: (d: { category: string; monthly_limit: number; essential: boolean }) => void
+  onSave: (data: { category: string; monthly_limit: number; essential: boolean }) => void
 }) {
   const [category, setCategory] = useState(initial?.category ?? "")
   const [limit, setLimit] = useState(initial ? String(initial.monthly_limit) : "")
-  const [essential, setEssential] = useState(initial?.essential ?? true)
+  const [essential, setEssential] = useState(initial?.essential ?? false)
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
-    const l = parseFloat(limit)
-    if (!category.trim() || !l || l <= 0) return
-    onSave({ category: category.trim().toLowerCase(), monthly_limit: l, essential })
+    const num = Number(limit)
+    if (!category.trim() || isNaN(num) || num <= 0) return
+    onSave({ category: category.trim(), monthly_limit: num, essential })
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[rgba(20,19,31,0.40)] backdrop-blur-sm" onClick={onClose} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
       <motion.form
-        initial={{ opacity: 0, scale: 0.96, y: 12 }}
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.2 }}
         onSubmit={submit}
-        className="relative bg-white rounded-3xl shadow-2xl p-7 w-full max-w-md border border-[rgba(20,19,31,0.06)]"
+        className="relative bg-[#12151E] rounded-3xl shadow-2xl p-7 w-full max-w-md border border-white/10 text-white"
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center text-[#8C8AA0] hover:bg-[#F4F1FB] hover:text-[#14131F] transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
           aria-label="Close"
         >
           <X size={16} strokeWidth={1.75} />
         </button>
 
-        <h2 className="text-[20px] font-semibold text-[#14131F] tracking-tight">
+        <h2 className="text-[20px] font-bold text-white tracking-tight">
           {initial ? "Edit budget" : "New budget"}
         </h2>
-        <p className="text-[13px] text-[#565469] mt-1">Pick a category and set a monthly cap.</p>
+        <p className="text-[13px] text-slate-400 mt-1">Pick a category and set a monthly cap.</p>
 
         <div className="mt-5 space-y-4">
           <div>
-            <label className="section-title block mb-2">Category</label>
+            <label className="section-title block mb-2 text-slate-400">Category</label>
             <input
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               autoFocus
               placeholder="e.g. groceries"
-              className="field"
+              className="w-full h-11 px-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 outline-none focus:border-emerald-500/50 transition-colors"
             />
           </div>
           <div>
-            <label className="section-title block mb-2">Monthly limit</label>
-            <div className="flex items-baseline gap-2 border-b-2 border-[#14131F] py-2">
-              <span className="text-[18px] font-medium text-[#565469]">₹</span>
+            <label className="section-title block mb-2 text-slate-400">Monthly limit</label>
+            <div className="flex items-baseline gap-2 border-b-2 border-white/20 py-2">
+              <span className="text-[18px] font-medium text-slate-400">₹</span>
               <input
                 type="number"
                 value={limit}
                 onChange={(e) => setLimit(e.target.value)}
                 placeholder="0"
-                className="flex-1 bg-transparent outline-none text-[26px] font-semibold tabular-nums text-[#14131F] placeholder:text-[#C4C2D4]"
+                className="flex-1 bg-transparent outline-none text-[26px] font-bold tabular-nums text-white placeholder-slate-600"
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-4 rounded-2xl border border-[rgba(20,19,31,0.06)]">
+          <div className="flex items-center justify-between p-4 rounded-2xl border border-white/10 bg-white/5">
             <div>
-              <p className="text-[13.5px] font-medium text-[#14131F]">Essential</p>
-              <p className="text-[12px] text-[#8C8AA0]">Must be covered even in a lean, low-income month</p>
+              <p className="text-[13.5px] font-semibold text-white">Essential</p>
+              <p className="text-[12px] text-slate-400">Must be covered even in a lean, low-income month</p>
             </div>
             <button
               type="button"
@@ -356,7 +356,7 @@ function BudgetModal({
         </div>
 
         <div className="mt-7 flex gap-2 justify-end">
-          <button type="button" onClick={onClose} className="btn-ghost">Cancel</button>
+          <button type="button" onClick={onClose} className="btn-ghost text-slate-400 hover:text-white">Cancel</button>
           <button type="submit" disabled={busy} className="btn-primary">{initial ? "Save changes" : "Create budget"}</button>
         </div>
       </motion.form>

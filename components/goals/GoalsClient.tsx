@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Plus, Pencil, Trash2, Calendar, Trophy, X, Wallet, Target } from "lucide-react"
 import { inr } from "@/lib/utils/format"
-import { categoryColor } from "@/lib/utils/categoryStyle"
 import { toast } from "sonner"
 
 export type Goal = {
@@ -99,10 +98,10 @@ export function GoalsClient({ initialGoals }: { initialGoals: Goal[] }) {
         className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
       >
         <div>
-          <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#14131F] leading-[1.1]">
+          <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-white leading-[1.1]">
             <span className="font-display italic text-gradient">Goals</span>
           </h1>
-          <p className="text-[14px] text-[#565469] mt-2">Milestones that turn saving into a story.</p>
+          <p className="text-[14px] text-slate-300 mt-2">Milestones that turn saving into a story.</p>
         </div>
         <button
           onClick={() => {
@@ -121,28 +120,28 @@ export function GoalsClient({ initialGoals }: { initialGoals: Goal[] }) {
         <div className="surface-card p-6">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             <div>
-              <p className="section-title mb-2">Total goals</p>
-              <p className="text-[24px] font-semibold text-[#14131F] leading-tight">{goals.length}</p>
+              <p className="section-title mb-2 text-slate-400">Total goals</p>
+              <p className="text-[24px] font-bold text-white leading-tight">{goals.length}</p>
             </div>
             <div>
-              <p className="section-title mb-2">Completed</p>
-              <p className="text-[24px] font-semibold text-[#0E8A5F] leading-tight flex items-center gap-1.5">
+              <p className="section-title mb-2 text-slate-400">Completed</p>
+              <p className="text-[24px] font-bold text-emerald-400 leading-tight flex items-center gap-1.5">
                 {completed}
-                <Trophy size={16} strokeWidth={1.75} className="text-[#E89B3C]" />
+                <Trophy size={16} strokeWidth={1.75} className="text-amber-400" />
               </p>
             </div>
             <div>
-              <p className="section-title mb-2">Saved</p>
-              <p className="text-[18px] font-semibold text-[#14131F] tabular-nums leading-tight">{inr(totalSaved)}</p>
+              <p className="section-title mb-2 text-slate-400">Saved</p>
+              <p className="text-[18px] font-bold text-white tabular-nums leading-tight">{inr(totalSaved)}</p>
             </div>
             <div>
-              <p className="section-title mb-2">Overall</p>
-              <p className="text-[24px] font-semibold tabular-nums leading-tight">
+              <p className="section-title mb-2 text-slate-400">Overall</p>
+              <p className="text-[24px] font-bold tabular-nums leading-tight">
                 <span className="text-gradient">{overall.toFixed(0)}%</span>
               </p>
             </div>
           </div>
-          <div className="progress-track !h-2 mt-5">
+          <div className="progress-track !h-2 mt-5 bg-white/10">
             <div className="progress-fill" style={{ width: `${Math.min(overall, 100)}%` }} />
           </div>
         </div>
@@ -151,11 +150,11 @@ export function GoalsClient({ initialGoals }: { initialGoals: Goal[] }) {
       {/* Goal grid */}
       {goals.length === 0 ? (
         <div className="surface-card p-14 text-center">
-          <div className="w-12 h-12 rounded-2xl bg-[#F4F1FB] flex items-center justify-center mx-auto mb-4">
-            <Target size={22} strokeWidth={1.5} className="text-[#6D55E3]" />
+          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+            <Target size={22} strokeWidth={1.5} className="text-emerald-400" />
           </div>
-          <p className="text-[15px] font-semibold text-[#14131F]">No goals yet</p>
-          <p className="text-[13px] text-[#565469] mt-1 mb-5">Start with a small win. The first one is the hardest.</p>
+          <p className="text-[15px] font-bold text-white">No goals yet</p>
+          <p className="text-[13px] text-slate-400 mt-1 mb-5">Start with a small win. The first one is the hardest.</p>
           <button
             onClick={() => {
               setEditing(null)
@@ -168,31 +167,31 @@ export function GoalsClient({ initialGoals }: { initialGoals: Goal[] }) {
           </button>
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {goals.map((g, idx) => {
-            const percent = Math.min(100, (g.currentAmount / g.targetAmount) * 100)
-            const isComplete = g.currentAmount >= g.targetAmount
-            const color = categoryColor(g.name)
+            const percent = g.targetAmount > 0 ? (g.currentAmount / g.targetAmount) * 100 : 0
+            const isComplete = percent >= 100
             const days = g.deadline ? Math.ceil((new Date(g.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null
             return (
               <motion.div
                 key={g.id}
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: idx * 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="surface-card p-6"
+                transition={{ duration: 0.3, delay: idx * 0.04, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="surface-card p-5"
               >
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start justify-between gap-3 mb-4">
                   <div className="flex items-center gap-3">
                     <div
-                      className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                      style={{ background: `${color}14`, color }}
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center border ${
+                        isComplete ? "bg-amber-500/20 border-amber-500/30 text-amber-400" : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                      }`}
                     >
                       <Target size={20} strokeWidth={1.75} />
                     </div>
                     <div>
-                      <p className="text-[15px] font-semibold text-[#14131F] leading-tight">{g.name}</p>
-                      <p className="text-[12px] text-[#8C8AA0] mt-0.5 flex items-center gap-1">
+                      <p className="text-[15px] font-bold text-white leading-tight">{g.name}</p>
+                      <p className="text-[12px] text-slate-400 mt-0.5 flex items-center gap-1">
                         <Calendar size={11} strokeWidth={1.75} />
                         {isComplete
                           ? "Goal achieved"
@@ -210,7 +209,7 @@ export function GoalsClient({ initialGoals }: { initialGoals: Goal[] }) {
                         setEditing(g)
                         setOpen(true)
                       }}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-[#8C8AA0] hover:bg-[#F4F1FB] hover:text-[#14131F] transition-colors"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
                       aria-label="Edit goal"
                     >
                       <Pencil size={14} strokeWidth={1.75} />
@@ -218,7 +217,7 @@ export function GoalsClient({ initialGoals }: { initialGoals: Goal[] }) {
                     <button
                       onClick={() => handleDelete(g.id)}
                       disabled={busy}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-[#8C8AA0] hover:bg-[#FCEEEC] hover:text-[#A02727] transition-colors"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 transition-colors"
                       aria-label="Delete goal"
                     >
                       <Trash2 size={14} strokeWidth={1.75} />
@@ -230,7 +229,7 @@ export function GoalsClient({ initialGoals }: { initialGoals: Goal[] }) {
                 <div className="flex items-center gap-5 mb-4">
                   <div className="relative w-[72px] h-[72px] flex-shrink-0">
                     <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="44" fill="none" stroke="#F0EEF5" strokeWidth="7" />
+                      <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="7" />
                       <motion.circle
                         cx="50"
                         cy="50"
@@ -246,33 +245,33 @@ export function GoalsClient({ initialGoals }: { initialGoals: Goal[] }) {
                       />
                       <defs>
                         <linearGradient id="goalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#A48FF6" />
-                          <stop offset="100%" stopColor="#6D55E3" />
+                          <stop offset="0%" stopColor="#10B981" />
+                          <stop offset="100%" stopColor="#059669" />
                         </linearGradient>
                       </defs>
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                       {isComplete ? (
-                        <Trophy size={18} strokeWidth={1.75} className="text-[#E89B3C]" />
+                        <Trophy size={18} strokeWidth={1.75} className="text-amber-400" />
                       ) : (
                         <>
-                          <span className="text-[15px] font-semibold text-[#14131F] leading-none">{percent.toFixed(0)}%</span>
-                          <span className="text-[9px] text-[#8C8AA0] mt-0.5 font-semibold uppercase tracking-wider">done</span>
+                          <span className="text-[15px] font-bold text-white leading-none">{percent.toFixed(0)}%</span>
+                          <span className="text-[9px] text-slate-400 mt-0.5 font-bold uppercase tracking-wider">done</span>
                         </>
                       )}
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[12px] text-[#8C8AA0]">Saved</p>
-                    <p className="text-[18px] font-semibold text-[#14131F] tabular-nums leading-tight">{inr(g.currentAmount)}</p>
-                    <p className="text-[11px] text-[#8C8AA0] mt-0.5 tabular-nums">of {inr(g.targetAmount)}</p>
+                    <p className="text-[12px] text-slate-400">Saved</p>
+                    <p className="text-[18px] font-bold text-white tabular-nums leading-tight">{inr(g.currentAmount)}</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5 tabular-nums">of {inr(g.targetAmount)}</p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => setFundsFor(g)}
                   disabled={isComplete}
-                  className="w-full h-10 rounded-xl bg-[#F2F1F6] hover:bg-[#E8E5F0] disabled:opacity-50 text-[12.5px] font-semibold text-[#14131F] transition-colors inline-flex items-center justify-center gap-1.5"
+                  className="w-full h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 disabled:opacity-50 text-[12.5px] font-bold text-white transition-colors inline-flex items-center justify-center gap-1.5"
                 >
                   <Wallet size={13} strokeWidth={1.75} />
                   {isComplete ? "Goal achieved" : "Add funds"}

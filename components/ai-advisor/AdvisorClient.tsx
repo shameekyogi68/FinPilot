@@ -91,8 +91,8 @@ export function AdvisorClient({
             <Sparkles size={18} strokeWidth={2} className="text-white" />
           </div>
           <div className="flex-1">
-            <p className="text-[14px] font-semibold text-[#14131F]">Yogi's Wealth AI Advisor</p>
-            <p className="text-[11.5px] text-[#8C8AA0] mt-0.5">Grounded in your real transactions, budgets, and goals</p>
+            <p className="text-[14px] font-bold text-white">Yogi's Wealth AI Advisor</p>
+            <p className="text-[11.5px] text-slate-400 mt-0.5">Grounded in your real transactions, budgets, and goals</p>
           </div>
         </div>
 
@@ -187,14 +187,14 @@ export function AdvisorClient({
 
         {/* Suggestions */}
         <div className="surface-card p-5">
-          <p className="section-title mb-3">Try asking</p>
+          <p className="section-title mb-3 text-slate-400">Try asking</p>
           <div className="flex flex-col gap-2">
             {SUGGESTIONS.map((s) => (
               <button
                 key={s}
                 onClick={() => send(s)}
                 disabled={sending}
-                className="text-left p-3 rounded-xl bg-[#FAFAF7] hover:bg-[#F4F1FB] border border-[rgba(20,19,31,0.06)] text-[12.5px] text-[#14131F] hover:border-[rgba(109,85,227,0.25)] transition-all"
+                className="text-left p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[12.5px] text-white hover:border-emerald-500/30 transition-all"
               >
                 {s}
               </button>
@@ -207,10 +207,10 @@ export function AdvisorClient({
 }
 
 function Row({ label, value, tone }: { label: string; value: string; tone?: "gain" | "loss" | "brand" }) {
-  const c = tone === "gain" ? "text-[#0E8A5F]" : tone === "brand" ? "text-gradient" : "text-[#14131F]"
+  const c = tone === "gain" ? "text-emerald-400" : tone === "brand" ? "text-gradient" : "text-white"
   return (
     <div className="flex items-center justify-between">
-      <span className="text-[#565469]">{label}</span>
+      <span className="text-slate-400">{label}</span>
       <span className={`font-semibold tabular-nums ${c}`}>{value}</span>
     </div>
   )

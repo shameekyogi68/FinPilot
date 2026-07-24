@@ -109,18 +109,18 @@ export function OverviewClient({
         className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
       >
         <div>
-          <p className="text-[12.5px] text-[#8C8AA0] mb-1.5 flex items-center gap-1.5">
+          <p className="text-[12.5px] text-slate-400 mb-1.5 flex items-center gap-1.5">
             <Calendar size={12} strokeWidth={1.75} />
             {dateLabel}
           </p>
-          <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#14131F] leading-[1.1]">
+          <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-white leading-[1.1]">
             {greeting}, <span className="font-display italic text-gradient">{profileName}.</span>
           </h1>
-          <p className="text-[14px] text-[#565469] mt-2">
+          <p className="text-[14px] text-slate-300 mt-2">
             {netThisMonth >= 0 ? (
-              <>You&apos;ve netted <span className="font-medium text-[#14131F]">{inr(netThisMonth)}</span> so far this month.</>
+              <>You&apos;ve netted <span className="font-semibold text-emerald-400">{inr(netThisMonth)}</span> so far this month.</>
             ) : (
-              <>You&apos;re <span className="font-medium text-[#14131F]">{inr(Math.abs(netThisMonth))}</span> in the red this month.</>
+              <>You&apos;re <span className="font-semibold text-rose-400">{inr(Math.abs(netThisMonth))}</span> in the red this month.</>
             )}
           </p>
         </div>
@@ -226,12 +226,12 @@ export function OverviewClient({
         transition={{ duration: 0.4, delay: 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4"
       >
-        <Link href="/investments" className="stat-tile block hover:border-[rgba(109,85,227,0.3)] transition-colors">
+        <Link href="/investments" className="stat-tile block hover:border-emerald-500/40 transition-colors">
           <p className="section-title mb-2">Net worth</p>
-          <p className="text-[20px] sm:text-[22px] font-semibold text-[#14131F] tracking-tight tabular-nums leading-tight">
+          <p className="text-[20px] sm:text-[22px] font-bold text-white tracking-tight tabular-nums leading-tight">
             {inr(netWorth)}
           </p>
-          <p className="mt-2 text-[11.5px] font-medium text-[#8C8AA0]">
+          <p className="mt-2 text-[11.5px] font-medium text-slate-400">
             {investedValue > 0 ? `incl. ${inrShort(investedValue)} invested` : "cash + investments"}
           </p>
         </Link>
@@ -239,34 +239,34 @@ export function OverviewClient({
           label="Income (MTD)"
           value={inr(metrics.monthlyIncome)}
           change={metrics.incomeChange}
-          accent="var(--bar, linear-gradient(90deg, #2DC295, #0E8A5F))"
+          accent="var(--bar, linear-gradient(90deg, #10B981, #059669))"
         />
         <StatCard
           label="Expenses (MTD)"
           value={inr(metrics.monthlyExpense)}
           change={-metrics.expenseChange}
-          accent="var(--bar, linear-gradient(90deg, #ED6F6F, #D63B3B))"
+          accent="var(--bar, linear-gradient(90deg, #EF4444, #B91C1C))"
         />
-        <div className="stat-tile" style={{ "--bar": "var(--bar, linear-gradient(90deg, #A48FF6, #6D55E3))" } as React.CSSProperties}>
+        <div className="stat-tile" style={{ "--bar": "var(--bar, linear-gradient(90deg, #10B981, #059669))" } as React.CSSProperties}>
           <p className="section-title mb-2">Savings rate</p>
-          <p className="text-[20px] sm:text-[22px] font-semibold text-[#14131F] tracking-tight tabular-nums leading-tight">
+          <p className="text-[20px] sm:text-[22px] font-bold text-white tracking-tight tabular-nums leading-tight">
             {(metrics.savingsRate * 100).toFixed(1)}%
           </p>
-          <p className="mt-2 text-[11.5px] font-medium text-[#8C8AA0]">of income kept, this month</p>
+          <p className="mt-2 text-[11.5px] font-medium text-slate-400">of income kept, this month</p>
         </div>
-        <div className="stat-tile" style={{ "--bar": "var(--bar, linear-gradient(90deg, #F2B168, #C77A1F))" } as React.CSSProperties}>
+        <div className="stat-tile" style={{ "--bar": "var(--bar, linear-gradient(90deg, #F59E0B, #D97706))" } as React.CSSProperties}>
           <p className="section-title mb-2">Budget used</p>
-          <p className="text-[20px] sm:text-[22px] font-semibold text-[#14131F] tracking-tight tabular-nums leading-tight">
+          <p className="text-[20px] sm:text-[22px] font-bold text-white tracking-tight tabular-nums leading-tight">
             {(metrics.budgetUtilization * 100).toFixed(0)}%
           </p>
-          <p className="mt-2 text-[11.5px] font-medium text-[#8C8AA0]">of budgeted limits spent</p>
+          <p className="mt-2 text-[11.5px] font-medium text-slate-400">of budgeted limits spent</p>
         </div>
         <div className="stat-tile col-span-2 lg:col-span-1">
           <p className="section-title mb-2">Safety Buffer</p>
-          <p className="text-[20px] sm:text-[22px] font-semibold text-[#14131F] tracking-tight tabular-nums leading-tight">
+          <p className="text-[20px] sm:text-[22px] font-bold text-white tracking-tight tabular-nums leading-tight">
             {runway.runwayMonths !== null ? `${runway.runwayMonths.toFixed(1)} mo` : "—"}
           </p>
-          <p className="mt-2 text-[11.5px] font-medium text-[#8C8AA0] leading-snug">{runwaySub}</p>
+          <p className="mt-2 text-[11.5px] font-medium text-slate-400 leading-snug">{runwaySub}</p>
         </div>
       </motion.div>
 
@@ -280,13 +280,13 @@ export function OverviewClient({
         >
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h3 className="text-[15px] font-semibold text-[#14131F]">Where it went</h3>
-              <p className="text-[12.5px] text-[#8C8AA0] mt-0.5">Spending by category this month</p>
+              <h3 className="text-[15px] font-bold text-white">Where it went</h3>
+              <p className="text-[12.5px] text-slate-400 mt-0.5">Spending by category this month</p>
             </div>
           </div>
 
           {expenseData.length === 0 ? (
-            <p className="text-[13px] text-[#8C8AA0] py-6 text-center">No expenses logged yet this month.</p>
+            <p className="text-[13px] text-slate-400 py-6 text-center">No expenses logged yet this month.</p>
           ) : (
             <div className="space-y-3.5">
               {(() => {
@@ -296,10 +296,10 @@ export function OverviewClient({
                   return (
                     <div key={c.name}>
                       <div className="flex items-center justify-between text-[13px] mb-1.5">
-                        <span className="text-[#14131F] font-medium capitalize">{c.name}</span>
-                        <span className="text-[#565469] tabular-nums">{inr(c.value)}</span>
+                        <span className="text-white font-medium capitalize">{c.name}</span>
+                        <span className="text-slate-300 tabular-nums">{inr(c.value)}</span>
                       </div>
-                      <div className="progress-track">
+                      <div className="progress-track bg-white/10">
                         <div
                           className="progress-fill"
                           style={{ width: `${pct}%`, background: c.color }}
@@ -321,31 +321,31 @@ export function OverviewClient({
         >
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h3 className="text-[15px] font-semibold text-[#14131F]">Recent activity</h3>
-              <p className="text-[12.5px] text-[#8C8AA0] mt-0.5">Latest {recentTransactions.length} transactions</p>
+              <h3 className="text-[15px] font-bold text-white">Recent activity</h3>
+              <p className="text-[12.5px] text-slate-400 mt-0.5">Latest {recentTransactions.length} transactions</p>
             </div>
-            <Link href="/transactions" className="text-[12.5px] text-[#4A30A8] hover:text-[#14131F] font-medium inline-flex items-center gap-1">
+            <Link href="/transactions" className="text-[12.5px] text-emerald-400 hover:text-emerald-300 font-semibold inline-flex items-center gap-1">
               See all
               <ArrowUpRight size={12} strokeWidth={1.75} />
             </Link>
           </div>
 
           {recentTransactions.length === 0 ? (
-            <p className="text-[13px] text-[#8C8AA0] py-6 text-center">No transactions yet. Add your first one.</p>
+            <p className="text-[13px] text-slate-400 py-6 text-center">No transactions yet. Add your first one.</p>
           ) : (
-            <ul className="divide-y divide-[rgba(20,19,31,0.06)]">
+            <ul className="divide-y divide-white/10">
               {recentTransactions.map((t) => (
                 <li key={t.id} className="flex items-center gap-3 py-3.5 first:pt-0 last:pb-0">
-                  <div className="w-10 h-10 rounded-xl bg-[#F4F1FB] flex items-center justify-center text-[13px] font-semibold text-[#4A30A8] flex-shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[13px] font-bold text-emerald-400 flex-shrink-0">
                     {t.category.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[13.5px] font-medium text-[#14131F] truncate capitalize">{t.description}</p>
-                    <p className="text-[12px] text-[#8C8AA0] capitalize">
+                    <p className="text-[13.5px] font-semibold text-white truncate capitalize">{t.description}</p>
+                    <p className="text-[12px] text-slate-400 capitalize">
                       {t.category} · {new Date(t.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
                     </p>
                   </div>
-                  <div className={`text-[13.5px] font-medium tabular-nums ${t.type === "INCOME" ? "text-[#0E8A5F]" : "text-[#14131F]"}`}>
+                  <div className={`text-[13.5px] font-semibold tabular-nums ${t.type === "INCOME" ? "text-emerald-400" : "text-slate-100"}`}>
                     {t.type === "INCOME" ? "+" : "−"}{inrShort(Math.abs(t.amount))}
                   </div>
                 </li>
@@ -364,21 +364,21 @@ export function OverviewClient({
           className="surface-card p-6"
         >
           <div className="flex items-center gap-2.5 mb-4">
-            <span className="w-7 h-7 rounded-lg bg-[#14131F] flex items-center justify-center flex-shrink-0">
-              <CalendarClock size={14} strokeWidth={1.75} className="text-white" />
+            <span className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+              <CalendarClock size={14} strokeWidth={1.75} className="text-emerald-400" />
             </span>
             <div>
-              <h3 className="text-[15px] font-semibold text-[#14131F]">
+              <h3 className="text-[15px] font-bold text-white">
                 Monthly review — {new Date(`${monthlyReviewLabel}-01`).toLocaleDateString("en-IN", { month: "long", year: "numeric" })}
               </h3>
-              <p className="text-[12px] text-[#8C8AA0]">Generated automatically, no prompting needed</p>
+              <p className="text-[12px] text-slate-400">Generated automatically, no prompting needed</p>
             </div>
           </div>
           <ul className="space-y-2">
             {monthlyReview.map((line, idx) => (
-              <li key={idx} className="text-[13px] text-[#565469] leading-relaxed flex gap-2">
-                <span className="text-[#A48FF6] flex-shrink-0">•</span>
-                <AiMarkdown content={line} block={false} />
+              <li key={idx} className="text-[13px] text-slate-300 leading-relaxed flex gap-2">
+                <span className="text-emerald-400 flex-shrink-0">•</span>
+                <span>{line}</span>
               </li>
             ))}
           </ul>
@@ -394,24 +394,25 @@ export function OverviewClient({
         <MutualFundIntelligence />
       </motion.section>
 
-      {/* ── AI Insights ── */}
+      {/* ── Monthly AI Insights ── */}
       {insights.length > 0 && (
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="surface-card p-6"
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
-              <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#A48FF6] to-[#6D55E3] flex items-center justify-center">
-                <Sparkles size={14} strokeWidth={2} className="text-white" />
+              <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center">
+                <Sparkles size={14} strokeWidth={2} className="text-black" />
               </span>
               <div>
-                <h3 className="text-[15px] font-semibold text-[#14131F]">Runway reads</h3>
-                <p className="text-[12px] text-[#8C8AA0]">Signals from this month&apos;s real data</p>
+                <h3 className="text-[15px] font-bold text-white">AI Wealth Intelligence Reads</h3>
+                <p className="text-[12px] text-slate-400">Signals from this month&apos;s real data</p>
               </div>
             </div>
-            <Link href="/ai-advisor" className="text-[12.5px] text-[#4A30A8] hover:text-[#14131F] font-medium inline-flex items-center gap-1">
+            <Link href="/ai-advisor" className="text-[12.5px] text-emerald-400 hover:text-emerald-300 font-semibold inline-flex items-center gap-1">
               Ask the advisor
               <ArrowUpRight size={12} strokeWidth={1.75} />
             </Link>
@@ -419,8 +420,8 @@ export function OverviewClient({
 
           <div className="grid sm:grid-cols-3 gap-3">
             {insights.map((insight, idx) => (
-              <div key={idx} className="insight insight-tip">
-                <AiMarkdown content={insight} block={false} className="text-[12.5px] text-[#565469] leading-relaxed" />
+              <div key={idx} className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                <AiMarkdown content={insight} block={false} className="text-[12.5px] text-slate-200 leading-relaxed" />
               </div>
             ))}
           </div>
@@ -448,10 +449,10 @@ function StatCard({
   return (
     <div className="stat-tile" style={{ "--bar": accent } as React.CSSProperties}>
       <p className="section-title mb-2">{label}</p>
-      <p className="text-[20px] sm:text-[22px] font-semibold text-[#14131F] tracking-tight tabular-nums leading-tight">
+      <p className="text-[20px] sm:text-[22px] font-bold text-white tracking-tight tabular-nums leading-tight">
         {value}
       </p>
-      <p className={`mt-2 text-[11.5px] font-medium inline-flex items-center gap-1 ${positive ? "text-[#0E8A5F]" : "text-[#A02727]"}`}>
+      <p className={`mt-2 text-[11.5px] font-semibold inline-flex items-center gap-1 ${positive ? "text-emerald-400" : "text-rose-400"}`}>
         {positive ? <TrendingUp size={11} strokeWidth={2} /> : <TrendingDown size={11} strokeWidth={2} />}
         {positive ? "+" : ""}{(change * 100).toFixed(1)}% vs last month
       </p>

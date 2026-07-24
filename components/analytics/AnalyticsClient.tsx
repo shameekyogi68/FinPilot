@@ -77,14 +77,14 @@ export function AnalyticsClient({ monthlySummary, last6MonthsTrend, categoryBrea
         className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
       >
         <div>
-          <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#14131F] leading-[1.1]">
+          <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-white leading-[1.1]">
             <span className="font-display italic text-gradient">Analytics</span>
           </h1>
-          <p className="text-[14px] text-[#565469] mt-2">
+          <p className="text-[14px] text-slate-300 mt-2">
             Trends, breakdowns, and the shape of your spending.
           </p>
         </div>
-        <div className="flex items-center gap-1 p-1 bg-white rounded-xl border border-[rgba(20,19,31,0.06)]">
+        <div className="flex items-center gap-1 p-1 bg-white/5 rounded-xl border border-white/10">
           {[
             { v: "6mo", l: "6 months" },
             { v: "monthly", l: "This month" },
@@ -93,8 +93,8 @@ export function AnalyticsClient({ monthlySummary, last6MonthsTrend, categoryBrea
             <button
               key={opt.v}
               onClick={() => setView(opt.v as typeof view)}
-              className={`h-8 px-3.5 text-[12.5px] font-medium rounded-lg transition-all ${
-                view === opt.v ? "bg-[#14131F] text-white" : "text-[#565469] hover:text-[#14131F]"
+              className={`h-8 px-3.5 text-[12.5px] font-semibold rounded-lg transition-all ${
+                view === opt.v ? "bg-emerald-500 text-black shadow-md shadow-emerald-500/30" : "text-slate-400 hover:text-white"
               }`}
             >
               {opt.l}
@@ -304,17 +304,17 @@ function BigTile({
   tone: "gain" | "loss" | "brand" | "warn" | "default"
 }) {
   const valueColor =
-    tone === "gain" ? "text-[#0E8A5F]" :
-    tone === "loss" ? "text-[#A02727]" :
+    tone === "gain" ? "text-emerald-400" :
+    tone === "loss" ? "text-rose-400" :
     tone === "brand" ? "text-gradient" :
-    tone === "warn" ? "text-[#C77A1F]" :
-    "text-[#14131F]"
+    tone === "warn" ? "text-amber-400" :
+    "text-white"
 
   return (
     <div className="stat-tile">
-      <p className="section-title mb-2">{label}</p>
-      <p className={`text-[22px] sm:text-[24px] font-semibold tabular-nums leading-tight ${valueColor}`}>{value}</p>
-      <p className="text-[11.5px] text-[#8C8AA0] mt-2">{sub}</p>
+      <p className="section-title mb-2 text-slate-400">{label}</p>
+      <p className={`text-[22px] sm:text-[24px] font-bold tabular-nums leading-tight ${valueColor}`}>{value}</p>
+      <p className="text-[11.5px] text-slate-400 mt-2">{sub}</p>
     </div>
   )
 }
