@@ -133,34 +133,56 @@ export function DailyWealthPulseBanner() {
               key={directive.id}
               className={`p-4 rounded-2xl border transition-all ${
                 isWarning
-                  ? "bg-amber-500/10 border-amber-500/30 text-amber-200"
+                  ? "bg-amber-500/10 border-amber-500/30 text-amber-100"
                   : isOpportunity
-                  ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-200"
-                  : "bg-white/5 border-white/10 text-white/90"
+                  ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-100"
+                  : "bg-white/5 border-white/10 text-white"
               }`}
             >
               <div className="flex items-start justify-between gap-2 mb-1.5">
                 <div className="flex items-center gap-2">
                   {isWarning ? (
-                    <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                    <AlertTriangle className="w-4.5 h-4.5 text-amber-400 flex-shrink-0" />
                   ) : isOpportunity ? (
-                    <TrendingUp className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <TrendingUp className="w-4.5 h-4.5 text-emerald-400 flex-shrink-0" />
                   ) : (
-                    <ShieldCheck className="w-4 h-4 text-teal-400 flex-shrink-0" />
+                    <ShieldCheck className="w-4.5 h-4.5 text-teal-400 flex-shrink-0" />
                   )}
-                  <h3 className="text-[13.5px] font-semibold tracking-tight">
+                  <h3
+                    className={`text-[14px] font-bold tracking-tight ${
+                      isWarning
+                        ? "text-amber-300"
+                        : isOpportunity
+                        ? "text-emerald-300"
+                        : "text-teal-300"
+                    }`}
+                  >
                     {directive.title}
                   </h3>
                 </div>
               </div>
-              <p className="text-[12px] opacity-80 leading-snug mb-3">
+              <p
+                className={`text-[12.5px] leading-snug mb-3 ${
+                  isWarning
+                    ? "text-amber-100/90"
+                    : isOpportunity
+                    ? "text-emerald-100/90"
+                    : "text-white/80"
+                }`}
+              >
                 {directive.description}
               </p>
 
               {directive.actionUrl && (
                 <Link
                   href={directive.actionUrl}
-                  className="inline-flex items-center gap-1.5 text-[12px] font-medium text-white hover:underline group"
+                  className={`inline-flex items-center gap-1.5 text-[12.5px] font-semibold hover:underline group ${
+                    isWarning
+                      ? "text-amber-300"
+                      : isOpportunity
+                      ? "text-emerald-300"
+                      : "text-teal-300"
+                  }`}
                 >
                   <span>{directive.actionLabel || "Execute Action"}</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
