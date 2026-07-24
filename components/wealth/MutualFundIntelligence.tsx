@@ -10,7 +10,7 @@ const formatCurrency = (val: number) =>
 export function MutualFundIntelligence() {
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<MFSearchResult[]>([])
-  const [selectedCode, setSelectedCode] = useState<number | null>(122639) // Default: Parag Parikh Flexi Cap
+  const [selectedCode, setSelectedCode] = useState<number | null>(null)
   const [details, setDetails] = useState<MFDetails | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -67,13 +67,13 @@ export function MutualFundIntelligence() {
               Live Mutual Funds Market Intelligence
             </h2>
             <p className="text-[12.5px] text-white/60">
-              Free real-time NAV tracking & CAGR analytics (api.mfapi.in)
+              Real-time NAV tracking & CAGR analytics (api.mfapi.in / AMFI)
             </p>
           </div>
         </div>
 
         {/* Search Input */}
-        <div className="relative min-w-[260px]">
+        <div className="relative min-w-[280px]">
           <Search className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
@@ -104,7 +104,7 @@ export function MutualFundIntelligence() {
         </div>
       </div>
 
-      {/* Selected Fund Details Card */}
+      {/* Selected Fund Details Card or Search Prompt */}
       {loading ? (
         <div className="p-8 rounded-2xl bg-white/5 animate-pulse flex items-center justify-center text-white/50 text-[13px]">
           Loading Live Mutual Fund Data…
@@ -157,7 +157,27 @@ export function MutualFundIntelligence() {
             </div>
           </div>
         </div>
-      ) : null}
+      ) : (
+        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-[13px] text-slate-400">
+            Search any Indian Direct Mutual Fund above to inspect live NAV, CAGR returns, and fund metadata.
+          </p>
+          <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => setSelectedCode(122639)}
+              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[11.5px] font-medium text-emerald-300 transition-colors"
+            >
+              Parag Parikh Flexi Cap
+            </button>
+            <button
+              onClick={() => setSelectedCode(120716)}
+              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[11.5px] font-medium text-emerald-300 transition-colors"
+            >
+              UTI Nifty 50 Index
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
